@@ -1,0 +1,54 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+
+html, body {
+  height: 100%;
+  background: #ffffff;
+  color: #3D2F27;
+  font-family: var(--font-quicksand), system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading, .font-[var(--font-heading)] {
+  font-family: var(--font-heading), var(--font-quicksand), system-ui, sans-serif;
+}
+
+.font-logo, .logo-font {
+  font-family: var(--font-pacifico), var(--font-heading), cursive;
+}
+
+/* Custom animations for mascot */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: translateX(0px);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.6s ease-in-out infinite;
+}
