@@ -1,5 +1,5 @@
 // API configuration and client for Ani & Ayu e-commerce
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3002/api'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ani-ayu-api.onrender.com/api'
 
 // Enhanced Product API response interface
 export interface Product {
