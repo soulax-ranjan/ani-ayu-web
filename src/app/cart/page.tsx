@@ -6,40 +6,28 @@ import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useCartStore } from '@/store/cartStore'
+import { Button } from '@/components/ui/Button'
 
 export default function CartPage() {
-  const { items, totalItems, totalPrice, updateQuantity, removeItem, clearCart } = useCartStore()
+  const { items, totals, updateQuantity, removeItem, clearCart, totalItems } = useCartStore()
 
-  const handleQuantityChange = (productId: string, size: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeItem(productId, size)
-    } else {
-      updateQuantity(productId, size, newQuantity)
-    }
-  }
-
-  if (items.length === 0) {
+  if (totalItems === 0) {
     return (
       <>
         <Header />
         
-        <main className="min-h-screen bg-cream flex items-center justify-center">
-          <div className="text-center max-w-md mx-auto px-4">
-            <div className="mb-8">
-              <ShoppingBag size={80} className="mx-auto text-gray-300 mb-4" />
-              <h1 className="text-2xl font-[var(--font-heading)] font-bold text-ink mb-2">Your cart is empty</h1>
-              <p className="text-gray-600">
-                Looks like you haven&apos;t added any items to your cart yet.
-              </p>
+        <main className="min-h-screen bg-cream/30">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center py-16">
+              <ShoppingBag className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+              <h2 className="text-2xl font-bold text-ink mb-2">Your cart is empty</h2>
+              <p className="text-muted-text mb-6">Looks like you haven't added any items to your cart yet.</p>
+              <Link href="/products">
+                <Button className="bg-primary hover:bg-primary/90 text-black">
+                  Continue Shopping
+                </Button>
+              </Link>
             </div>
-            
-            <Link 
-              href="/products"
-              className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-            >
-              <ArrowLeft size={20} />
-              Continue Shopping
-            </Link>
           </div>
         </main>
 
@@ -186,17 +174,19 @@ export default function CartPage() {
                   {/* Items Summary */}
                   <div className="flex justify-between text-gray-600">
                     <span>Items ({totalItems}):</span>
-                    <span>₹{totalPrice.toLocaleString()}</span>
+                    <span>₹{totals.subtotal.toLocaleString()}</span>
                   </div>
                   
                   <div className="flex justify-between text-gray-600">
                     <span>Shipping:</span>
-                    <span className="text-green-600 font-medium">Free</span>
+                    <span className="text-green-600 font-medium">
+                      {totals.shipping > 0 ? `₹${totals.shipping.toLocaleString()}` : 'Free'}
+                    </span>
                   </div>
                   
                   <div className="flex justify-between text-gray-600">
                     <span>Tax:</span>
-                    <span>₹0</span>
+                    <span>₹{totals.tax.toLocaleString()}</span>
                   </div>
                   
                   <hr className="border-gray-200" />
@@ -204,18 +194,19 @@ export default function CartPage() {
                   {/* Total */}
                   <div className="flex justify-between text-lg font-bold text-ink">
                     <span>Total:</span>
-                    <span>₹{totalPrice.toLocaleString()}</span>
+                    <span>₹{totals.total.toLocaleString()}</span>
                   </div>
                 </div>
                 
                 {/* Checkout Button */}
-                <button 
-                  className="w-full mt-6 bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
-                  onClick={() => alert('Checkout functionality coming soon!')}
-                >
-                  <ShoppingBag size={20} />
-                  Proceed to Checkout
-                </button>
+                <Link href="/checkout">
+                  <button 
+                    className="w-full mt-6 bg-primary hover:bg-primary/90 text-black font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    <ShoppingBag size={20} />
+                    Proceed to Checkout
+                  </button>
+                </Link>
                 
                 {/* Continue Shopping Link */}
                 <Link

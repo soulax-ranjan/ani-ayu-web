@@ -72,9 +72,11 @@ export interface Product {
 }
 
 export interface CartItem {
+  id: string
   product: Product
   size: string
   quantity: number
+  price: number // Price at time of adding to cart
 }
 
 export interface Filters {

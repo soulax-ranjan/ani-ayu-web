@@ -1,7 +1,10 @@
+"use client"
 import Image from 'next/image'
 import Link from 'next/link'
 import { Star, ShoppingBag, Palette } from 'lucide-react'
 import { Product } from '@/types/product'
+import { useCartStore } from '@/store/cartStore'
+import { useState } from 'react'
 
 interface ProductCardProps {
   product: Product
@@ -9,9 +12,27 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, className = '' }: ProductCardProps) {
+  const { addItem } = useCartStore()
+  const [isAdding, setIsAdding] = useState(false)
+  
   const discountPercent = product.originalPrice 
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    setIsAdding(true)
+    
+    // Add to cart with default size (you might want to add size selection)
+    addItem(product, 'M', 1)
+    
+    // Show feedback
+    setTimeout(() => {
+      setIsAdding(false)
+    }, 1000)
+  }
 
   return (
     <div className={`group relative ${className}`}>
@@ -32,9 +53,19 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
             </div>
           )}
           
-          {/* Preorder Tag */}
-          <div className="absolute bottom-2 right-2 bg-primary text-white px-2 py-1 rounded text-xs font-semibold uppercase tracking-wide shadow-sm">
-            Preorder
+          {/* Preorder Tag with Add to Cart */}
+          <div className="absolute bottom-2 right-2 flex flex-col gap-2">
+            <div className="bg-primary text-black px-2 py-1 rounded text-xs font-semibold uppercase tracking-wide shadow-sm">
+              Preorder
+            </div>
+            <button
+              onClick={handleAddToCart}
+              disabled={isAdding}
+              className="bg-white/90 backdrop-blur-sm text-ink p-2 rounded-full shadow-sm hover:bg-white transition-all duration-200 hover:scale-110 disabled:opacity-50"
+              title="Add to cart"
+            >
+              <ShoppingBag size={14} />
+            </button>
           </div>
         </div>
 

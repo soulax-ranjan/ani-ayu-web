@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Search, User, ShoppingBag, Menu, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useCartStore } from '@/store/cartStore';
 
 const NAV_LINKS = [
   { href: '/products', label: 'Shop All' },
@@ -15,6 +16,7 @@ const NAV_LINKS = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { totalItems } = useCartStore();
 
   return (
   <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
@@ -85,9 +87,11 @@ export default function Header() {
           >
             <ShoppingBag size={20} className="text-gray-600 hover:text-primary" />
             {/* Cart badge */}
-            <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold shadow-lg">
-              2
-            </span>
+            {totalItems > 0 && (
+              <span className="absolute -top-1 -right-1 bg-primary text-black text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold shadow-lg">
+                {totalItems > 99 ? '99+' : totalItems}
+              </span>
+            )}
           </Link>
           <button
             aria-label="Toggle menu"
