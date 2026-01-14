@@ -1,0 +1,44 @@
+import ImageBanner from './ImageBanner'
+import ProductCard from './ProductCard'
+import { Product } from '@/types/product'
+
+interface BannerProductSectionProps {
+  bannerImage: string
+  bannerAlt: string
+  bannerLink?: string
+  products: Product[]
+  sectionTitle?: string
+}
+
+export default function BannerProductSection({ 
+  bannerImage, 
+  bannerAlt, 
+  bannerLink,
+  products,
+  sectionTitle 
+}: BannerProductSectionProps) {
+  return (
+    <section className="py-6 md:py-8">
+      <div className="container mx-auto px-4">
+        {/* Banner and Products in Single Row - 3:7 ratio */}
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-4 md:gap-6">
+          {/* Banner Card - Takes 3 columns (30%) */}
+          <div className="lg:col-span-3">
+            <ImageBanner 
+              imageUrl={bannerImage}
+              alt={bannerAlt}
+              link={bannerLink}
+            />
+          </div>
+          
+          {/* Product Cards - Take 7 columns (70%) */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {products.slice(0, 3).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

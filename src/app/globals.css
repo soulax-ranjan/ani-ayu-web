@@ -10,8 +10,8 @@
 
 html, body {
   height: 100%;
-  background: #ffffff;
-  color: #3D2F27;
+  background: #FFF9EE;
+  color: #1E1E1E;
   font-family: var(--font-quicksand), system-ui, sans-serif;
 }
 
@@ -51,4 +51,18 @@ h1, h2, h3, h4, h5, h6, .font-heading, .font-[var(--font-heading)] {
 
 .animate-wiggle {
   animation: wiggle 0.6s ease-in-out infinite;
+}
+
+/* Modern carousel animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
 }

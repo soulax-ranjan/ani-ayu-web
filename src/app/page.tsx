@@ -1,6 +1,7 @@
 import Header from "@/components/Header"
 import HeroCarousel from "@/components/HeroCarousel"
 import BestDesigns from "@/components/BestDesigns"
+import BannerProductSections from "@/components/BannerProductSections"
 import SingleImageBanner from "@/components/SingleImageBanner"
 import ShopByGender from "@/components/ShopByGender"
 import FounderStory from "@/components/FounderStory"
@@ -16,6 +17,7 @@ export default function HomePage() {
         {/* Hero Carousel */}
         <HeroCarousel />
         <BestDesigns />
+        <BannerProductSections />
         <SingleImageBanner />
         <ShopByGender />
         <FounderStory />
