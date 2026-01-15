@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from 'lucide-react'
@@ -9,13 +11,17 @@ import { useCartStore } from '@/store/cartStore'
 import { Button } from '@/components/ui/Button'
 
 export default function CartPage() {
-  const { items, totals, updateQuantity, removeItem, clearCart, totalItems } = useCartStore()
+  const { items, totals, updateQuantity, removeItem, clearCart, totalItems, fetchCart } = useCartStore()
+
+  useEffect(() => {
+    fetchCart()
+  }, [fetchCart])
 
   if (totalItems === 0) {
     return (
       <>
         <Header />
-        
+
         <main className="min-h-screen bg-cream/30">
           <div className="container mx-auto px-4 py-8">
             <div className="text-center py-16">
@@ -39,7 +45,7 @@ export default function CartPage() {
   return (
     <>
       <Header />
-      
+
       <main className="min-h-screen bg-cream">
         <div className="max-w-[1200px] mx-auto px-4 py-8">
           {/* Page Header */}
@@ -50,8 +56,8 @@ export default function CartPage() {
                 {totalItems} {totalItems === 1 ? 'item' : 'items'} in your cart
               </p>
             </div>
-            
-            <Link 
+
+            <Link
               href="/products"
               className="flex items-center gap-2 text-primary hover:text-primary/80 font-medium"
             >
@@ -96,13 +102,13 @@ export default function CartPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div className="flex-1 min-w-0">
-                          <Link 
+                          <Link
                             href={`/products/${item.product.id}`}
                             className="font-semibold text-ink hover:text-primary transition-colors block truncate"
                           >
                             {item.product.name}
                           </Link>
-                          
+
                           <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
                             <span>Size: <span className="font-medium">{item.size}</span></span>
                             <span className="capitalize">Category: {item.product.category}</span>
@@ -110,7 +116,7 @@ export default function CartPage() {
 
                           <div className="flex items-center gap-2 mt-2">
                             <span className="font-bold text-ink">
-                              ₹{item.product.price.toLocaleString()}
+                              ₹{(item.product.price || 0).toLocaleString()}
                             </span>
                             {item.product.originalPrice && (
                               <span className="text-sm text-gray-500 line-through">
@@ -124,7 +130,7 @@ export default function CartPage() {
                         <div className="flex items-center gap-4">
                           <div className="flex items-center border border-gray-200 rounded-lg">
                             <button
-                              onClick={() => handleQuantityChange(item.product.id, item.size, item.quantity - 1)}
+                              onClick={() => updateQuantity(item.product.id, item.size, item.quantity - 1)}
                               className="p-2 hover:bg-gray-50 transition-colors"
                               aria-label="Decrease quantity"
                             >
@@ -134,7 +140,7 @@ export default function CartPage() {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => handleQuantityChange(item.product.id, item.size, item.quantity + 1)}
+                              onClick={() => updateQuantity(item.product.id, item.size, item.quantity + 1)}
                               className="p-2 hover:bg-gray-50 transition-colors"
                               aria-label="Increase quantity"
                             >
@@ -169,45 +175,45 @@ export default function CartPage() {
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg p-6 shadow-card sticky top-24">
                 <h2 className="font-semibold text-ink text-lg mb-6">Order Summary</h2>
-                
+
                 <div className="space-y-4">
                   {/* Items Summary */}
                   <div className="flex justify-between text-gray-600">
                     <span>Items ({totalItems}):</span>
                     <span>₹{totals.subtotal.toLocaleString()}</span>
                   </div>
-                  
+
                   <div className="flex justify-between text-gray-600">
                     <span>Shipping:</span>
                     <span className="text-green-600 font-medium">
                       {totals.shipping > 0 ? `₹${totals.shipping.toLocaleString()}` : 'Free'}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between text-gray-600">
                     <span>Tax:</span>
                     <span>₹{totals.tax.toLocaleString()}</span>
                   </div>
-                  
+
                   <hr className="border-gray-200" />
-                  
+
                   {/* Total */}
                   <div className="flex justify-between text-lg font-bold text-ink">
                     <span>Total:</span>
                     <span>₹{totals.total.toLocaleString()}</span>
                   </div>
                 </div>
-                
+
                 {/* Checkout Button */}
                 <Link href="/checkout">
-                  <button 
+                  <button
                     className="w-full mt-6 bg-primary hover:bg-primary/90 text-black font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
                     <ShoppingBag size={20} />
                     Proceed to Checkout
                   </button>
                 </Link>
-                
+
                 {/* Continue Shopping Link */}
                 <Link
                   href="/products"

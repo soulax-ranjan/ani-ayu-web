@@ -1,5 +1,5 @@
 // API configuration and client for Ani & Ayu e-commerce
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://ani-ayu-api.onrender.com'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'
 
 // Enhanced Product API response interface
 export interface Product {
@@ -86,12 +86,17 @@ export interface CartItem {
   quantity: number
   image: string
   total: number
+  product: Product // Nested product object from API
 }
 
 export interface Cart {
   items: CartItem[]
   totalItems: number
   totalAmount: number
+  summary?: {
+    totalItems: number
+    subtotal: number
+  }
 }
 
 export interface Banner {
@@ -175,11 +180,13 @@ class APIClient {
     const url = `${this.baseURL}${endpoint}`
     
     const config: RequestInit = {
+      ...options,
       headers: {
         'Content-Type': 'application/json',
         ...options?.headers,
       },
-      ...options,
+      credentials: 'include', // Ensure cookies are sent with requests
+      mode: 'cors',
     }
 
     try {
@@ -311,52 +318,120 @@ class APIClient {
   }
 
   // Cart APIs
-  async getCart(sessionId: string): Promise<Cart> {
-    return this.request<Cart>(`/cart/${sessionId}`)
+  async getCart(sessionId?: string): Promise<Cart> {
+    const url = sessionId ? `/cart/${sessionId}` : '/cart'
+    return this.request<Cart>(url)
   }
 
   async addToCart(data: {
-    sessionId: string
+    sessionId?: string
     productId: string
     size: string
     quantity: number
-    price: number
+    price?: number
   }): Promise<{
     success: boolean
     message: string
     cartItem: CartItem
   }> {
-    return this.request('/cart', {
+    return this.request('/cart/add', {
       method: 'POST',
       body: JSON.stringify(data),
     })
   }
 
-  async updateCartItem(sessionId: string, itemId: string, quantity: number): Promise<{
+  async updateCartItem(sessionId: string | undefined, itemId: string, quantity: number): Promise<{
     success: boolean
     message: string
   }> {
-    return this.request(`/cart/${sessionId}/${itemId}`, {
+    // Cookie-based session: PUT /cart/item/:itemId
+    return this.request(`/cart/item/${itemId}`, {
       method: 'PUT',
       body: JSON.stringify({ quantity }),
     })
   }
 
-  async removeCartItem(sessionId: string, itemId: string): Promise<{
+  async removeCartItem(sessionId: string | undefined, itemId: string): Promise<{
     success: boolean
     message: string
   }> {
-    return this.request(`/cart/${sessionId}/${itemId}`, {
+    // Cookie-based session: DELETE /cart/item/:itemId
+    return this.request(`/cart/item/${itemId}`, {
       method: 'DELETE',
     })
   }
 
-  async clearCart(sessionId: string): Promise<{
+  async clearCart(sessionId?: string): Promise<{
     success: boolean
     message: string
   }> {
-    return this.request(`/cart/${sessionId}`, {
+    // Cookie-based session: DELETE /cart
+    return this.request(`/cart`, {
       method: 'DELETE',
+    })
+  }
+
+  // Guest Session
+  async startGuestSession(): Promise<{ success: boolean; guestId: string; message: string }> {
+    return this.request('/guest/session', {
+      method: 'POST',
+      body: JSON.stringify({}),
+    })
+  }
+
+  // Address
+  async saveAddress(data: {
+    fullName: string
+    email: string
+    phone: string
+    addressLine1: string
+    city: string
+    state: string
+    country: string
+    postalCode: string
+  }): Promise<{ id: string; full_name: string; [key: string]: any }> {
+    return this.request('/addresses', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // Checkout & Payment
+  async placeOrder(data: { addressId: string; paymentMethod: 'cod' | 'card' }): Promise<{
+    success: boolean
+    orderId: string
+    message?: string
+    razorpayOrderId?: string
+    amount?: number
+    currency?: string
+    key?: string
+  }> {
+    return this.request('/checkout', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async verifyPayment(data: {
+    razorpayOrderId: string
+    razorpayPaymentId: string
+    razorpaySignature: string
+  }): Promise<{ success: boolean; orderId: string; message: string }> {
+    return this.request('/payments/verify', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // Orders
+  async getOrder(orderId: string): Promise<any> {
+    return this.request(`/orders/${orderId}`)
+  }
+
+  async trackOrder(data: { email: string; phone: string }): Promise<any[]> {
+    return this.request('/orders/track', {
+      method: 'POST',
+      body: JSON.stringify(data),
     })
   }
 

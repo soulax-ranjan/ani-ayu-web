@@ -1,219 +1,240 @@
 import { create } from 'zustand'
-import { persist, subscribeWithSelector } from 'zustand/middleware'
 import { CartItem, Product } from '@/types/product'
 import { CartTotals, ShippingMethod } from '@/types/checkout'
-
-// Utility functions
-const generateGuestId = () => {
-  return 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
-}
-
-const calculateTotals = (items: CartItem[], shippingCost: number = 0, taxRate: number = 0.18): CartTotals => {
-  const subtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
-  const shipping = shippingCost
-  const tax = subtotal * taxRate
-  const discount = 0 // Can be implemented later
-  const total = subtotal + shipping + tax - discount
-  
-  return {
-    subtotal,
-    shipping,
-    tax,
-    discount,
-    total
-  }
-}
+import { apiClient } from '@/lib/api'
 
 interface CartStore {
   // Core cart state
-  guestId: string
   items: CartItem[]
   totals: CartTotals
   selectedShipping: ShippingMethod | null
   isLoading: boolean
   totalItems: number
+  error: string | null
   
   // Cart actions
-  addItem: (product: Product, size: string, quantity?: number) => void
-  removeItem: (productId: string, size: string) => void
-  updateQuantity: (productId: string, size: string, quantity: number) => void
-  clearCart: () => void
-  getItemQuantity: (productId: string, size: string) => number
+  fetchCart: () => Promise<void>
+  addItem: (product: Product, size: string, quantity?: number) => Promise<void>
+  removeItem: (productId: string, size: string) => Promise<void>
+  updateQuantity: (productId: string, size: string, quantity: number) => Promise<void>
+  clearCart: () => Promise<void>
   
   // Shipping actions
   setShipping: (shipping: ShippingMethod) => void
   
-  // Utility actions
-  initializeGuestSession: () => void
-  recalculateTotals: () => void
+  // Session actions
+  initializeSession: () => Promise<void>
+  
+  // Helpers
+  getItemQuantity: (productId: string, size: string) => number
 }
 
-export const useCartStore = create<CartStore>()(
-  persist(
-    subscribeWithSelector((set, get) => ({
-      // Initial state
-      guestId: '',
-      items: [],
-      totals: {
-        subtotal: 0,
-        shipping: 0,
-        tax: 0,
-        discount: 0,
-        total: 0
-      },
-      selectedShipping: null,
-      isLoading: false,
-      totalItems: 0,
+export const useCartStore = create<CartStore>((set, get) => ({
+  items: [],
+  totals: {
+    subtotal: 0,
+    shipping: 0,
+    tax: 0,
+    discount: 0,
+    total: 0
+  },
+  selectedShipping: null,
+  isLoading: false,
+  totalItems: 0,
+  error: null,
 
-      // Initialize guest session
-      initializeGuestSession: () => {
-        set((state) => {
-          if (!state.guestId) {
-            return { guestId: generateGuestId() }
-          }
-          return state
-        })
-      },
-
-      // Recalculate totals
-      recalculateTotals: () => {
-        set((state) => {
-          const shippingCost = state.selectedShipping?.cost || 0
-          const totals = calculateTotals(state.items, shippingCost)
-          return { totals }
-        })
-      },
-
-      addItem: (product: Product, size: string, quantity: number = 1) => {
-        set((state) => {
-          // Ensure guest session exists
-          const guestId = state.guestId || generateGuestId()
-          
-          const existingItemIndex = state.items.findIndex(
-            item => item.product.id === product.id && item.size === size
-          )
-
-          let updatedItems: CartItem[]
-          
-          if (existingItemIndex >= 0) {
-            // Update existing item
-            updatedItems = [...state.items]
-            updatedItems[existingItemIndex].quantity += quantity
-          } else {
-            // Add new item
-            const newItem: CartItem = {
-              id: `${product.id}-${size}-${Date.now()}`,
-              product,
-              size,
-              quantity,
-              price: product.price // Lock in current price
-            }
-            updatedItems = [...state.items, newItem]
-          }
-
-          const shippingCost = state.selectedShipping?.cost || 0
-          const totals = calculateTotals(updatedItems, shippingCost)
-          const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0)
-
-          return {
-            guestId,
-            items: updatedItems,
-            totals,
-            totalItems
-          }
-        })
-      },
-
-      removeItem: (productId: string, size: string) => {
-        set((state) => {
-          const updatedItems = state.items.filter(
-            item => !(item.product.id === productId && item.size === size)
-          )
-          
-          const shippingCost = state.selectedShipping?.cost || 0
-          const totals = calculateTotals(updatedItems, shippingCost)
-          const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0)
-
-          return {
-            items: updatedItems,
-            totals,
-            totalItems
-          }
-        })
-      },
-
-      updateQuantity: (productId: string, size: string, quantity: number) => {
-        if (quantity <= 0) {
-          get().removeItem(productId, size)
-          return
-        }
-
-        set((state) => {
-          const updatedItems = state.items.map(item => {
-            if (item.product.id === productId && item.size === size) {
-              return { ...item, quantity }
-            }
-            return item
-          })
-
-          const shippingCost = state.selectedShipping?.cost || 0
-          const totals = calculateTotals(updatedItems, shippingCost)
-          const totalItems = updatedItems.reduce((sum, item) => sum + item.quantity, 0)
-
-          return {
-            items: updatedItems,
-            totals,
-            totalItems
-          }
-        })
-      },
-
-      setShipping: (shipping: ShippingMethod) => {
-        set((state) => {
-          const totals = calculateTotals(state.items, shipping.cost)
-          return {
-            selectedShipping: shipping,
-            totals
-          }
-        })
-      },
-
-      clearCart: () => {
-        set({
-          items: [],
-          totals: {
-            subtotal: 0,
-            shipping: 0,
-            tax: 0,
-            discount: 0,
-            total: 0
-          },
-          selectedShipping: null,
-          totalItems: 0
-        })
-      },
-
-      getItemQuantity: (productId: string, size: string) => {
-        const item = get().items.find(
-          item => item.product.id === productId && item.size === size
-        )
-        return item ? item.quantity : 0
-      }
-    })),
-    {
-      name: 'ani-ayu-cart-storage',
-      partialize: (state) => ({
-        guestId: state.guestId,
-        items: state.items,
-        totals: state.totals,
-        selectedShipping: state.selectedShipping,
-        totalItems: state.totalItems
-      })
+  initializeSession: async () => {
+    try {
+      // Unconditionally try to start/refresh session. 
+      // The backend should handle existing cookies gracefully.
+      await apiClient.startGuestSession()
+      await get().fetchCart()
+      set({ error: null })
+    } catch (error) {
+       console.error('Failed to init session', error)
+       // Even if startGuestSession fails (e.g. 403), we try to fetch cart just in case
+       try { await get().fetchCart() } catch (e) {}
     }
-  )
-)
+  },
 
-// Initialize guest session on first load
-if (typeof window !== 'undefined') {
-  useCartStore.getState().initializeGuestSession()
-}
+  fetchCart: async () => {
+    set({ isLoading: true, error: null })
+    try {
+      const cartData = await apiClient.getCart() 
+      
+      const subtotal = cartData.summary?.subtotal || cartData.totalAmount || 0
+      const shipping = get().selectedShipping?.cost || 0
+      const tax = 0 
+      const total = subtotal + shipping + tax
+      
+      set({ 
+        items: cartData.items.map((item: any) => ({
+          id: item.id,
+          product: {
+            id: item.product.id,
+            name: item.product.name,
+            price: item.product.price,
+            image: item.product.image_url || item.product.image,
+            description: '',
+            category: 'boys', 
+            sizes: [item.size],
+            material: '',
+            occasion: '',
+            rating: 0,
+            featured: false,
+            slug: item.product.slug
+            // Minimal product object for cart display
+          } as Product,
+          size: item.size,
+          quantity: item.quantity,
+          price: item.product.price || 0
+        })), 
+        totals: {
+            subtotal: subtotal,
+            shipping: shipping,
+            tax: tax,
+            discount: 0,
+            total: total
+        },
+        totalItems: cartData.summary?.totalItems || cartData.totalItems || cartData.items.length
+      })
+    } catch (error) {
+      // safe to ignore if empty
+    } finally {
+      set({ isLoading: false })
+    }
+  },
+
+  addItem: async (product: Product, size: string, quantity: number = 1) => {
+    set({ isLoading: true, error: null })
+    try {
+      await apiClient.addToCart({
+        productId: product.id,
+        quantity,
+        size,
+        price: product.price
+      })
+      await get().fetchCart()
+    } catch (error: any) {
+      console.error('Failed to add item:', error)
+      
+      // Retry logic: If 400/401, maybe session expired or missing
+      if (error.message?.includes('400') || error.message?.includes('401')) {
+          try {
+              console.log('Retrying add to cart after session refresh...')
+              await apiClient.startGuestSession()
+              await apiClient.addToCart({
+                productId: product.id,
+                quantity,
+                size,
+                price: product.price
+              })
+              await get().fetchCart()
+              return // Success on retry
+          } catch (retryError) {
+              console.error('Retry failed:', retryError)
+          }
+      }
+      
+      set({ error: 'Failed to add item to cart' })
+    } finally {
+      set({ isLoading: false })
+    }
+  },
+
+  removeItem: async (productId: string, size: string) => {
+    set({ isLoading: true, error: null })
+    try {
+      const item = get().items.find(i => 
+        i.product.id === productId && i.size === size
+      );
+      
+      if (item) {
+        await apiClient.removeCartItem(undefined, item.id)
+        await get().fetchCart()
+      }
+    } catch (error) {
+      console.error('Failed to remove item:', error)
+      set({ error: 'Failed to remove item' })
+    } finally {
+      set({ isLoading: false })
+    }
+  },
+
+  updateQuantity: async (productId: string, size: string, quantity: number) => {
+    set({ isLoading: true, error: null })
+    try {
+      if (quantity <= 0) {
+        await get().removeItem(productId, size)
+        return
+      }
+
+      const item = get().items.find(i => 
+        i.product.id === productId && i.size === size
+      );
+                   
+      if (item) {
+        await apiClient.updateCartItem(undefined, item.id, quantity)
+        await get().fetchCart()
+      }
+    } catch (error) {
+      console.error('Failed to update quantity:', error)
+      set({ error: 'Failed to update quantity' })
+    } finally {
+      set({ isLoading: false })
+    }
+  },
+
+  clearCart: async () => {
+    set({ isLoading: true, error: null })
+    try {
+      // Backend expects item-by-item deletion or the clear endpoint behavior is unexpected.
+      // Iterating to be safe based on 'delete cart/item/:id' prompt.
+      const currentItems = get().items;
+      
+      // If there's a bulk clear endpoint (DELETE /cart/:sessionId), we try that first
+      // But based on user prompt, maybe we should just loop if that fails or is the intended way.
+      // Let's try the standard clear first, if it fails or if we need to do it by item:
+      
+      await apiClient.clearCart()
+      await get().fetchCart()
+      
+    } catch (error) {
+       console.warn('Bulk clear failed, trying item-by-item...', error)
+       try {
+         const currentItems = get().items;
+         for (const item of currentItems) {
+            await apiClient.removeCartItem(undefined, item.id)
+         }
+         await get().fetchCart()
+       } catch (retryError) {
+          console.error('Failed to clear cart:', retryError)
+          set({ error: 'Failed to clear cart' })
+       }
+    } finally {
+      set({ isLoading: false })
+    }
+  },
+
+  setShipping: (shipping: ShippingMethod) => {
+    set((state) => {
+      const subtotal = state.totals.subtotal
+      const newTotal = subtotal + shipping.cost + state.totals.tax
+      return {
+        selectedShipping: shipping,
+        totals: {
+            ...state.totals,
+            shipping: shipping.cost,
+            total: newTotal
+        }
+      }
+    })
+  },
+
+  getItemQuantity: (productId: string, size: string) => {
+      const item = get().items.find(
+          item => item.product.id === productId && item.size === size
+      )
+      return item ? item.quantity : 0
+  }
+}))
