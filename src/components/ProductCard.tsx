@@ -34,6 +34,11 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
     }, 1000)
   }
 
+  // Use placeholder if image is missing or empty
+  const imageSrc = product.image && product.image.trim() !== ''
+    ? product.image
+    : '/assets/placeholders/festive-version-2.png'
+
   return (
     <div className={`group relative ${className}`}>
       {/* Main Card Container */}
@@ -41,7 +46,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
         {/* Product Image Section */}
         <div className="relative aspect-square overflow-hidden">
           <Image
-            src={product.image}
+            src={imageSrc}
             alt={product.name}
             fill
             className="object-cover"

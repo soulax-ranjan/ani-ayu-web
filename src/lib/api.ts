@@ -30,6 +30,7 @@ export interface Product {
   features: string[]
   in_stock: boolean
   featured: boolean
+  section?: number
   
   // Enhanced fields
   sku?: string
