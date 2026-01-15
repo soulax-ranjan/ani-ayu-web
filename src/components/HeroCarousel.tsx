@@ -1,6 +1,8 @@
 "use client"
 import Image from "next/image"
+import Link from "next/link"
 import { useState, useEffect } from "react"
+import { ArrowRight } from "lucide-react"
 import { useBanners } from "@/lib/hooks"
 
 export default function HeroBanner() {
@@ -24,7 +26,7 @@ export default function HeroBanner() {
   if (loading) {
     return (
       <section className="w-screen !m-0 !border-none !p-0 relative">
-        <div className="relative w-full aspect-[18/7] !m-0 !border-none !p-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/30 animate-pulse">
+        <div className="relative w-full aspect-[16/9] !m-0 !border-none !p-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/30 animate-pulse">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
           <div className="absolute inset-x-0 bottom-8 text-center">
             <div className="bg-gradient-to-r from-primary to-accent h-12 w-32 rounded-full mx-auto animate-pulse"></div>
@@ -37,7 +39,7 @@ export default function HeroBanner() {
   if (error) {
     return (
       <section className="w-screen !m-0 !border-none !p-0">
-        <div className="relative w-full aspect-[18/7] !m-0 !border-none !p-0 bg-red-100 flex items-center justify-center">
+        <div className="relative w-full aspect-[16/9] !m-0 !border-none !p-0 bg-red-100 flex items-center justify-center">
           <div className="text-center">
             <p className="text-red-600 font-semibold">Error loading banners</p>
             <p className="text-sm text-red-500">{error}</p>
@@ -50,7 +52,7 @@ export default function HeroBanner() {
   if (banners.length === 0) {
     return (
       <section className="w-screen !m-0 !border-none !p-0">
-        <div className="relative w-full aspect-[18/7] !m-0 !border-none !p-0 bg-gray-100 flex items-center justify-center">
+        <div className="relative w-full aspect-[16/9] !m-0 !border-none !p-0 bg-gray-100 flex items-center justify-center">
           <p className="text-gray-600">No banners available</p>
         </div>
       </section>
@@ -58,11 +60,8 @@ export default function HeroBanner() {
   }
 
   return (
-    <section className="w-screen !m-0 !border-none !p-0 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none z-10"></div>
-      
-      <div className="relative w-full aspect-[18/7] min-h-[220px] md:min-h-[400px] !m-0 !border-none !p-0 overflow-hidden group">
+    <section className="w-full relative overflow-hidden bg-gradient-to-br from-primary/5 via-white to-accent/5">
+      <div className="relative w-full h-[450px] md:h-[550px] overflow-hidden group">
         {/* Carousel Container */}
         <div 
           className="flex transition-all duration-700 ease-out w-full h-full"
@@ -77,29 +76,50 @@ export default function HeroBanner() {
                 fill
                 priority={index === 0}
                 sizes="100vw"
-                className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                className="w-full h-full object-cover object-center"
               />
               
-              {/* Vibrant Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-accent/20 opacity-60"></div>
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
               
-              {/* Dynamic Color Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
-              
-              {/* Animated Border */}
-              <div className="absolute inset-0 border-4 border-gradient-to-r from-primary/50 to-accent/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              {/* Content Overlay - Bottom Aligned */}
+              <div className="absolute inset-0 flex items-end justify-center pb-12 md:pb-16">
+                <div className="text-center text-white max-w-4xl px-6 md:px-8">
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+                    {banner.title}
+                  </h1>
+                  <p className="text-base md:text-lg lg:text-xl mb-6 text-white/90 leading-relaxed max-w-2xl mx-auto">
+                    {banner.subtitle}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Link 
+                      href={banner.ctaLink}
+                      className="inline-flex items-center justify-center px-6 py-3 bg-primary text-black font-semibold rounded-full hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg"
+                    >
+                      {banner.ctaText}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                    <Link 
+                      href="/products"
+                      className="inline-flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300"
+                    >
+                      Shop Collection
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
           ))}
         </div>
 
         {/* Modern Carousel Dots */}
         {banners.length > 1 && (
-          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
+          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
             {banners.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`relative w-4 h-4 rounded-full transition-all duration-300 transform hover:scale-125 ${
+                className={`relative w-3 h-3 rounded-full transition-all duration-300 transform hover:scale-125 ${
                   index === currentSlide 
                     ? 'bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/50 scale-110' 
                     : 'bg-white/60 hover:bg-white/80 backdrop-blur-sm'
@@ -119,17 +139,17 @@ export default function HeroBanner() {
           <>
             <button 
               onClick={() => setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length)}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 hover:scale-110 z-20"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 hover:scale-110 z-20"
             >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button 
               onClick={() => setCurrentSlide((prev) => (prev + 1) % banners.length)}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 hover:scale-110 z-20"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 hover:scale-110 z-20"
             >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>

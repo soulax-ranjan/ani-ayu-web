@@ -41,6 +41,7 @@ export interface Product {
   stock_quantity?: number
   low_stock_threshold?: number
   featured?: boolean
+  section?: number
   
   // Physical attributes
   shipping_weight?: number
