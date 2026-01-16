@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Star, ShoppingBag, Share2, ChevronLeft, Minus, Plus, X, ZoomIn } from 'lucide-react'
+import { Star, ShoppingBag, Share2, ChevronLeft, Minus, Plus, X, ZoomIn, CheckCircle } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
@@ -60,7 +60,7 @@ interface Props {
 
 export default function ProductDetailsPage({ params }: Props) {
   const resolvedParams = React.use(params)
-  
+
   // ALL HOOKS MUST BE CALLED FIRST - before any conditional returns
   const [selectedSize, setSelectedSize] = useState<string>('')
   const [quantity, setQuantity] = useState(1)
@@ -70,28 +70,29 @@ export default function ProductDetailsPage({ params }: Props) {
   const [previewImageIndex, setPreviewImageIndex] = useState(0)
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
-  
+  const [showToast, setShowToast] = useState(false)
+
   // Fetch product data from API
   const { data: productData, loading: productLoading, error: productError } = useProduct(resolvedParams.id)
   const { data: relatedData, loading: relatedLoading } = useRelatedProducts(resolvedParams.id)
-  
+
   const { addItem, getItemQuantity } = useCartStore()
-  
+
   // Process product images - MUST be called before conditional returns
   const productImages = useMemo(() => {
     // Default fallback for loading/error states
     if (!productData) {
       return ['/assets/placeholders/ph-card-4x5.svg']
     }
-    
+
     const product = transformAPIProduct(productData)
     const images: string[] = []
-    
+
     // Add main image first if it exists
     if (product.image) {
       images.push(product.image)
     }
-    
+
     // Add additional images from the images array, avoiding duplicates
     if (product.images && Array.isArray(product.images)) {
       product.images.forEach((img: string) => {
@@ -100,33 +101,33 @@ export default function ProductDetailsPage({ params }: Props) {
         }
       })
     }
-    
+
     // FOR TESTING: Add some sample images if we don't have enough
     if (images.length < 3) {
       const sampleImages = [
         '/assets/designs/design-1.jpg',
-        '/assets/designs/design-2.jpg', 
+        '/assets/designs/design-2.jpg',
         '/assets/designs/design-4.webp',
         '/assets/designs/design-5.webp'
       ]
-      
+
       sampleImages.forEach((img: string) => {
         if (!images.includes(img) && images.length < 5) {
           images.push(img)
         }
       })
     }
-    
+
     // Fallback to main image if no images found
     return images.length > 0 ? images : [product.image || '/assets/placeholders/ph-card-4x5.svg']
   }, [productData])
-  
+
   // Handle keyboard navigation and disable body scroll for image preview
   useEffect(() => {
     if (isImagePreviewOpen) {
       // Disable body scroll when modal is open
       document.body.style.overflow = 'hidden'
-      
+
       const handleKeydown = (e: KeyboardEvent) => {
         switch (e.key) {
           case 'Escape':
@@ -144,14 +145,14 @@ export default function ProductDetailsPage({ params }: Props) {
       }
 
       document.addEventListener('keydown', handleKeydown)
-      
+
       return () => {
         document.removeEventListener('keydown', handleKeydown)
         document.body.style.overflow = 'unset'
       }
     }
   }, [isImagePreviewOpen, productImages.length])
-  
+
   // Show loading or error states AFTER all hooks are called
   if (productLoading) {
     return (
@@ -169,11 +170,11 @@ export default function ProductDetailsPage({ params }: Props) {
       </>
     )
   }
-  
+
   if (productError || !productData) {
     notFound()
   }
-  
+
   // Transform product data (now safe since we've checked for null)
   const product = transformAPIProduct(productData)
   const relatedProducts = relatedData?.products?.map(transformAPIProduct) || []
@@ -187,19 +188,24 @@ export default function ProductDetailsPage({ params }: Props) {
     }
 
     setIsAddingToCart(true)
-    
+
     // Simulate loading
     await new Promise(resolve => setTimeout(resolve, 500))
-    
-    addItem(product, selectedSize, quantity)
+
+    const success = await addItem(product, selectedSize, quantity)
     setIsAddingToCart(false)
-    
-    // Reset form
-    setQuantity(1)
-    setSelectedSize('')
+
+    if (success) {
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+
+      // Reset form
+      setQuantity(1)
+      setSelectedSize('')
+    }
   }
 
-  const discountPercent = product.originalPrice 
+  const discountPercent = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : null
 
@@ -233,7 +239,7 @@ export default function ProductDetailsPage({ params }: Props) {
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return
-    
+
     const distance = touchStart - touchEnd
     const isLeftSwipe = distance > 50
     const isRightSwipe = distance < -50
@@ -249,7 +255,20 @@ export default function ProductDetailsPage({ params }: Props) {
   return (
     <>
       <Header />
-      
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-24 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-3 animate-in slide-in-from-right fade-in duration-300">
+          <div className="bg-white/20 p-1 rounded-full">
+            <CheckCircle size={18} className="text-white" />
+          </div>
+          <div>
+            <p className="font-medium">Added to Cart!</p>
+            <p className="text-xs text-green-100">Item added successfully</p>
+          </div>
+        </div>
+      )}
+
       <main className="min-h-screen bg-cream">
         <div className="max-w-[1400px] mx-auto px-4 py-16">
           <div className="grid lg:grid-cols-2 gap-12">
@@ -281,11 +300,10 @@ export default function ProductDetailsPage({ params }: Props) {
                       <button
                         onClick={() => setSelectedImageIndex(index)}
                         onDoubleClick={() => openImagePreview(index)}
-                        className={`relative aspect-[4/5] w-20 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${
-                          selectedImageIndex === index 
-                            ? 'border-primary shadow-lg' 
+                        className={`relative aspect-[4/5] w-20 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${selectedImageIndex === index
+                            ? 'border-primary shadow-lg'
                             : 'border-gray-200 hover:border-primary/50'
-                        }`}
+                          }`}
                         title={`View image ${index + 1} (double-click to preview)`}
                       >
                         <Image
@@ -330,10 +348,10 @@ export default function ProductDetailsPage({ params }: Props) {
                   <div className="flex items-center gap-1">
                     <div className="flex">
                       {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          size={18} 
-                          className={i < Math.floor(product.rating) ? 'fill-accent text-accent' : 'text-gray-300'} 
+                        <Star
+                          key={i}
+                          size={18}
+                          className={i < Math.floor(product.rating) ? 'fill-accent text-accent' : 'text-gray-300'}
                         />
                       ))}
                     </div>
@@ -404,15 +422,14 @@ export default function ProductDetailsPage({ params }: Props) {
                 {product.stock_quantity !== undefined && (
                   <div>
                     <span className="text-sm text-gray-600">Stock:</span>
-                    <p className={`font-medium ${
-                      product.stock_quantity === 0 
-                        ? 'text-red-600' 
+                    <p className={`font-medium ${product.stock_quantity === 0
+                        ? 'text-red-600'
                         : product.stock_quantity <= 5
-                        ? 'text-orange-600'
-                        : 'text-green-600'
-                    }`}>
-                      {product.stock_quantity === 0 
-                        ? 'Out of Stock' 
+                          ? 'text-orange-600'
+                          : 'text-green-600'
+                      }`}>
+                      {product.stock_quantity === 0
+                        ? 'Out of Stock'
                         : `${product.stock_quantity} available`
                       }
                     </p>
@@ -479,11 +496,10 @@ export default function ProductDetailsPage({ params }: Props) {
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 rounded-lg border-2 font-medium transition-colors ${
-                        selectedSize === size
+                      className={`px-4 py-2 rounded-lg border-2 font-medium transition-colors ${selectedSize === size
                           ? 'border-primary bg-primary text-white'
                           : 'border-gray-200 bg-white text-ink hover:border-primary'
-                      }`}
+                        }`}
                     >
                       {size}
                     </button>
@@ -601,7 +617,7 @@ export default function ProductDetailsPage({ params }: Props) {
           )}
 
           {/* Main preview image */}
-          <div 
+          <div
             className="relative max-w-4xl max-h-full select-none"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -616,7 +632,7 @@ export default function ProductDetailsPage({ params }: Props) {
               priority
               draggable={false}
             />
-            
+
             {/* Swipe instruction for mobile */}
             {productImages.length > 1 && (
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded text-sm sm:hidden">
@@ -633,11 +649,10 @@ export default function ProductDetailsPage({ params }: Props) {
                   <button
                     key={index}
                     onClick={() => setPreviewImageIndex(index)}
-                    className={`flex-shrink-0 w-12 h-12 rounded border-2 overflow-hidden transition-all ${
-                      previewImageIndex === index
+                    className={`flex-shrink-0 w-12 h-12 rounded border-2 overflow-hidden transition-all ${previewImageIndex === index
                         ? 'border-white scale-110'
                         : 'border-transparent opacity-70 hover:opacity-100'
-                    }`}
+                      }`}
                   >
                     <Image
                       src={image}

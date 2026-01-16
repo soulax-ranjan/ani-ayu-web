@@ -14,7 +14,7 @@ interface CartStore {
   
   // Cart actions
   fetchCart: () => Promise<void>
-  addItem: (product: Product, size: string, quantity?: number) => Promise<void>
+  addItem: (product: Product, size: string, quantity?: number) => Promise<boolean>
   removeItem: (productId: string, size: string) => Promise<void>
   updateQuantity: (productId: string, size: string, quantity: number) => Promise<void>
   clearCart: () => Promise<void>
@@ -115,6 +115,8 @@ export const useCartStore = create<CartStore>((set, get) => ({
         price: product.price
       })
       await get().fetchCart()
+      set({ isLoading: false })
+      return true
     } catch (error: any) {
       console.error('Failed to add item:', error)
       
@@ -130,15 +132,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
                 price: product.price
               })
               await get().fetchCart()
-              return // Success on retry
+              set({ isLoading: false })
+              return true
           } catch (retryError) {
               console.error('Retry failed:', retryError)
           }
       }
       
-      set({ error: 'Failed to add item to cart' })
-    } finally {
-      set({ isLoading: false })
+      set({ error: 'Failed to add item to cart', isLoading: false })
+      return false
     }
   },
 

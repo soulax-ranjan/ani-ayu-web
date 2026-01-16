@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
@@ -14,6 +14,27 @@ export default function TrackOrderPage() {
     const [orders, setOrders] = useState<any[]>([])
     const [error, setError] = useState<string | null>(null)
     const [searched, setSearched] = useState(false)
+
+    useEffect(() => {
+        const fetchSessionOrders = async () => {
+            try {
+                setLoading(true)
+                const res = await apiClient.getMyOrders()
+                const orderList = Array.isArray(res) ? res : (res as any).orders || []
+
+                if (orderList.length > 0) {
+                    setOrders(orderList)
+                    setSearched(true)
+                }
+            } catch (err) {
+                // Session invalid or no orders, just show form
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchSessionOrders()
+    }, [])
 
     const handleTrack = async (e: React.FormEvent) => {
         e.preventDefault()

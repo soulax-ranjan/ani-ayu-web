@@ -19,8 +19,8 @@ export default function Header() {
   const { totalItems } = useCartStore();
 
   return (
-  <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-  <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+      <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center shrink-0 mr-6 md:mr-8">
           <Link href="/" className="flex items-center group cursor-pointer" aria-label="Go to homepage">
@@ -46,8 +46,8 @@ export default function Header() {
                 aria-current={isActive ? 'page' : undefined}
                 className={`
                   group relative px-6 py-3 rounded-full transition-all duration-300 font-semibold text-sm tracking-wide
-                  ${isActive 
-                    ? 'bg-primary text-white shadow-lg shadow-primary/40 transform scale-105' 
+                  ${isActive
+                    ? 'bg-primary text-white shadow-lg shadow-primary/40 transform scale-105'
                     : 'text-gray-700 hover:text-white hover:bg-primary hover:shadow-md hover:shadow-primary/20 hover:scale-105'
                   }
                 `}
@@ -68,21 +68,35 @@ export default function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-1 md:gap-2">
-          <button 
-            aria-label="Search" 
+          <button
+            aria-label="Search"
             className="p-3 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             <Search size={20} className="text-gray-600 hover:text-primary" />
           </button>
-          <button 
-            aria-label="Account" 
-            className="p-3 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95"
-          >
-            <User size={20} className="text-gray-600 hover:text-primary" />
-          </button>
-          <Link 
-            href="/cart" 
-            aria-label="Shopping bag" 
+
+          <div className="relative group">
+            <button
+              aria-label="Account"
+              className="p-3 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95 group-hover:bg-gray-100"
+            >
+              <User size={20} className="text-gray-600 hover:text-primary" />
+            </button>
+
+            {/* Profile Dropdown */}
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <Link
+                href="/orders"
+                className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors font-medium border-l-2 border-transparent hover:border-primary"
+              >
+                Track Order
+              </Link>
+              {/* Future items like My Profile, Logout can go here */}
+            </div>
+          </div>
+          <Link
+            href="/cart"
+            aria-label="Shopping bag"
             className="relative p-3 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             <ShoppingBag size={20} className="text-gray-600 hover:text-primary" />
@@ -117,8 +131,8 @@ export default function Header() {
                   aria-current={isActive ? 'page' : undefined}
                   className={`
                     group relative px-5 py-4 rounded-2xl font-semibold transition-all duration-300 text-center tracking-wide
-                    ${isActive 
-                      ? 'bg-gradient-to-r from-[#FF725E] via-[#FF6B4A] to-[#FF8A7A] text-white shadow-xl shadow-[#FF725E]/30 transform scale-105' 
+                    ${isActive
+                      ? 'bg-gradient-to-r from-[#FF725E] via-[#FF6B4A] to-[#FF8A7A] text-white shadow-xl shadow-[#FF725E]/30 transform scale-105'
                       : 'text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-[#FF725E] hover:to-[#FF8A7A] hover:shadow-lg hover:shadow-[#FF725E]/20 hover:scale-105 active:scale-95'
                     }
                   `}

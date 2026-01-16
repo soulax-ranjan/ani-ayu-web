@@ -1,5 +1,5 @@
 // API configuration and client for Ani & Ayu e-commerce
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL!
 
 // Enhanced Product API response interface
 export interface Product {
@@ -427,6 +427,10 @@ class APIClient {
   // Orders
   async getOrder(orderId: string): Promise<any> {
     return this.request(`/orders/${orderId}`)
+  }
+
+  async getMyOrders(): Promise<any[]> {
+    return this.request(`/orders`)
   }
 
   async trackOrder(data: { email: string; phone: string }): Promise<any[]> {
