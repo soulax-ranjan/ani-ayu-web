@@ -45,14 +45,24 @@ export const useCartStore = create<CartStore>((set, get) => ({
 
   initializeSession: async () => {
     try {
-      // Unconditionally try to start/refresh session. 
-      // The backend should handle existing cookies gracefully.
-      await apiClient.startGuestSession()
+      // Check for existing guest session in localStorage
+      const existingGuestId = typeof window !== 'undefined' ? localStorage.getItem('guest_id') : null;
+      
+      if (!existingGuestId) {
+          const response = await apiClient.startGuestSession()
+          if (response?.guestId && typeof window !== 'undefined') {
+             localStorage.setItem('guest_id', response.guestId)
+          }
+      } else {
+        // Optional: Verify if session is still valid?
+        // For now, assume it's valid, if API fails with 400/401 retry logic will handle it.
+      }
+      
       await get().fetchCart()
       set({ error: null })
     } catch (error) {
        console.error('Failed to init session', error)
-       // Even if startGuestSession fails (e.g. 403), we try to fetch cart just in case
+       // If init fails, maybe existing session works?
        try { await get().fetchCart() } catch (e) {}
     }
   },
@@ -76,7 +86,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
             price: item.product.price,
             image: item.product.image_url || item.product.image,
             description: '',
-            category: 'boys', 
+            category: item.product.category_id || 'boys', 
             sizes: [item.size],
             material: '',
             occasion: '',
@@ -112,8 +122,10 @@ export const useCartStore = create<CartStore>((set, get) => ({
         productId: product.id,
         quantity,
         size,
+        color: null, // Default color if not handled
         price: product.price
-      })
+      } as any) // Type assertion to bypass strict checks if API signature evolved
+      
       await get().fetchCart()
       set({ isLoading: false })
       return true
@@ -121,10 +133,15 @@ export const useCartStore = create<CartStore>((set, get) => ({
       console.error('Failed to add item:', error)
       
       // Retry logic: If 400/401, maybe session expired or missing
-      if (error.message?.includes('400') || error.message?.includes('401')) {
+      if (error.message?.includes('400') || error.message?.includes('401') || error.toString().includes('400')) {
           try {
               console.log('Retrying add to cart after session refresh...')
-              await apiClient.startGuestSession()
+              const response = await apiClient.startGuestSession()
+              
+              if (response?.guestId && typeof window !== 'undefined') {
+                 localStorage.setItem('guest_id', response.guestId)
+              }
+
               await apiClient.addToCart({
                 productId: product.id,
                 quantity,

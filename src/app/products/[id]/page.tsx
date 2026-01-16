@@ -12,6 +12,7 @@ import { useProduct, useRelatedProducts } from '@/lib/hooks'
 import { useCartStore } from '@/store/cartStore'
 import { Product as APIProduct } from '@/lib/api'
 import { Product } from '@/types/product'
+import { apiClient } from '@/lib/api'
 
 // Convert API Product to Frontend Product format
 function transformAPIProduct(apiProduct: APIProduct): Product {
@@ -30,7 +31,7 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
     rating: apiProduct.rating,
     review_count: apiProduct.review_count,
     reviewCount: apiProduct.review_count,
-    category: apiProduct.category_id as 'boys' | 'girls',
+    category: apiProduct.category_id,
     category_id: apiProduct.category_id,
     sizes: apiProduct.sizes,
     colors: apiProduct.colors,
@@ -77,6 +78,31 @@ export default function ProductDetailsPage({ params }: Props) {
   const { data: relatedData, loading: relatedLoading } = useRelatedProducts(resolvedParams.id)
 
   const { addItem, getItemQuantity } = useCartStore()
+
+  // Fetch category name
+  const [categoryName, setCategoryName] = useState<string>('')
+
+  useEffect(() => {
+    // Only fetch if we have a product and category_id
+    if (!productData) return;
+
+    // Check if category_id exists (it's in the API response)
+    const categoryId = productData.category_id;
+
+    const fetchCategory = async () => {
+      if (categoryId) {
+        try {
+          const category = await apiClient.getCategoryById(categoryId)
+          setCategoryName(category.name)
+        } catch (error) {
+          console.error('Failed to fetch category:', error)
+          // Fallback to category ID if name fetch fails, or static default if needed
+          setCategoryName('Collection')
+        }
+      }
+    }
+    fetchCategory()
+  }, [productData]) // Depend on productData being loaded
 
   // Process product images - MUST be called before conditional returns
   const productImages = useMemo(() => {
@@ -301,8 +327,8 @@ export default function ProductDetailsPage({ params }: Props) {
                         onClick={() => setSelectedImageIndex(index)}
                         onDoubleClick={() => openImagePreview(index)}
                         className={`relative aspect-[4/5] w-20 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${selectedImageIndex === index
-                            ? 'border-primary shadow-lg'
-                            : 'border-gray-200 hover:border-primary/50'
+                          ? 'border-primary shadow-lg'
+                          : 'border-gray-200 hover:border-primary/50'
                           }`}
                         title={`View image ${index + 1} (double-click to preview)`}
                       >
@@ -333,10 +359,12 @@ export default function ProductDetailsPage({ params }: Props) {
 
             {/* Product Info */}
             <div className="space-y-6">
-              {/* Category Badge */}
-              <div className="inline-block bg-mint px-3 py-1 rounded-full text-primary text-sm font-medium capitalize">
-                {product.category}
-              </div>
+              {/* Category Badge - uses categoryName fetched from ID */}
+              {categoryName && (
+                <div className="inline-block bg-mint px-3 py-1 rounded-full text-primary text-sm font-medium capitalize">
+                  {categoryName}
+                </div>
+              )}
 
               <div>
                 <h1 className="text-2xl lg:text-3xl font-[var(--font-heading)] font-bold text-ink mb-4">
@@ -423,10 +451,10 @@ export default function ProductDetailsPage({ params }: Props) {
                   <div>
                     <span className="text-sm text-gray-600">Stock:</span>
                     <p className={`font-medium ${product.stock_quantity === 0
-                        ? 'text-red-600'
-                        : product.stock_quantity <= 5
-                          ? 'text-orange-600'
-                          : 'text-green-600'
+                      ? 'text-red-600'
+                      : product.stock_quantity <= 5
+                        ? 'text-orange-600'
+                        : 'text-green-600'
                       }`}>
                       {product.stock_quantity === 0
                         ? 'Out of Stock'
@@ -497,8 +525,8 @@ export default function ProductDetailsPage({ params }: Props) {
                       key={size}
                       onClick={() => setSelectedSize(size)}
                       className={`px-4 py-2 rounded-lg border-2 font-medium transition-colors ${selectedSize === size
-                          ? 'border-primary bg-primary text-white'
-                          : 'border-gray-200 bg-white text-ink hover:border-primary'
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-gray-200 bg-white text-ink hover:border-primary'
                         }`}
                     >
                       {size}
@@ -650,8 +678,8 @@ export default function ProductDetailsPage({ params }: Props) {
                     key={index}
                     onClick={() => setPreviewImageIndex(index)}
                     className={`flex-shrink-0 w-12 h-12 rounded border-2 overflow-hidden transition-all ${previewImageIndex === index
-                        ? 'border-white scale-110'
-                        : 'border-transparent opacity-70 hover:opacity-100'
+                      ? 'border-white scale-110'
+                      : 'border-transparent opacity-70 hover:opacity-100'
                       }`}
                   >
                     <Image

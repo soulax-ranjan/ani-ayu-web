@@ -180,13 +180,19 @@ class APIClient {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${this.baseURL}${endpoint}`
     
+    // Get guest ID from localStorage if available
+    let guestId = '';
+    if (typeof window !== 'undefined') {
+      guestId = localStorage.getItem('guest_id') || '';
+    }
+
     const config: RequestInit = {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...(guestId ? { 'x-guest-id': guestId } : {}),
         ...options?.headers,
       },
-      credentials: 'include', // Ensure cookies are sent with requests
       mode: 'cors',
     }
 
@@ -194,7 +200,19 @@ class APIClient {
       const response = await fetch(url, config)
       
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status} ${response.statusText}`)
+        // Parse error response if possible
+        let errorData;
+        try {
+            errorData = await response.json();
+        } catch (e) {
+            // ignore
+        }
+        
+        const errorMessage = errorData?.message || `API Error: ${response.status} ${response.statusText}`;
+        const error = new Error(errorMessage) as any;
+        error.status = response.status;
+        error.data = errorData;
+        throw error
       }
 
       return await response.json()
@@ -316,6 +334,10 @@ class APIClient {
 
   async getCategory(slug: string): Promise<Category> {
     return this.request<Category>(`/categories/${slug}`)
+  }
+
+  async getCategoryById(id: string): Promise<Category> {
+    return this.request<Category>(`/categories/${id}`)
   }
 
   // Cart APIs
@@ -508,7 +530,7 @@ export const transformApiProduct = (apiProduct: Product): import('../types/produ
     rating: apiProduct.rating || 0,
     review_count: apiProduct.review_count || 0,
     reviewCount: apiProduct.review_count || 0, // Legacy compatibility
-    category: (apiProduct.category_id as 'boys' | 'girls') || 'boys',
+    category: apiProduct.category_id,
     category_id: apiProduct.category_id,
     sizes: apiProduct.sizes || [],
     colors: apiProduct.colors || [],

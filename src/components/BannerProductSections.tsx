@@ -17,9 +17,11 @@ const convertApiProduct = (apiProduct: ApiProduct): Product => ({
   category: apiProduct.category_id,
   sizes: apiProduct.sizes,
   colors: apiProduct.colors,
-  inStock: apiProduct.in_stock,
+  in_stock: apiProduct.in_stock,
   featured: apiProduct.featured,
-  section: apiProduct.section
+  section: apiProduct.section,
+  material: apiProduct.material || '',
+  occasion: apiProduct.occasion || ''
 })
 
 // Mock product data for sections 2 and 3 - replace with real data from API
@@ -37,10 +39,10 @@ const mockProducts: Product[] = [
     sizes: ['S', 'M', 'L'],
     material: 'Cotton',
     occasion: 'Daily',
-    inStock: true
+    in_stock: true
   },
   {
-    id: '2', 
+    id: '2',
     name: 'Festival Special Traditional Outfit',
     description: 'Beautiful traditional outfit for special occasions',
     price: 1499,
@@ -52,7 +54,7 @@ const mockProducts: Product[] = [
     sizes: ['S', 'M', 'L'],
     material: 'Silk',
     occasion: 'Festival',
-    inStock: true
+    in_stock: true
   },
   {
     id: '3',
@@ -67,7 +69,7 @@ const mockProducts: Product[] = [
     sizes: ['S', 'M', 'L'],
     material: 'Cotton Blend',
     occasion: 'Casual',
-    inStock: true
+    in_stock: true
   },
   {
     id: '4',
@@ -82,7 +84,7 @@ const mockProducts: Product[] = [
     sizes: ['S', 'M', 'L'],
     material: 'Polyester',
     occasion: 'Party',
-    inStock: true
+    in_stock: true
   }
 ]
 
@@ -97,7 +99,7 @@ const sections = [
   },
   {
     id: 2,
-    bannerImage: '/assets/placeholders/n8-2.jpg', 
+    bannerImage: '/assets/placeholders/n8-2.jpg',
     bannerAlt: 'Festival Collection',
     bannerLink: '/products?category=festival',
     products: mockProducts,
@@ -107,7 +109,7 @@ const sections = [
     id: 3,
     bannerImage: '/assets/placeholders/n13-1.jpg',
     bannerAlt: 'Playtime Collection',
-    bannerLink: '/products?category=playtime', 
+    bannerLink: '/products?category=playtime',
     products: mockProducts,
     sectionTitle: 'Playtime Essentials'
   }
@@ -118,22 +120,22 @@ export default function BannerProductSections() {
   const [section2Products, setSection2Products] = useState<Product[]>([])
   const [section3Products, setSection3Products] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  
+
   useEffect(() => {
     const fetchAllSectionProducts = async () => {
       try {
         // Fetch all products and then filter by section
-        const response = await apiClient.getProducts({ 
+        const response = await apiClient.getProducts({
           limit: 50, // Get more products to ensure we have products for each section
-          featured: true 
+          featured: true
         })
         const allProducts = response.products.map(convertApiProduct)
-        
+
         // Filter products by section
         const section1 = allProducts.filter(p => p.section === 1).slice(0, 4)
         const section2 = allProducts.filter(p => p.section === 2).slice(0, 4)
         const section3 = allProducts.filter(p => p.section === 3).slice(0, 4)
-        
+
         console.log('API Products by section:', {
           total: allProducts.length,
           section1: section1.length,
@@ -141,11 +143,11 @@ export default function BannerProductSections() {
           section3: section3.length,
           allSections: allProducts.map(p => ({ id: p.id, name: p.name, section: p.section, image: p.image }))
         })
-        
+
         setSection1Products(section1.length > 0 ? section1 : mockProducts.slice(0, 4))
         setSection2Products(section2.length > 0 ? section2 : mockProducts.slice(0, 4))
         setSection3Products(section3.length > 0 ? section3 : mockProducts.slice(0, 4))
-        
+
       } catch (error) {
         console.error('Failed to fetch section products:', error)
         // Fallback to mock data if API fails
@@ -171,7 +173,7 @@ export default function BannerProductSections() {
     },
     {
       id: 2,
-      bannerImage: '/assets/placeholders/n8-2.jpg', 
+      bannerImage: '/assets/placeholders/n8-2.jpg',
       bannerAlt: 'Festival Collection',
       bannerLink: '/products?section=2',
       products: section2Products,
@@ -181,7 +183,7 @@ export default function BannerProductSections() {
       id: 3,
       bannerImage: '/assets/placeholders/n13-1.jpg',
       bannerAlt: 'Playtime Collection',
-      bannerLink: '/products?section=3', 
+      bannerLink: '/products?section=3',
       products: section3Products,
       sectionTitle: 'Playtime Essentials'
     }

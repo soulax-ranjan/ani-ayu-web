@@ -19,7 +19,7 @@ export interface Product {
   // Core product info
   rating: number
   review_count?: number
-  category: 'boys' | 'girls'
+  category: string
   category_id?: string
   sizes: string[]
   colors?: string[]

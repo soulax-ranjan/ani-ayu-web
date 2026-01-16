@@ -1,3 +1,5 @@
+import { Product } from './product'
+
 export interface CartItem {
   id: string
   product: Product
@@ -101,4 +103,3 @@ export type CheckoutStep =
   | 'confirmation'
 
 // Re-export from existing types
-export type { Product } from './product'
