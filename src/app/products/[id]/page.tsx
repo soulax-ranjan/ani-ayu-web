@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo, useEffect } from 'react'
-import { notFound } from 'next/navigation'
+import { notFound, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Star, ShoppingBag, Share2, ChevronLeft, Minus, Plus, X, ZoomIn, CheckCircle } from 'lucide-react'
@@ -63,6 +63,7 @@ export default function ProductDetailsPage({ params }: Props) {
   const resolvedParams = React.use(params)
 
   // ALL HOOKS MUST BE CALLED FIRST - before any conditional returns
+  const router = useRouter()
   const [selectedSize, setSelectedSize] = useState<string>('')
   const [quantity, setQuantity] = useState(1)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
@@ -72,6 +73,8 @@ export default function ProductDetailsPage({ params }: Props) {
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
   const [showToast, setShowToast] = useState(false)
+  const [isSizeChartOpen, setIsSizeChartOpen] = useState(false)
+  const [sizeUnit, setSizeUnit] = useState<'inches' | 'cm'>('inches')
 
   // Fetch product data from API
   const { data: productData, loading: productLoading, error: productError } = useProduct(resolvedParams.id)
@@ -296,8 +299,8 @@ export default function ProductDetailsPage({ params }: Props) {
       )}
 
       <main className="min-h-screen bg-cream">
-        <div className="max-w-[1400px] mx-auto px-4 py-16">
-          <div className="grid lg:grid-cols-2 gap-12">
+        <div className="max-w-[1400px] mx-auto px-4 py-6 md:py-12 lg:py-16">
+          <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
             {/* Product Images */}
             <div className="space-y-4">
               {/* Main Image */}
@@ -358,238 +361,173 @@ export default function ProductDetailsPage({ params }: Props) {
             </div>
 
             {/* Product Info */}
-            <div className="space-y-6">
-              {/* Category Badge - uses categoryName fetched from ID */}
-              {categoryName && (
-                <div className="inline-block bg-mint px-3 py-1 rounded-full text-primary text-sm font-medium capitalize">
-                  {categoryName}
+            <div className="flex flex-col h-full bg-white p-4 sm:p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100">
+              {/* Header Section */}
+              <div className="mb-4 md:mb-6 border-b border-gray-100 pb-4 md:pb-6">
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  {categoryName && (
+                    <span className="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                      {categoryName}
+                    </span>
+                  )}
+                  {/* Share Button (moved up) */}
+                  <button className="text-gray-400 hover:text-primary transition-colors p-1" title="Share">
+                    <Share2 size={20} />
+                  </button>
                 </div>
-              )}
 
-              <div>
-                <h1 className="text-2xl lg:text-3xl font-[var(--font-heading)] font-bold text-ink mb-4">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-[var(--font-heading)] font-bold text-gray-900 mb-2 md:mb-3 leading-tight">
                   {product.name}
                 </h1>
 
-                {/* Rating */}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-1">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={18}
-                          className={i < Math.floor(product.rating) ? 'fill-accent text-accent' : 'text-gray-300'}
-                        />
-                      ))}
-                    </div>
-                    <span className="font-semibold ml-1">{product.rating}</span>
+                <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                  <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg">
+                    <Star size={16} className="fill-amber-400 text-amber-400" />
+                    <span className="font-bold text-gray-900">{product.rating}</span>
+                    <span className="text-sm text-gray-500">/ 5.0</span>
                   </div>
-                  <span className="text-gray-500">({product.reviewCount} reviews)</span>
+                  <span className="text-xs md:text-sm text-gray-400 font-medium">{product.reviewCount} verified reviews</span>
+                </div>
+              </div>
+
+              {/* Price Block */}
+              <div className="mb-6 md:mb-8">
+                <div className="flex items-end gap-3 mb-2">
+                  <span className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+                    ₹{(product.price || 0).toLocaleString()}
+                  </span>
+                  {product.originalPrice && (
+                    <span className="text-lg md:text-xl text-gray-400 line-through mb-1.5">
+                      ₹{(product.originalPrice || 0).toLocaleString()}
+                    </span>
+                  )}
+                  {discountPercent && (
+                    <span className="mb-2 bg-red-50 text-red-600 border border-red-100 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide">
+                      {discountPercent}% OFF
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-gray-500">Includes all taxes</p>
+              </div>
+
+              {/* Description (Condensed) */}
+              <p className="text-gray-600 leading-relaxed mb-8 text-sm sm:text-base">
+                {product.description}
+              </p>
+
+              {/* Selectors (Size & Quantity) */}
+              <div className="space-y-6 mb-8 bg-gray-50 p-6 rounded-2xl border border-gray-100/50">
+                {/* Size */}
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide">Select Size</h3>
+                    {product.sizes && <button onClick={() => setIsSizeChartOpen(true)} className="text-xs text-primary font-medium hover:underline">Size Chart</button>}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(product.sizes || []).map(size => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`min-w-[3rem] h-10 flex items-center justify-center px-4 rounded-xl text-sm font-bold transition-all duration-200 border
+                          ${selectedSize === size
+                            ? 'bg-gray-900 text-white border-gray-900 shadow-md transform scale-105'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Price */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center gap-2">
-                    <span className="text-3xl font-bold text-ink">
-                      ₹{(product.price || 0).toLocaleString()}
-                    </span>
-                    {product.originalPrice && (
-                      <>
-                        <span className="text-xl text-gray-500 line-through">
-                          ₹{(product.originalPrice || 0).toLocaleString()}
-                        </span>
-                        {discountPercent && (
-                          <span className="bg-accent text-white px-2 py-1 rounded text-sm font-semibold">
-                            {discountPercent}% OFF
-                          </span>
-                        )}
-                      </>
+                {/* Quantity */}
+                <div>
+                  <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide mb-3">Quantity</h3>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center bg-white border border-gray-300 rounded-xl shadow-sm h-10">
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="w-10 h-full flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-l-xl transition-colors"
+                      >
+                        <Minus size={16} />
+                      </button>
+                      <span className="w-10 text-center font-bold text-gray-900 text-sm">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="w-10 h-full flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-r-xl transition-colors"
+                      >
+                        <Plus size={16} />
+                      </button>
+                    </div>
+                    {currentQuantityInCart > 0 && (
+                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-md">
+                        {currentQuantityInCart} in cart
+                      </span>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Description */}
-              <div>
-                <p className="text-gray-700 leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-
-              {/* Product Details */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4 border-t border-b border-gray-200">
-                {product.brand && (
-                  <div>
-                    <span className="text-sm text-gray-600">Brand:</span>
-                    <p className="font-medium">{product.brand}</p>
-                  </div>
-                )}
-                {product.sku && (
-                  <div>
-                    <span className="text-sm text-gray-600">SKU:</span>
-                    <p className="font-medium font-mono text-xs">{product.sku}</p>
-                  </div>
-                )}
-                <div>
-                  <span className="text-sm text-gray-600">Age Range:</span>
-                  <p className="font-medium">{product.ageRange}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Material:</span>
-                  <p className="font-medium">{product.material}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Occasion:</span>
-                  <p className="font-medium">{product.occasion}</p>
-                </div>
-                <div>
-                  <span className="text-sm text-gray-600">Available Sizes:</span>
-                  <p className="font-medium">{(product.sizes || []).join(', ')}</p>
-                </div>
-                {product.stock_quantity !== undefined && (
-                  <div>
-                    <span className="text-sm text-gray-600">Stock:</span>
-                    <p className={`font-medium ${product.stock_quantity === 0
-                      ? 'text-red-600'
-                      : product.stock_quantity <= 5
-                        ? 'text-orange-600'
-                        : 'text-green-600'
-                      }`}>
-                      {product.stock_quantity === 0
-                        ? 'Out of Stock'
-                        : `${product.stock_quantity} available`
-                      }
-                    </p>
-                  </div>
-                )}
-                {product.customizable && (
-                  <div>
-                    <span className="text-sm text-gray-600">Customization:</span>
-                    <p className="font-medium text-primary">Available</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Features */}
-              {product.features && (
-                <div>
-                  <h3 className="font-semibold text-ink mb-2">Features:</h3>
-                  <ul className="list-disc list-inside text-gray-700 space-y-1">
-                    {product.features.map((feature, index) => (
-                      <li key={index}>{feature}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Specifications */}
-              {product.specifications && Object.keys(product.specifications).length > 0 && (
-                <div>
-                  <h3 className="font-semibold text-ink mb-3">Specifications:</h3>
-                  <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                    {Object.entries(product.specifications).map(([key, value]) => (
-                      <div key={key} className="flex justify-between text-sm">
-                        <span className="text-gray-600 capitalize">{key.replace(/_/g, ' ')}:</span>
-                        <span className="text-ink font-medium">{String(value)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Warranty and Return Policy */}
-              {(product.warranty || product.return_policy) && (
-                <div className="space-y-4">
-                  {product.warranty && (
-                    <div>
-                      <h3 className="font-semibold text-ink mb-2">Warranty:</h3>
-                      <p className="text-gray-700 text-sm">{product.warranty}</p>
-                    </div>
-                  )}
-                  {product.return_policy && (
-                    <div>
-                      <h3 className="font-semibold text-ink mb-2">Return Policy:</h3>
-                      <p className="text-gray-700 text-sm">{product.return_policy}</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Size Selection */}
-              <div>
-                <h3 className="font-[var(--font-heading)] font-semibold text-ink mb-3">Select Size:</h3>
-                <div className="flex flex-wrap gap-3">
-                  {(product.sizes || []).map(size => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`px-4 py-2 rounded-lg border-2 font-medium transition-colors ${selectedSize === size
-                        ? 'border-primary bg-primary text-white'
-                        : 'border-gray-200 bg-white text-ink hover:border-primary'
-                        }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Quantity Selection */}
-              <div>
-                <h3 className="font-[var(--font-heading)] font-semibold text-ink mb-3">Quantity:</h3>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center border border-gray-200 rounded-lg">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="p-2 hover:bg-gray-50 transition-colors"
-                    >
-                      <Minus size={18} />
-                    </button>
-                    <span className="px-4 py-2 font-medium min-w-[3rem] text-center">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="p-2 hover:bg-gray-50 transition-colors"
-                    >
-                      <Plus size={18} />
-                    </button>
-                  </div>
-                  {currentQuantityInCart > 0 && (
-                    <span className="text-sm text-gray-600">
-                      {currentQuantityInCart} in cart
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6">
+              {/* Action Buttons (Right Aligned per request) */}
+              <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4 justify-end">
                 <button
                   onClick={handleAddToCart}
                   disabled={isAddingToCart}
-                  className="flex-1 bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                  className="flex-1 sm:flex-none border-2 border-primary text-primary hover:bg-primary/5 font-bold py-3 px-8 rounded-full flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isAddingToCart ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Adding...
-                    </>
+                    <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
                   ) : (
                     <>
-                      <ShoppingBag size={20} />
-                      Add to Cart
+                      <ShoppingBag size={18} />
+                      <span>Add to Cart</span>
                     </>
                   )}
                 </button>
 
+                <button
+                  onClick={async () => {
+                    // Reuse cart adding logic but redirect afterwards
+                    if (!selectedSize) {
+                      alert('Please select a size')
+                      return
+                    }
+                    setIsAddingToCart(true)
+                    const success = await addItem(product, selectedSize, quantity)
+                    setIsAddingToCart(false)
+
+                    if (success) {
+                      router.push('/checkout')
+                    }
+                  }}
+                  className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white font-bold py-3 px-10 rounded-full shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 active:scale-95 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <span>Buy Now</span>
+                </button>
+              </div>
+
+              {/* Quick Details (Compact) */}
+              <div className="mt-8 grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-gray-500">
                 <div className="flex gap-2">
-                  <button className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Share2 size={20} />
-                  </button>
+                  <span className="font-semibold text-gray-900">Brand:</span>
+                  <span>{product.brand || 'Ani & Ayu'}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-semibold text-gray-900">Material:</span>
+                  <span>{product.material || 'Cotton'}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-semibold text-gray-900">SKU:</span>
+                  <span className="font-mono">{product.sku || 'N/A'}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="font-semibold text-gray-900">Ships in:</span>
+                  <span>2-3 Days</span>
                 </div>
               </div>
+
             </div>
           </div>
 
@@ -700,6 +638,103 @@ export default function ProductDetailsPage({ params }: Props) {
             className="absolute inset-0 -z-10"
             onClick={closeImagePreview}
           />
+        </div>
+      )}
+
+      {/* Size Chart Modal */}
+      {isSizeChartOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-4xl w-full my-8 shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-2xl z-10">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">Size Chart</h2>
+              <div className="flex items-center gap-3">
+                {/* Unit Toggle */}
+                <div className="flex items-center bg-gray-100 rounded-full p-1">
+                  <button
+                    onClick={() => setSizeUnit('inches')}
+                    className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-all ${sizeUnit === 'inches'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                  >
+                    Inches
+                  </button>
+                  <button
+                    onClick={() => setSizeUnit('cm')}
+                    className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-all ${sizeUnit === 'cm'
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900'
+                      }`}
+                  >
+                    CM
+                  </button>
+                </div>
+                <button
+                  onClick={() => setIsSizeChartOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  aria-label="Close size chart"
+                >
+                  <X size={24} className="text-gray-600" />
+                </button>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto p-4 md:p-6">
+              <table className="w-full border-collapse min-w-[600px]">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-200 px-3 md:px-4 py-3 text-left text-xs md:text-sm font-bold text-gray-900">Age</th>
+                    <th className="border border-gray-200 px-3 md:px-4 py-3 text-left text-xs md:text-sm font-bold text-gray-900">Top Length</th>
+                    <th className="border border-gray-200 px-3 md:px-4 py-3 text-left text-xs md:text-sm font-bold text-gray-900">Chest</th>
+                    <th className="border border-gray-200 px-3 md:px-4 py-3 text-left text-xs md:text-sm font-bold text-gray-900">Bottom Length</th>
+                    <th className="border border-gray-200 px-3 md:px-4 py-3 text-left text-xs md:text-sm font-bold text-gray-900">Waist</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['6 - 12 Months', '6.00', '20.00', '15.00', '18.00'],
+                    ['1 - 2 Years', '6.00', '22.00', '17.00', '19.00'],
+                    ['2 - 3 Years', '7.00', '23.00', '21.00', '20.00'],
+                    ['3 - 4 Years', '7.00', '23.50', '23.00', '21.00'],
+                    ['4 - 5 Years', '8.00', '24.00', '25.00', '22.00'],
+                    ['5 - 6 Years', '9.00', '25.00', '26.00', '23.00'],
+                    ['6 - 7 Years', '9.00', '26.00', '28.00', '24.00'],
+                    ['7 - 8 Years', '10.00', '27.00', '30.00', '25.00'],
+                    ['8 - 9 Years', '10.00', '28.50', '32.00', '26.00'],
+                    ['9 - 10 Years', '11.00', '30.00', '34.00', '28.00'],
+                    ['10 - 11 Years', '12.00', '31.00', '35.00', '29.00'],
+                    ['11 - 12 Years', '13.00', '31.00', '35.00', '30.00'],
+                  ].map((row, index) => {
+                    const convertToUnit = (inches: string) => {
+                      if (sizeUnit === 'cm') {
+                        return (parseFloat(inches) * 2.54).toFixed(1);
+                      }
+                      return inches;
+                    };
+
+                    return (
+                      <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
+                        <td className="border border-gray-200 px-3 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-900 font-medium">{row[0]}</td>
+                        <td className="border border-gray-200 px-3 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">{convertToUnit(row[1])}</td>
+                        <td className="border border-gray-200 px-3 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">{convertToUnit(row[2])}</td>
+                        <td className="border border-gray-200 px-3 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">{convertToUnit(row[3])}</td>
+                        <td className="border border-gray-200 px-3 md:px-4 py-2 md:py-3 text-xs md:text-sm text-gray-700">{convertToUnit(row[4])}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 md:p-6 border-t border-gray-200 bg-gray-50">
+              <p className="text-xs md:text-sm text-gray-600">
+                <strong>Note:</strong> All measurements are in {sizeUnit === 'inches' ? 'inches' : 'centimeters'}. For the best fit, please measure your child and compare with the chart above.
+              </p>
+            </div>
+          </div>
         </div>
       )}
 

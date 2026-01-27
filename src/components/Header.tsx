@@ -30,7 +30,7 @@ export default function Header() {
               width={556}
               height={148}
               priority
-              className="h-16 w-auto sm:h-20 md:h-24 lg:h-28 object-contain transition-all duration-200"
+              className="h-20 w-auto sm:h-20 md:h-24 lg:h-28 object-contain transition-all duration-200"
             />
           </Link>
         </div>

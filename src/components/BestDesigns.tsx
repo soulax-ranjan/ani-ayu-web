@@ -3,12 +3,40 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useBestSellers } from "@/lib/hooks"
+import { useCartStore } from '@/store/cartStore'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function BestDesigns() {
   const { data: bestSellersData, loading, error } = useBestSellers(6) // Get top 6
+  const router = useRouter()
+  const { addItem } = useCartStore()
+  const [addingId, setAddingId] = useState<string | null>(null)
+  const [successId, setSuccessId] = useState<string | null>(null)
 
   // Use API data only
   const designs = bestSellersData?.bestSellers || []
+
+  const handleAddToCart = async (e: React.MouseEvent, d: any) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setAddingId(d.id)
+    const success = await addItem(d, 'M', 1)
+    setAddingId(null)
+    if (success) {
+      setSuccessId(d.id)
+      setTimeout(() => setSuccessId(null), 1500)
+    }
+  }
+
+  const handleBuyNow = async (e: React.MouseEvent, d: any) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setAddingId(d.id)
+    await addItem(d, 'M', 1)
+    setAddingId(null)
+    router.push('/checkout')
+  }
 
   if (loading) {
     return (
@@ -93,45 +121,54 @@ export default function BestDesigns() {
                 />
 
                 {/* gradient overlay */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/0 to-transparent" />
+
+
+                {/* Preorder badge overlay */}
+                <div className="absolute top-3 left-3 z-10">
+                  <span className="bg-accent text-white px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md">
+                    Preorder
+                  </span>
+                </div>
               </div>
 
               {/* Content */}
               <div className="p-5">
                 <h3 className="text-lg font-[var(--font-heading)] font-semibold text-ink md:text-xl">{d.name}</h3>
                 
-                {/* Preorder badge */}
-                <div className="mt-2 mb-3">
-                  <span className="inline-block bg-accent text-white px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide">
-                    Preorder
+                {/* Price */}
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xl font-bold bg-gradient-to-r from-[#F6B400] via-[#FFD700] to-[#FFB300] bg-clip-text text-transparent drop-shadow-sm md:text-2xl">
+                    ₹{d.price.toLocaleString()}
                   </span>
+                  {d.originalPrice > d.price && (
+                    <span className="text-sm text-gray-400 line-through ml-2">₹{d.originalPrice.toLocaleString()}</span>
+                  )}
                 </div>
-                
-                {/* Description */}
-                <p className="mt-2 text-sm leading-relaxed text-ink/80 overflow-hidden" style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical' as any
-                }}>
-                  {d.description}
-                </p>
-                
-                {/* Age Range and Stock Info */}
-                <div className="mt-2 flex items-center justify-between">
-                  <p className="text-xs text-ink/60 font-medium">
-                    Age: {d.ageRange}
-                  </p>
-                  {/* Stock indicator could be added here if needed */}
-                </div>
-                
-                <div className="mt-3 flex items-center justify-between">
-                  <Stars value={d.rating} />
-                  <div className="text-right">
-                    <p className="text-xl font-bold text-primary md:text-2xl">₹{d.price.toLocaleString()}</p>
-                    {d.originalPrice > d.price && (
-                      <p className="text-sm text-gray-500 line-through">₹{d.originalPrice.toLocaleString()}</p>
+
+                {/* Add to Cart & Buy Now Buttons */}
+                <div className="flex gap-3 mt-2">
+                  <button
+                    onClick={e => handleAddToCart(e, d)}
+                    disabled={addingId === d.id}
+                    className={`flex-1 bg-white border border-primary text-primary px-4 py-2 rounded-full font-semibold shadow-sm hover:bg-primary hover:text-white transition-all duration-200 disabled:opacity-60 ${successId === d.id ? 'bg-green-50 text-green-700 border-green-400' : ''}`}
+                    title="Add to cart"
+                  >
+                    {addingId === d.id && !successId ? (
+                      <span className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin inline-block align-middle" />
+                    ) : successId === d.id ? (
+                      'Added!'
+                    ) : (
+                      'Add to Cart'
                     )}
-                  </div>
+                  </button>
+                  <button
+                    onClick={e => handleBuyNow(e, d)}
+                    disabled={addingId === d.id}
+                    className="flex-1 bg-primary text-white px-4 py-2 rounded-full font-semibold shadow-sm hover:bg-primary/90 transition-all duration-200"
+                    title="Buy Now"
+                  >
+                    Buy Now
+                  </button>
                 </div>
               </div>
             </article>

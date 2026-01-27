@@ -2,7 +2,7 @@
 
 import { useState, useMemo, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Grid } from 'lucide-react'
+import { Grid, SlidersHorizontal, X } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
@@ -36,10 +36,11 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
 function ProductsContent() {
   const searchParams = useSearchParams()
   const categoryFromUrl = searchParams?.get('category') || ''
-  
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
+
   const [filters, setFilters] = useState<Filters>({
     category: categoryFromUrl ? [categoryFromUrl] : [],
-    priceRange: [0, 5000],
+    priceRange: [0, 10000],
     sizes: [],
     sortBy: 'popularity'
   })
@@ -50,81 +51,156 @@ function ProductsContent() {
     minPrice: filters.priceRange[0],
     maxPrice: filters.priceRange[1],
     sizes: filters.sizes.length > 0 ? filters.sizes : undefined,
-    sort: filters.sortBy === 'price-low' ? 'price-asc' : 
-          filters.sortBy === 'price-high' ? 'price-desc' : 
-          filters.sortBy === 'rating' ? 'rating' : undefined, // 'popularity' maps to default sorting
-    // Remove limit to fetch all products
+    sort: filters.sortBy === 'price-low' ? 'price-asc' :
+      filters.sortBy === 'price-high' ? 'price-desc' :
+        filters.sortBy === 'rating' ? 'rating' : undefined,
   }), [filters])
 
   // Fetch products from API
   const { data, loading, error } = useProducts(apiParams)
-  
+
   const products = data?.products || []
-  const filteredProducts = products.map(transformAPIProduct)
+
+  // Filter to show only customizable products when no category is selected
+  const filteredProducts = products
+    .filter(product => categoryFromUrl ? true : product.customizable === true)
+    .map(transformAPIProduct)
+
+  const hasActiveFilters = filters.category.length > 0 || filters.sizes.length > 0 ||
+    filters.priceRange[0] > 0 || filters.priceRange[1] < 10000
+
+  const resetFilters = () => {
+    setFilters({
+      category: [],
+      priceRange: [0, 10000],
+      sizes: [],
+      sortBy: 'popularity'
+    })
+  }
 
   return (
     <>
       <Header />
       <main className="min-h-screen bg-cream">
-        <div className="max-w-[1400px] mx-auto px-4 py-8">
-          {/* Page Header (category info only) */}
-          {categoryFromUrl && (
-            <div className="mb-8">
-              <h2 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-ink mb-2">
-                {`${categoryFromUrl.charAt(0).toUpperCase() + categoryFromUrl.slice(1)} Collection`}
-              </h2>
-            </div>
-          )}
+        <div className="max-w-[1400px] mx-auto px-4 py-6 md:py-8">
+          {/* Filter Button - Right Aligned */}
+          <div className="mb-6 md:mb-8 flex justify-end">
+            <button
+              onClick={() => setIsFilterOpen(true)}
+              className="flex items-center gap-2 bg-gradient-to-r from-primary to-amber-400 hover:from-amber-500 hover:to-primary text-gray-900 px-4 md:px-6 py-2.5 md:py-3 rounded-full font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
+            >
+              <SlidersHorizontal size={20} />
+              <span className="hidden sm:inline">Filters</span>
+              {hasActiveFilters && (
+                <span className="bg-white text-primary text-xs px-2 py-0.5 rounded-full font-bold">
+                  {filters.category.length + filters.sizes.length}
+                </span>
+              )}
+            </button>
+          </div>
 
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Filters Sidebar */}
-            <aside className="lg:w-80 flex-shrink-0">
+          {/* Products Grid */}
+          <div>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading products...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="text-red-400 mb-4">
+                  <Grid size={64} className="mx-auto" />
+                </div>
+                <h3 className="text-xl font-[var(--font-heading)] font-semibold text-red-600 mb-2">Error loading products</h3>
+                <p className="text-gray-500">{error}</p>
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-4">
+                  <Grid size={64} className="mx-auto" />
+                </div>
+                <h3 className="text-xl font-[var(--font-heading)] font-semibold text-gray-600 mb-2">No products found</h3>
+                <p className="text-gray-500 mb-4">Try adjusting your filters to see more results.</p>
+                {hasActiveFilters && (
+                  <button
+                    onClick={resetFilters}
+                    className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-full font-semibold transition-colors"
+                  >
+                    Clear Filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                {filteredProducts.map(product => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      {/* Filter Slider Panel */}
+      {isFilterOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 z-40 transition-opacity"
+            onClick={() => setIsFilterOpen(false)}
+          />
+
+          {/* Slider Panel */}
+          <div className="fixed right-0 top-0 bottom-0 w-full sm:w-96 bg-white z-50 shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300">
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 md:p-6 z-10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">Filters</h2>
+                <button
+                  onClick={() => setIsFilterOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  aria-label="Close filters"
+                >
+                  <X size={24} className="text-gray-600" />
+                </button>
+              </div>
+
+              {/* Reset Button */}
+              {hasActiveFilters && (
+                <button
+                  onClick={resetFilters}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-4 py-2.5 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+                >
+                  <X size={18} />
+                  Reset All Filters
+                </button>
+              )}
+            </div>
+
+            {/* Filters Content */}
+            <div className="p-4 md:p-6">
               <ProductFilters
                 filters={filters}
                 onFiltersChange={setFilters}
               />
-            </aside>
+            </div>
 
-            {/* Products Grid */}
-            <div className="flex-1">
-              {/* Products */}
-              {loading ? (
-                <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                  <p className="text-gray-600">Loading products...</p>
-                </div>
-              ) : error ? (
-                <div className="text-center py-12">
-                  <div className="text-red-400 mb-4">
-                    <Grid size={64} className="mx-auto" />
-                  </div>
-                  <h3 className="text-xl font-[var(--font-heading)] font-semibold text-red-600 mb-2">Error loading products</h3>
-                  <p className="text-gray-500">{error}</p>
-                </div>
-              ) : filteredProducts.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-gray-400 mb-4">
-                    <Grid size={64} className="mx-auto" />
-                  </div>
-                  <h3 className="text-xl font-[var(--font-heading)] font-semibold text-gray-600 mb-2">No products found</h3>
-                  <p className="text-gray-500">Try adjusting your filters to see more results.</p>
-                </div>
-              ) : (
-                <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                  {filteredProducts.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                    />
-                  ))}
-                </div>
-              )}
-
-
+            {/* Apply Button (Sticky Footer) */}
+            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 md:p-6">
+              <button
+                onClick={() => setIsFilterOpen(false)}
+                className="w-full bg-gradient-to-r from-primary to-amber-400 hover:from-amber-500 hover:to-primary text-gray-900 px-6 py-3.5 rounded-full font-bold shadow-lg shadow-primary/30 transition-all duration-300 hover:shadow-xl"
+              >
+                Show {filteredProducts.length} Products
+              </button>
             </div>
           </div>
-        </div>
-      </main>
+        </>
+      )}
+
       <Footer />
     </>
   )

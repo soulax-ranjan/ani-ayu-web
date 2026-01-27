@@ -61,9 +61,9 @@ export default function HeroBanner() {
 
   return (
     <section className="w-full relative overflow-hidden bg-gradient-to-br from-primary/5 via-white to-accent/5">
-      <div className="relative w-full h-[450px] md:h-[550px] overflow-hidden group">
+      <div className="relative w-full h-[500px] md:h-[550px] overflow-hidden group">
         {/* Carousel Container */}
-        <div 
+        <div
           className="flex transition-all duration-700 ease-out w-full h-full"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
@@ -78,32 +78,26 @@ export default function HeroBanner() {
                 sizes="100vw"
                 className="w-full h-full object-cover object-center"
               />
-              
+
               {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
-              
+
               {/* Content Overlay - Bottom Aligned */}
-              <div className="absolute inset-0 flex items-end justify-center pb-12 md:pb-16">
-                <div className="text-center text-white max-w-4xl px-6 md:px-8">
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+              <div className="absolute inset-0 flex items-end justify-center pb-8 md:pb-16">
+                <div className="text-center text-white max-w-4xl px-4 md:px-8">
+                  <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 leading-tight">
                     {banner.title}
                   </h1>
-                  <p className="text-base md:text-lg lg:text-xl mb-6 text-white/90 leading-relaxed max-w-2xl mx-auto">
+                  <p className="text-sm md:text-lg lg:text-xl mb-4 md:mb-6 text-white/90 leading-relaxed max-w-2xl mx-auto">
                     {banner.subtitle}
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link 
+                  <div className="flex justify-center">
+                    <Link
                       href={banner.ctaLink}
-                      className="inline-flex items-center justify-center px-6 py-3 bg-primary text-black font-semibold rounded-full hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg"
+                      className="inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-primary text-black font-bold rounded-full hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg shadow-primary/30 text-sm md:text-base"
                     >
                       {banner.ctaText}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                    <Link 
-                      href="/products"
-                      className="inline-flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-md text-white font-semibold rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300"
-                    >
-                      Shop Collection
+                      <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                     </Link>
                   </div>
                 </div>
@@ -119,11 +113,10 @@ export default function HeroBanner() {
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`relative w-3 h-3 rounded-full transition-all duration-300 transform hover:scale-125 ${
-                  index === currentSlide 
-                    ? 'bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/50 scale-110' 
-                    : 'bg-white/60 hover:bg-white/80 backdrop-blur-sm'
-                }`}
+                className={`relative w-3 h-3 rounded-full transition-all duration-300 transform hover:scale-125 ${index === currentSlide
+                  ? 'bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/50 scale-110'
+                  : 'bg-white/60 hover:bg-white/80 backdrop-blur-sm'
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
               >
                 {index === currentSlide && (
@@ -133,11 +126,11 @@ export default function HeroBanner() {
             ))}
           </div>
         )}
-        
+
         {/* Navigation Arrows */}
         {banners.length > 1 && (
           <>
-            <button 
+            <button
               onClick={() => setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length)}
               className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 hover:scale-110 z-20"
             >
@@ -145,7 +138,7 @@ export default function HeroBanner() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <button 
+            <button
               onClick={() => setCurrentSlide((prev) => (prev + 1) % banners.length)}
               className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white/30 hover:scale-110 z-20"
             >

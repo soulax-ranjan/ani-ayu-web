@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 interface ImageBannerProps {
   imageUrl: string
@@ -7,31 +8,29 @@ interface ImageBannerProps {
 }
 
 export default function ImageBanner({ imageUrl, alt, link }: ImageBannerProps) {
-  const BannerContent = () => (
-    <div className="group relative">
-      {/* Main Card Container - Identical to ProductCard */}
-      <div className="relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
-        {/* Image Section - Covers full card height */}
-        <div className="relative aspect-square overflow-hidden">
-          <Image
-            src={imageUrl}
-            alt={alt}
-            fill
-            className="object-cover hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        </div>
-      </div>
+  const Content = () => (
+    <div className="relative w-full aspect-[3/4] md:aspect-[4/5] lg:h-full bg-gray-50 rounded-3xl overflow-hidden shadow-sm group-hover:shadow-xl transition-all duration-300 border border-transparent group-hover:border-amber-100">
+      <Image
+        src={imageUrl}
+        alt={alt}
+        fill
+        className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+        sizes="(max-width: 768px) 100vw, 33vw"
+      />
     </div>
   )
 
   if (link) {
     return (
-      <a href={link} className="block">
-        <BannerContent />
-      </a>
+      <Link href={link} className="group block h-full">
+        <Content />
+      </Link>
     )
   }
 
-  return <BannerContent />
+  return (
+    <div className="group h-full">
+      <Content />
+    </div>
+  )
 }

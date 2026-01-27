@@ -3,7 +3,6 @@ import HeroCarousel from "@/components/HeroCarousel"
 import BestDesigns from "@/components/BestDesigns"
 import BannerProductSections from "@/components/BannerProductSections"
 import SingleImageBanner from "@/components/SingleImageBanner"
-import ShopByGender from "@/components/ShopByGender"
 import FounderStory from "@/components/FounderStory"
 import InstagramFeed from "@/components/InstagramFeed"
 import Footer from "@/components/Footer"
@@ -19,7 +18,6 @@ export default function HomePage() {
         <BestDesigns />
         <BannerProductSections />
         <SingleImageBanner />
-        <ShopByGender />
         <FounderStory />
         <InstagramFeed />
       </main>

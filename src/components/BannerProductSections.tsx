@@ -126,8 +126,7 @@ export default function BannerProductSections() {
       try {
         // Fetch all products and then filter by section
         const response = await apiClient.getProducts({
-          limit: 50, // Get more products to ensure we have products for each section
-          featured: true
+          limit: 100, // Get more products to ensure we have products for each section
         })
         const allProducts = response.products.map(convertApiProduct)
 
@@ -144,16 +143,16 @@ export default function BannerProductSections() {
           allSections: allProducts.map(p => ({ id: p.id, name: p.name, section: p.section, image: p.image }))
         })
 
-        setSection1Products(section1.length > 0 ? section1 : mockProducts.slice(0, 4))
-        setSection2Products(section2.length > 0 ? section2 : mockProducts.slice(0, 4))
-        setSection3Products(section3.length > 0 ? section3 : mockProducts.slice(0, 4))
+        setSection1Products(section1)
+        setSection2Products(section2)
+        setSection3Products(section3)
 
       } catch (error) {
         console.error('Failed to fetch section products:', error)
-        // Fallback to mock data if API fails
-        setSection1Products(mockProducts.slice(0, 4))
-        setSection2Products(mockProducts.slice(0, 4))
-        setSection3Products(mockProducts.slice(0, 4))
+        // Set empty if API fails
+        setSection1Products([])
+        setSection2Products([])
+        setSection3Products([])
       } finally {
         setLoading(false)
       }

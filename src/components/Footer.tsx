@@ -1,97 +1,129 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Instagram, Facebook, Youtube } from "lucide-react"
+import { Instagram, Facebook, Youtube, Mail, Phone, MapPin } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="bg-cream text-ink pt-16 pb-8">
-      <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
+    <footer className="bg-gradient-to-br from-gray-50 via-cream to-gray-50 text-ink">
+      <div className="mx-auto max-w-[1400px] px-4 md:px-6 lg:px-8">
+
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-          
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 py-12 md:py-16">
+
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-6">
-              <Image 
-                src="/assets/logo/ani_ayu_logo.png" 
-                alt="Ani & Ayu" 
-                width={200} 
-                height={70} 
-                className="h-14 w-auto object-contain" 
+              <Image
+                src="/assets/logo/ani_ayu_logo.png"
+                alt="Ani & Ayu"
+                width={556}
+                height={148}
+                className="h-20 w-auto sm:h-20 md:h-24 lg:h-28 object-contain"
               />
             </Link>
-            <p className="text-muted-text mb-6 max-w-md leading-relaxed">
-              Beautiful traditional clothing for children, crafted with love and inspired by heritage. 
+            <p className="text-gray-600 mb-6 max-w-md leading-relaxed text-sm md:text-base">
+              Beautiful traditional clothing for children, crafted with love and inspired by heritage.
               Making every occasion special for kids aged 2-13.
             </p>
-            
+
+            {/* Contact Info */}
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center gap-3 text-sm text-gray-600">
+                <div className="bg-primary/10 p-2 rounded-lg">
+                  <Mail size={16} className="text-primary" />
+                </div>
+                <a href="mailto:hello@aniayu.com" className="hover:text-primary transition-colors">
+                  hello@aniayu.com
+                </a>
+              </div>
+              <div className="flex items-center gap-3 text-sm text-gray-600">
+                <div className="bg-primary/10 p-2 rounded-lg">
+                  <Phone size={16} className="text-primary" />
+                </div>
+                <a href="tel:+911234567890" className="hover:text-primary transition-colors">
+                  +91 123 456 7890
+                </a>
+              </div>
+            </div>
+
             {/* Social Media */}
             <div>
-              <h4 className="font-[var(--font-heading)] font-semibold mb-4 text-ink">
+              <h4 className="font-[var(--font-heading)] font-bold mb-4 text-gray-900 text-sm uppercase tracking-wider">
                 Follow Us
               </h4>
-              <div className="flex gap-4">
-                <a 
-                  href="https://instagram.com/aniayu" 
-                  target="_blank" 
-                  rel="noopener" 
+              <div className="flex gap-3">
+                <a
+                  href="https://instagram.com/aniayu"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="bg-primary/10 p-3 rounded-full hover:bg-primary/20 transition-colors hover:scale-110 transform duration-200"
+                  className="bg-gradient-to-br from-pink-500 to-purple-600 p-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-all hover:scale-110 transform duration-200 group"
                 >
-                  <Instagram size={20} className="text-primary" />
+                  <Instagram size={20} className="text-white" />
                 </a>
-                <a 
-                  href="https://facebook.com/aniayu" 
-                  target="_blank" 
-                  rel="noopener" 
+                <a
+                  href="https://facebook.com/aniayu"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="bg-primary/10 p-3 rounded-full hover:bg-primary/20 transition-colors hover:scale-110 transform duration-200"
+                  className="bg-gradient-to-br from-blue-500 to-blue-700 p-3 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all hover:scale-110 transform duration-200 group"
                 >
-                  <Facebook size={20} className="text-primary" />
+                  <Facebook size={20} className="text-white" />
                 </a>
-                <a 
-                  href="https://youtube.com/aniayu" 
-                  target="_blank" 
-                  rel="noopener" 
+                <a
+                  href="https://youtube.com/aniayu"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="YouTube"
-                  className="bg-accent/10 p-3 rounded-full hover:bg-accent/20 transition-colors hover:scale-110 transform duration-200"
+                  className="bg-gradient-to-br from-red-500 to-red-700 p-3 rounded-xl hover:shadow-lg hover:shadow-red-500/30 transition-all hover:scale-110 transform duration-200 group"
                 >
-                  <Youtube size={20} className="text-accent" />
+                  <Youtube size={20} className="text-white" />
                 </a>
               </div>
             </div>
           </div>
 
-          {/* Shop Section */}
+          {/* Quick Links */}
           <div>
-            <h4 className="font-[var(--font-heading)] font-semibold mb-6 text-ink">
-              Shop
+            <h4 className="font-[var(--font-heading)] font-bold mb-6 text-gray-900 text-sm uppercase tracking-wider">
+              Quick Links
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link 
-                  href="/products?category=girls" 
-                  className="text-[#FF725E]/80 hover:text-[#FF725E] hover:underline transition-colors"
+                <Link
+                  href="/products"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                  All Products
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products?category=girls"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Girls Collection
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/products?category=boys" 
-                  className="text-[#FF725E]/80 hover:text-[#FF725E] hover:underline transition-colors"
+                <Link
+                  href="/products?category=boys"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Boys Collection
                 </Link>
               </li>
-
               <li>
-                <Link 
-                  href="/products" 
-                  className="text-[#FF725E]/80 hover:text-[#FF725E] hover:underline transition-colors"
+                <Link
+                  href="/orders"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
-                  All Products
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                  Track Order
                 </Link>
               </li>
             </ul>
@@ -99,47 +131,52 @@ export default function Footer() {
 
           {/* Customer Care Section */}
           <div>
-            <h4 className="font-[var(--font-heading)] font-semibold mb-6 text-ink">
+            <h4 className="font-[var(--font-heading)] font-bold mb-6 text-gray-900 text-sm uppercase tracking-wider">
               Customer Care
             </h4>
             <ul className="space-y-3">
               <li>
-                <Link 
-                  href="/help/contact" 
-                  className="text-muted-text hover:text-ink hover:underline transition-colors"
+                <Link
+                  href="/help/contact"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/help/shipping" 
-                  className="text-muted-text hover:text-ink hover:underline transition-colors"
+                <Link
+                  href="/help/shipping"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Shipping Info
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/help/returns" 
-                  className="text-muted-text hover:text-ink hover:underline transition-colors"
+                <Link
+                  href="/help/returns"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Returns & Exchanges
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/help/size-guide" 
-                  className="text-muted-text hover:text-ink hover:underline transition-colors"
+                <Link
+                  href="/help/size-guide"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Size Guide
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/help/faq" 
-                  className="text-muted-text hover:text-ink hover:underline transition-colors"
+                <Link
+                  href="/help/faq"
+                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   FAQ
                 </Link>
               </li>
@@ -148,27 +185,27 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-12 pt-8 border-t border-border-color">
+        <div className="border-t border-gray-200 py-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <div className="text-sm text-muted-text">
-              © {new Date().getFullYear()} Ani & Ayu. All rights reserved.
+            <div className="text-sm text-gray-600 text-center md:text-left">
+              © {new Date().getFullYear()} Ani & Ayu. All rights reserved. Made with ❤️ for little ones.
             </div>
-            <div className="flex flex-wrap gap-6 text-sm">
-              <Link 
-                href="/legal/privacy" 
-                className="text-muted-text hover:text-ink hover:underline transition-colors"
+            <div className="flex flex-wrap justify-center md:justify-end gap-6 text-sm">
+              <Link
+                href="/legal/privacy"
+                className="text-gray-600 hover:text-primary transition-colors font-medium"
               >
                 Privacy Policy
               </Link>
-              <Link 
-                href="/legal/terms" 
-                className="text-muted-text hover:text-ink hover:underline transition-colors"
+              <Link
+                href="/legal/terms"
+                className="text-gray-600 hover:text-primary transition-colors font-medium"
               >
                 Terms of Service
               </Link>
-              <Link 
-                href="/legal/refund" 
-                className="text-muted-text hover:text-ink hover:underline transition-colors"
+              <Link
+                href="/legal/refund"
+                className="text-gray-600 hover:text-primary transition-colors font-medium"
               >
                 Refund Policy
               </Link>
