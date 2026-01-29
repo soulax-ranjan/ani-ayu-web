@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { notFound, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Star, ShoppingBag, Share2, ChevronLeft, Minus, Plus, X, ZoomIn, CheckCircle } from 'lucide-react'
+import { Star, ShoppingBag, Share2, ChevronLeft, X, ZoomIn, CheckCircle } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
@@ -13,6 +13,7 @@ import { useCartStore } from '@/store/cartStore'
 import { Product as APIProduct } from '@/lib/api'
 import { Product } from '@/types/product'
 import { apiClient } from '@/lib/api'
+import { trackEvent } from '@/lib/mixpanel'
 
 export const runtime = 'edge'
 
@@ -67,7 +68,7 @@ export default function ProductDetailsPage({ params }: Props) {
   // ALL HOOKS MUST BE CALLED FIRST - before any conditional returns
   const router = useRouter()
   const [selectedSize, setSelectedSize] = useState<string>('')
-  const [quantity, setQuantity] = useState(1)
+  const quantity = 1
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false)
@@ -82,7 +83,7 @@ export default function ProductDetailsPage({ params }: Props) {
   const { data: productData, loading: productLoading, error: productError } = useProduct(resolvedParams.id)
   const { data: relatedData, loading: relatedLoading } = useRelatedProducts(resolvedParams.id)
 
-  const { addItem, getItemQuantity } = useCartStore()
+  const { addItem } = useCartStore()
 
   // Fetch category name
   const [categoryName, setCategoryName] = useState<string>('')
@@ -210,8 +211,6 @@ export default function ProductDetailsPage({ params }: Props) {
   const product = transformAPIProduct(productData)
   const relatedProducts = relatedData?.products?.map(transformAPIProduct) || []
 
-  const currentQuantityInCart = selectedSize ? getItemQuantity(product.id, selectedSize) : 0
-
   const handleAddToCart = async () => {
     if (!selectedSize) {
       alert('Please select a size')
@@ -227,11 +226,19 @@ export default function ProductDetailsPage({ params }: Props) {
     setIsAddingToCart(false)
 
     if (success) {
+      trackEvent('Add to Cart', {
+        product_id: product.id,
+        product_name: product.name,
+        price: product.price,
+        size: selectedSize,
+        quantity: quantity,
+        category: categoryName
+      })
+
       setShowToast(true)
       setTimeout(() => setShowToast(false), 3000)
 
       // Reset form
-      setQuantity(1)
       setSelectedSize('')
     }
   }
@@ -302,9 +309,9 @@ export default function ProductDetailsPage({ params }: Props) {
 
       <main className="min-h-screen bg-cream">
         <div className="max-w-[1400px] mx-auto px-4 py-6 md:py-12 lg:py-16">
-          <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
+          <div className="grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 w-full">
             {/* Product Images */}
-            <div className="space-y-4">
+            <div className="space-y-4 min-w-0">
               {/* Main Image */}
               <div className="relative aspect-square rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
                 <Image
@@ -359,7 +366,7 @@ export default function ProductDetailsPage({ params }: Props) {
             </div>
 
             {/* Product Info */}
-            <div className="flex flex-col h-full bg-white p-4 sm:p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100">
+            <div className="flex flex-col h-full bg-white p-4 sm:p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 min-w-0">
               {/* Header Section */}
               <div className="mb-4 md:mb-6 border-b border-gray-100 pb-4 md:pb-6">
                 <div className="flex items-start justify-between gap-4 mb-2">
@@ -429,42 +436,15 @@ export default function ProductDetailsPage({ params }: Props) {
                   </div>
                 </div>
 
-                {/* Quantity */}
-                <div>
-                  <h3 className="font-bold text-gray-900 text-sm uppercase tracking-wide mb-3">Quantity</h3>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center bg-white border border-gray-300 rounded-xl shadow-sm h-10">
-                      <button
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="w-10 h-full flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-l-xl transition-colors"
-                      >
-                        <Minus size={16} />
-                      </button>
-                      <span className="w-10 text-center font-bold text-gray-900 text-sm">
-                        {quantity}
-                      </span>
-                      <button
-                        onClick={() => setQuantity(quantity + 1)}
-                        className="w-10 h-full flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-r-xl transition-colors"
-                      >
-                        <Plus size={16} />
-                      </button>
-                    </div>
-                    {currentQuantityInCart > 0 && (
-                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-md">
-                        {currentQuantityInCart} in cart
-                      </span>
-                    )}
-                  </div>
-                </div>
+
               </div>
 
               {/* Action Buttons (Right Aligned per request) */}
-              <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4 justify-end">
+              <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col gap-3 sm:flex-row sm:gap-4 justify-end">
                 <button
                   onClick={handleAddToCart}
                   disabled={isAddingToCart}
-                  className="flex-1 sm:flex-none border-2 border-primary text-primary hover:bg-primary/5 font-bold py-3 px-8 rounded-full flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto sm:flex-1 md:flex-none border-2 border-primary text-primary hover:bg-primary/5 font-bold py-3 px-6 rounded-full flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {isAddingToCart ? (
                     <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -488,10 +468,27 @@ export default function ProductDetailsPage({ params }: Props) {
                     setIsAddingToCart(false)
 
                     if (success) {
+                      trackEvent('Buy Now Clicked', {
+                        product_id: product.id,
+                        product_name: product.name,
+                        price: product.price,
+                        size: selectedSize,
+                        quantity: quantity,
+                        category: categoryName
+                      })
+                      trackEvent('Add to Cart', {
+                        product_id: product.id,
+                        product_name: product.name,
+                        price: product.price,
+                        size: selectedSize,
+                        quantity: quantity,
+                        category: categoryName,
+                        source: 'Buy Now'
+                      })
                       router.push('/checkout')
                     }
                   }}
-                  className="flex-1 sm:flex-none bg-primary hover:bg-primary/90 text-white font-bold py-3 px-10 rounded-full shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 active:scale-95 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto sm:flex-1 md:flex-none bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5 active:scale-95 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
                 >
                   <span>Buy Now</span>
                 </button>

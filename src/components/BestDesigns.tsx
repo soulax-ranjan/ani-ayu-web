@@ -66,7 +66,7 @@ export default function BestDesigns() {
       <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
         {/* Heading */}
         <div className="mb-12 text-center md:mb-16">
-          <h2 className="mb-4 text-2xl font-[var(--font-heading)] font-bold text-ink md:text-3xl lg:text-4xl">
+          <h2 className="mb-2 md:mb-4 text-2xl font-[var(--font-heading)] font-bold text-ink md:text-3xl lg:text-4xl">
             Our Best Picks
           </h2>
           <p className="mx-auto max-w-2xl text-sm text-ink/70 md:text-base leading-relaxed">
@@ -82,7 +82,7 @@ export default function BestDesigns() {
                 className="group overflow-hidden rounded-3xl bg-white ring-1 ring-amber-100/70 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl cursor-pointer"
               >
                 {/* Image wrapper MUST have a fixed height when using `fill` */}
-                <div className="relative w-full h-72 sm:h-80 lg:h-96">
+                <div className="relative w-full aspect-[3/4]">
                   <Image
                     src={d.image}
                     alt={d.name}
@@ -104,11 +104,11 @@ export default function BestDesigns() {
                 </div>
 
                 {/* Content */}
-                <div className="p-5">
-                  <h3 className="text-lg font-[var(--font-heading)] font-semibold text-ink md:text-xl line-clamp-2 mb-3">{d.name}</h3>
+                <div className="p-3">
+                  <h3 className="text-base sm:text-lg font-[var(--font-heading)] font-semibold text-ink line-clamp-2 min-h-[2.5rem] mb-1">{d.name}</h3>
 
                   {/* Price */}
-                  <div className="flex flex-col mb-4">
+                  <div className="flex flex-col mb-2">
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl font-black text-gray-900 tracking-tight">
                         ₹{d.price.toLocaleString()}
@@ -122,7 +122,7 @@ export default function BestDesigns() {
                   </div>
 
                   {/* View Details Hint */}
-                  <div className="mt-4 text-sm text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="hidden md:block mt-4 text-sm text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     View Details →
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import { quicksand, pacifico } from "@/styles/fonts"
 import { Poppins } from "next/font/google"
 import Script from "next/script"
 import SessionInit from "@/components/SessionInit"
+import AnalyticsInit from "@/components/AnalyticsInit"
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-heading" })
 
@@ -22,8 +23,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${poppins.variable} ${quicksand.variable} ${pacifico.variable}`}>
       <body className="min-h-screen font-[var(--font-quicksand)] text-ink antialiased">
         <SessionInit />
+        <AnalyticsInit />
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-        <div style={{ width: '100vw', maxWidth: '100vw', margin: 0, padding: 0, overflowX: 'hidden' }}>
+        <div style={{ width: '100%', maxWidth: '100vw', margin: 0, padding: 0, overflowX: 'hidden' }}>
           {children}
         </div>
       </body>

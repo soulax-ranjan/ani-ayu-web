@@ -9,6 +9,8 @@ import Footer from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
 import { CheckoutStep } from '@/types/checkout'
 import { apiClient } from '@/lib/api'
+import { trackEvent } from '@/lib/mixpanel'
+import { useEffect } from 'react'
 
 // Define window.Razorpay for TS
 declare global {
@@ -43,6 +45,14 @@ export default function CheckoutPage() {
 
   const [addressId, setAddressId] = useState<string | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'card'>('card')
+  const hasTrackedStart = useState(false) // Using ref-like state to track once if strict mode double invokes, but useEffect with empty dep is usually fine.
+
+  useEffect(() => {
+    trackEvent('Checkout Started', {
+      cart_total: totals.total,
+      item_count: totalItems
+    })
+  }, [])
 
   // Coupon state
   const [couponCode, setCouponCode] = useState('')
@@ -159,6 +169,10 @@ export default function CheckoutPage() {
         setCouponDiscount(result.discount)
         setCouponApplied(true)
         setCouponError(null)
+        trackEvent('Coupon Applied', {
+          code: couponCode,
+          discount_amount: result.discount
+        })
       } else {
         setCouponError(result.message || 'Invalid coupon code')
         setCouponDiscount(0)
@@ -207,6 +221,11 @@ export default function CheckoutPage() {
       console.log('✅ Order response:', res)
 
       if (res.success) {
+        trackEvent('Order Initiated', {
+          order_id: res.orderId,
+          amount: totals.total,
+          payment_method: paymentMethod
+        })
         if (paymentMethod === 'cod') {
           router.push(`/checkout/success?orderId=${res.orderId}`)
         } else if (res.requiresPayment && res.razorpayOrderId && (paymentMethod === 'card' || paymentMethod === 'upi')) {
@@ -343,7 +362,7 @@ export default function CheckoutPage() {
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 {/* Progress Steps */}
-                <div className="p-6 border-b border-gray-100">
+                <div className="p-4 sm:p-6 border-b border-gray-100">
                   <div className="flex justify-between items-center max-w-lg mx-auto">
                     {steps.map((step, index) => {
                       const StepIcon = step.icon
@@ -351,9 +370,9 @@ export default function CheckoutPage() {
                       const isCompleted = index < currentStepIndex
 
                       return (
-                        <div key={step.id} className="flex flex-col items-center relative z-10">
+                        <div key={step.id} className="flex flex-col items-center relative z-10 w-1/3">
                           <div className={`
-                            flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors
+                            flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 transition-colors
                             ${isActive
                               ? 'border-primary bg-primary text-black'
                               : isCompleted
@@ -361,10 +380,10 @@ export default function CheckoutPage() {
                                 : 'border-gray-300 bg-white text-gray-400'
                             }
                           `}>
-                            <StepIcon size={18} />
+                            <StepIcon size={16} className="sm:w-[18px] sm:h-[18px]" />
                           </div>
                           <span className={`
-                            mt-2 text-xs font-medium
+                            mt-2 text-[10px] sm:text-xs font-medium text-center
                             ${isActive ? 'text-primary' : isCompleted ? 'text-green-600' : 'text-gray-400'}
                           `}>
                             {step.name}
@@ -377,7 +396,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Step Content */}
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   {error && (
                     <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm">
                       {error}
@@ -530,7 +549,7 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Navigation */}
-                <div className="p-6 border-t border-gray-100 flex justify-between">
+                <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-between">
                   <Button
                     variant="outline"
                     onClick={() => {

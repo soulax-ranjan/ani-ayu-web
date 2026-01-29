@@ -9,6 +9,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { apiClient } from '@/lib/api'
 import { useCartStore } from '@/store/cartStore'
+import { trackEvent } from '@/lib/mixpanel'
 
 // Disable static generation for this page (it needs query params)
 export const dynamic = 'force-dynamic'
@@ -27,9 +28,16 @@ function OrderSuccessContent() {
             // Fetch order details
             apiClient.getOrder(orderId)
                 .then(data => {
-                    setOrder(data.order || data)
+                    const orderData = data.order || data
+                    setOrder(orderData)
                     // Ensure cart is cleared (though backend probably did it, local store might need sync)
                     clearCart()
+
+                    trackEvent('Purchase Completed', {
+                        order_id: orderId,
+                        total_amount: orderData.total_amount || orderData.totalAmount || orderData.amount || 0,
+                        currency: 'INR'
+                    })
                 })
                 .catch(err => console.error(err))
                 .finally(() => setLoading(false))

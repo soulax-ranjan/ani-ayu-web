@@ -51,7 +51,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
         </div>
 
         {/* Content Section */}
-        <div className="flex flex-col p-4 space-y-3">
+        <div className="flex flex-col p-3 space-y-2">
 
           {/* Title */}
           <h3 className="font-heading text-base font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300 min-h-[2.5rem]">
@@ -61,7 +61,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           {/* Price */}
           <div className="flex flex-col">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-gray-900 tracking-tight">
+              <span className="text-xl md:text-2xl font-black text-gray-900 tracking-tight">
                 ₹{product.price.toLocaleString()}
               </span>
             </div>
@@ -73,7 +73,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           </div>
 
           {/* View Details Hint */}
-          <div className="pt-2 text-sm text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="hidden md:block pt-1 text-xs md:text-sm text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             View Details →
           </div>
 
