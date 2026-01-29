@@ -10,6 +10,10 @@ import Footer from '@/components/Footer'
 import { useCartStore } from '@/store/cartStore'
 import { Button } from '@/components/ui/Button'
 
+// Disable static generation (uses cart state)
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
+
 export default function CartPage() {
   const { items, totals, updateQuantity, removeItem, clearCart, totalItems, fetchCart } = useCartStore()
 
