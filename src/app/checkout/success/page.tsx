@@ -10,6 +10,10 @@ import Footer from '@/components/Footer'
 import { apiClient } from '@/lib/api'
 import { useCartStore } from '@/store/cartStore'
 
+// Disable static generation for this page (it needs query params)
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
+
 function OrderSuccessContent() {
     const searchParams = useSearchParams()
     const router = useRouter()
