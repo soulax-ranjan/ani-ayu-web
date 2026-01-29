@@ -8,6 +8,10 @@ import FounderStory from "@/components/FounderStory"
 import Footer from "@/components/Footer"
 import MascotCorner from "@/components/MascotCorner"
 
+// Disable static generation (components fetch dynamic data)
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
+
 export default function HomePage() {
   return (
     <>
