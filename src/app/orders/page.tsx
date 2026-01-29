@@ -8,6 +8,10 @@ import { apiClient } from '@/lib/api'
 import { Loader2, Package, Calendar, ChevronRight, AlertCircle, ShoppingBag } from 'lucide-react'
 import Link from 'next/link'
 
+// Disable static generation (fetches user orders dynamically)
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
+
 export default function TrackOrderPage() {
     const [formData, setFormData] = useState({ email: '', phone: '' })
     const [loading, setLoading] = useState(false)
