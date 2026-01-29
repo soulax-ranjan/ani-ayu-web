@@ -17,6 +17,10 @@ declare global {
   }
 }
 
+// Disable static generation (uses cart state and dynamic data)
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
+
 export default function CheckoutPage() {
   const { items, totals, totalItems } = useCartStore()
   const router = useRouter()
