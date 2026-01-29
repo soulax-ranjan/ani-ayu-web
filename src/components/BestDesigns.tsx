@@ -3,40 +3,12 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useBestSellers } from "@/lib/hooks"
-import { useCartStore } from '@/store/cartStore'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
 export default function BestDesigns() {
   const { data: bestSellersData, loading, error } = useBestSellers(6) // Get top 6
-  const router = useRouter()
-  const { addItem } = useCartStore()
-  const [addingId, setAddingId] = useState<string | null>(null)
-  const [successId, setSuccessId] = useState<string | null>(null)
 
   // Use API data only
   const designs = bestSellersData?.bestSellers || []
-
-  const handleAddToCart = async (e: React.MouseEvent, d: any) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setAddingId(d.id)
-    const success = await addItem(d, 'M', 1)
-    setAddingId(null)
-    if (success) {
-      setSuccessId(d.id)
-      setTimeout(() => setSuccessId(null), 1500)
-    }
-  }
-
-  const handleBuyNow = async (e: React.MouseEvent, d: any) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setAddingId(d.id)
-    await addItem(d, 'M', 1)
-    setAddingId(null)
-    router.push('/checkout')
-  }
 
   if (loading) {
     return (
@@ -133,42 +105,25 @@ export default function BestDesigns() {
 
                 {/* Content */}
                 <div className="p-5">
-                  <h3 className="text-lg font-[var(--font-heading)] font-semibold text-ink md:text-xl">{d.name}</h3>
+                  <h3 className="text-lg font-[var(--font-heading)] font-semibold text-ink md:text-xl line-clamp-2 mb-3">{d.name}</h3>
 
                   {/* Price */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xl font-bold bg-gradient-to-r from-[#F6B400] via-[#FFD700] to-[#FFB300] bg-clip-text text-transparent drop-shadow-sm md:text-2xl">
-                      ₹{d.price.toLocaleString()}
-                    </span>
+                  <div className="flex flex-col mb-4">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-black text-gray-900 tracking-tight">
+                        ₹{d.price.toLocaleString()}
+                      </span>
+                    </div>
                     {d.originalPrice > d.price && (
-                      <span className="text-sm text-gray-400 line-through ml-2">₹{d.originalPrice.toLocaleString()}</span>
+                      <span className="text-xs text-gray-400 line-through font-medium">
+                        ₹{d.originalPrice.toLocaleString()}
+                      </span>
                     )}
                   </div>
 
-                  {/* Add to Cart & Buy Now Buttons */}
-                  <div className="flex gap-3 mt-2">
-                    <button
-                      onClick={e => handleAddToCart(e, d)}
-                      disabled={addingId === d.id}
-                      className={`flex-1 bg-white border border-primary text-primary px-4 py-2 rounded-full font-semibold shadow-sm hover:bg-primary hover:text-white transition-all duration-200 disabled:opacity-60 ${successId === d.id ? 'bg-green-50 text-green-700 border-green-400' : ''}`}
-                      title="Add to cart"
-                    >
-                      {addingId === d.id && !successId ? (
-                        <span className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin inline-block align-middle" />
-                      ) : successId === d.id ? (
-                        'Added!'
-                      ) : (
-                        'Add to Cart'
-                      )}
-                    </button>
-                    <button
-                      onClick={e => handleBuyNow(e, d)}
-                      disabled={addingId === d.id}
-                      className="flex-1 bg-primary text-white px-4 py-2 rounded-full font-semibold shadow-sm hover:bg-primary/90 transition-all duration-200"
-                      title="Buy Now"
-                    >
-                      Buy Now
-                    </button>
+                  {/* View Details Hint */}
+                  <div className="mt-4 text-sm text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    View Details →
                   </div>
                 </div>
               </article>

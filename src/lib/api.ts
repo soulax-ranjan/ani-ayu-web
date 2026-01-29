@@ -430,6 +430,24 @@ class APIClient {
     })
   }
 
+  // Coupon verification
+  async verifyCoupon(data: {
+    code: string
+    orderAmount: number
+  }): Promise<{
+    valid: boolean
+    discount?: number
+    discountType?: 'percentage' | 'fixed'
+    discountValue?: number
+    message?: string
+    finalAmount?: number
+  }> {
+    return this.request('/coupons/verify', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   // Checkout & Payment
   async placeOrder(data: {
     addressId: string

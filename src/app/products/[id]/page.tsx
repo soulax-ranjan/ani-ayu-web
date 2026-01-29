@@ -306,21 +306,22 @@ export default function ProductDetailsPage({ params }: Props) {
             {/* Product Images */}
             <div className="space-y-4">
               {/* Main Image */}
-              <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-white group cursor-pointer">
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100">
                 <Image
                   src={productImages[selectedImageIndex]}
                   alt={product.name}
                   width={600}
-                  height={750}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  onClick={() => openImagePreview(selectedImageIndex)}
+                  height={600}
+                  className="w-full h-full object-cover"
                 />
-                {/* Zoom overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 p-2 rounded-full">
-                    <ZoomIn size={24} className="text-gray-700" />
-                  </div>
-                </div>
+                {/* Zoom button - bottom right corner */}
+                <button
+                  onClick={() => openImagePreview(selectedImageIndex)}
+                  className="absolute bottom-4 right-4 bg-white/90 hover:bg-white p-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+                  title="View full size"
+                >
+                  <ZoomIn size={20} className="text-gray-700" />
+                </button>
               </div>
 
               {/* Thumbnail Images */}
@@ -330,24 +331,19 @@ export default function ProductDetailsPage({ params }: Props) {
                     <div key={index} className="flex-shrink-0">
                       <button
                         onClick={() => setSelectedImageIndex(index)}
-                        onDoubleClick={() => openImagePreview(index)}
-                        className={`relative aspect-[4/5] w-20 rounded-lg overflow-hidden border-2 transition-all duration-200 hover:scale-105 ${selectedImageIndex === index
-                          ? 'border-primary shadow-lg'
-                          : 'border-gray-200 hover:border-primary/50'
+                        className={`relative aspect-square w-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${selectedImageIndex === index
+                          ? 'border-primary shadow-md scale-105'
+                          : 'border-gray-200 hover:border-gray-300'
                           }`}
-                        title={`View image ${index + 1} (double-click to preview)`}
+                        title={`View image ${index + 1}`}
                       >
                         <Image
                           src={image}
                           alt={`${product.name} ${index + 1}`}
                           width={80}
-                          height={100}
+                          height={80}
                           className="w-full h-full object-cover"
                         />
-                        {/* Small zoom icon on hover */}
-                        <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-colors duration-200 flex items-center justify-center opacity-0 hover:opacity-100">
-                          <ZoomIn size={14} className="text-white" />
-                        </div>
                       </button>
                     </div>
                   ))}
@@ -381,15 +377,6 @@ export default function ProductDetailsPage({ params }: Props) {
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-[var(--font-heading)] font-bold text-gray-900 mb-2 md:mb-3 leading-tight">
                   {product.name}
                 </h1>
-
-                <div className="flex flex-wrap items-center gap-2 md:gap-4">
-                  <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg">
-                    <Star size={16} className="fill-amber-400 text-amber-400" />
-                    <span className="font-bold text-gray-900">{product.rating}</span>
-                    <span className="text-sm text-gray-500">/ 5.0</span>
-                  </div>
-                  <span className="text-xs md:text-sm text-gray-400 font-medium">{product.reviewCount} verified reviews</span>
-                </div>
               </div>
 
               {/* Price Block */}

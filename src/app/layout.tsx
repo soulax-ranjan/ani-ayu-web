@@ -11,6 +11,10 @@ const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700
 export const metadata: Metadata = {
   title: "Ani & Ayu — Indian Ethnic Kidswear",
   description: "Modern yet classical ethnicwear for kids 2–13.",
+  icons: {
+    icon: '/assets/logo/small-logo.png',
+    apple: '/assets/logo/small-logo.png',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
