@@ -90,14 +90,14 @@ export default function BestDesigns() {
     )
   }
   return (
-  <section className="w-full py-6 bg-cream">
+    <section className="w-full py-12 md:py-16 lg:py-20 bg-cream">
       <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
         {/* Heading */}
-        <div className="mb-10 text-center md:mb-12">
-          <h2 className="mb-3 text-3xl font-[var(--font-heading)] font-bold text-ink md:mb-4 md:text-4xl">
+        <div className="mb-12 text-center md:mb-16">
+          <h2 className="mb-4 text-2xl font-[var(--font-heading)] font-bold text-ink md:text-3xl lg:text-4xl">
             Our Best Picks
           </h2>
-          <p className="mx-auto max-w-2xl text-ink/70">
+          <p className="mx-auto max-w-2xl text-sm text-ink/70 md:text-base leading-relaxed">
             Handpicked traditional outfits kids love to wear — crafted for comfort and style.
           </p>
         </div>
@@ -109,69 +109,69 @@ export default function BestDesigns() {
               <article
                 className="group overflow-hidden rounded-3xl bg-white ring-1 ring-amber-100/70 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl cursor-pointer"
               >
-              {/* Image wrapper MUST have a fixed height when using `fill` */}
-              <div className="relative w-full h-72 sm:h-80 lg:h-96">
-                <Image
-                  src={d.image}
-                  alt={d.name}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  priority={index === 0}
-                />
+                {/* Image wrapper MUST have a fixed height when using `fill` */}
+                <div className="relative w-full h-72 sm:h-80 lg:h-96">
+                  <Image
+                    src={d.image}
+                    alt={d.name}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    priority={index === 0}
+                  />
 
-                {/* gradient overlay */}
+                  {/* gradient overlay */}
 
 
-                {/* Preorder badge overlay */}
-                <div className="absolute top-3 left-3 z-10">
-                  <span className="bg-accent text-white px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md">
-                    Preorder
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-5">
-                <h3 className="text-lg font-[var(--font-heading)] font-semibold text-ink md:text-xl">{d.name}</h3>
-                
-                {/* Price */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xl font-bold bg-gradient-to-r from-[#F6B400] via-[#FFD700] to-[#FFB300] bg-clip-text text-transparent drop-shadow-sm md:text-2xl">
-                    ₹{d.price.toLocaleString()}
-                  </span>
-                  {d.originalPrice > d.price && (
-                    <span className="text-sm text-gray-400 line-through ml-2">₹{d.originalPrice.toLocaleString()}</span>
-                  )}
+                  {/* Preorder badge overlay */}
+                  <div className="absolute top-3 left-3 z-10">
+                    <span className="bg-accent text-white px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md">
+                      Preorder
+                    </span>
+                  </div>
                 </div>
 
-                {/* Add to Cart & Buy Now Buttons */}
-                <div className="flex gap-3 mt-2">
-                  <button
-                    onClick={e => handleAddToCart(e, d)}
-                    disabled={addingId === d.id}
-                    className={`flex-1 bg-white border border-primary text-primary px-4 py-2 rounded-full font-semibold shadow-sm hover:bg-primary hover:text-white transition-all duration-200 disabled:opacity-60 ${successId === d.id ? 'bg-green-50 text-green-700 border-green-400' : ''}`}
-                    title="Add to cart"
-                  >
-                    {addingId === d.id && !successId ? (
-                      <span className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin inline-block align-middle" />
-                    ) : successId === d.id ? (
-                      'Added!'
-                    ) : (
-                      'Add to Cart'
+                {/* Content */}
+                <div className="p-5">
+                  <h3 className="text-lg font-[var(--font-heading)] font-semibold text-ink md:text-xl">{d.name}</h3>
+
+                  {/* Price */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xl font-bold bg-gradient-to-r from-[#F6B400] via-[#FFD700] to-[#FFB300] bg-clip-text text-transparent drop-shadow-sm md:text-2xl">
+                      ₹{d.price.toLocaleString()}
+                    </span>
+                    {d.originalPrice > d.price && (
+                      <span className="text-sm text-gray-400 line-through ml-2">₹{d.originalPrice.toLocaleString()}</span>
                     )}
-                  </button>
-                  <button
-                    onClick={e => handleBuyNow(e, d)}
-                    disabled={addingId === d.id}
-                    className="flex-1 bg-primary text-white px-4 py-2 rounded-full font-semibold shadow-sm hover:bg-primary/90 transition-all duration-200"
-                    title="Buy Now"
-                  >
-                    Buy Now
-                  </button>
+                  </div>
+
+                  {/* Add to Cart & Buy Now Buttons */}
+                  <div className="flex gap-3 mt-2">
+                    <button
+                      onClick={e => handleAddToCart(e, d)}
+                      disabled={addingId === d.id}
+                      className={`flex-1 bg-white border border-primary text-primary px-4 py-2 rounded-full font-semibold shadow-sm hover:bg-primary hover:text-white transition-all duration-200 disabled:opacity-60 ${successId === d.id ? 'bg-green-50 text-green-700 border-green-400' : ''}`}
+                      title="Add to cart"
+                    >
+                      {addingId === d.id && !successId ? (
+                        <span className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin inline-block align-middle" />
+                      ) : successId === d.id ? (
+                        'Added!'
+                      ) : (
+                        'Add to Cart'
+                      )}
+                    </button>
+                    <button
+                      onClick={e => handleBuyNow(e, d)}
+                      disabled={addingId === d.id}
+                      className="flex-1 bg-primary text-white px-4 py-2 rounded-full font-semibold shadow-sm hover:bg-primary/90 transition-all duration-200"
+                      title="Buy Now"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </article>
+              </article>
             </Link>
           ))}
         </div>

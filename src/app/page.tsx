@@ -4,7 +4,7 @@ import BestDesigns from "@/components/BestDesigns"
 import BannerProductSections from "@/components/BannerProductSections"
 import SingleImageBanner from "@/components/SingleImageBanner"
 import FounderStory from "@/components/FounderStory"
-import InstagramFeed from "@/components/InstagramFeed"
+// import InstagramFeed from "@/components/InstagramFeed"
 import Footer from "@/components/Footer"
 import MascotCorner from "@/components/MascotCorner"
 
@@ -19,7 +19,7 @@ export default function HomePage() {
         <BannerProductSections />
         <SingleImageBanner />
         <FounderStory />
-        <InstagramFeed />
+        {/* <InstagramFeed /> */}
       </main>
       <Footer />
     </>

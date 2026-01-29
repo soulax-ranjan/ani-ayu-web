@@ -10,6 +10,8 @@ import { apiClient } from '@/lib/api'
 import { Loader2, ArrowLeft, MapPin, CreditCard, Clock, Package, CheckCircle, Truck, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 
+export const runtime = 'edge'
+
 export default function OrderDetailsPage() {
     const { orderId } = useParams()
     const [order, setOrder] = useState<any>(null)

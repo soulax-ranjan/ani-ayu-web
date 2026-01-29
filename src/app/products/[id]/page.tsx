@@ -14,6 +14,8 @@ import { Product as APIProduct } from '@/lib/api'
 import { Product } from '@/types/product'
 import { apiClient } from '@/lib/api'
 
+export const runtime = 'edge'
+
 // Convert API Product to Frontend Product format
 function transformAPIProduct(apiProduct: APIProduct): Product {
   return {
@@ -654,8 +656,8 @@ export default function ProductDetailsPage({ params }: Props) {
                   <button
                     onClick={() => setSizeUnit('inches')}
                     className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-all ${sizeUnit === 'inches'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
                       }`}
                   >
                     Inches
@@ -663,8 +665,8 @@ export default function ProductDetailsPage({ params }: Props) {
                   <button
                     onClick={() => setSizeUnit('cm')}
                     className={`px-3 py-1.5 rounded-full text-xs md:text-sm font-medium transition-all ${sizeUnit === 'cm'
-                        ? 'bg-white text-gray-900 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
                       }`}
                   >
                     CM

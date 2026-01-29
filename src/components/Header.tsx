@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Search, User, ShoppingBag, Menu, X } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useCartStore } from '@/store/cartStore';
 
@@ -16,6 +16,7 @@ const NAV_LINKS = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { totalItems } = useCartStore();
 
   return (
@@ -25,12 +26,12 @@ export default function Header() {
         <div className="flex items-center shrink-0 mr-6 md:mr-8">
           <Link href="/" className="flex items-center group cursor-pointer" aria-label="Go to homepage">
             <Image
-              src="/assets/logo/ani_ayu_logo.png"
+              src="/assets/logo/main-logo.webp"
               alt="Ani & Ayu Logo"
               width={556}
               height={148}
               priority
-              className="h-20 w-auto sm:h-20 md:h-24 lg:h-28 object-contain transition-all duration-200"
+              className="h-24 w-auto sm:h-28 md:h-32 lg:h-36 object-contain transition-all duration-200"
             />
           </Link>
         </div>
@@ -38,7 +39,17 @@ export default function Header() {
         {/* Desktop nav */}
         <nav aria-label="Primary" className="hidden md:flex items-center gap-2 font-[var(--font-heading)]">
           {NAV_LINKS.map(({ href, label }) => {
-            const isActive = pathname === href || (href.includes('?') && pathname === href.split('?')[0]);
+            // Check if link is active by comparing both path and query params
+            let isActive = false;
+            if (href.includes('?')) {
+              const [linkPath, linkQuery] = href.split('?');
+              const category = searchParams?.get('category');
+              const expectedCategory = new URLSearchParams(linkQuery).get('category');
+              isActive = pathname === linkPath && category === expectedCategory;
+            } else {
+              // For /products without query, only active if no category param
+              isActive = pathname === href && !searchParams?.get('category');
+            }
             return (
               <Link
                 key={href}
@@ -68,12 +79,14 @@ export default function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-1 md:gap-2">
+          {/* Search button - hidden for now
           <button
             aria-label="Search"
             className="p-3 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95"
           >
             <Search size={20} className="text-gray-600 hover:text-primary" />
           </button>
+          */}
 
           <div className="relative group">
             <button
@@ -122,7 +135,17 @@ export default function Header() {
         <div className="md:hidden border-t border-gray-100 bg-cream/95 backdrop-blur-xl">
           <nav aria-label="Mobile" className="px-6 py-6 flex flex-col gap-3">
             {NAV_LINKS.map(({ href, label }) => {
-              const isActive = pathname === href || (href.includes('?') && pathname === href.split('?')[0]);
+              // Check if link is active by comparing both path and query params
+              let isActive = false;
+              if (href.includes('?')) {
+                const [linkPath, linkQuery] = href.split('?');
+                const category = searchParams?.get('category');
+                const expectedCategory = new URLSearchParams(linkQuery).get('category');
+                isActive = pathname === linkPath && category === expectedCategory;
+              } else {
+                // For /products without query, only active if no category param
+                isActive = pathname === href && !searchParams?.get('category');
+              }
               return (
                 <Link
                   key={href}

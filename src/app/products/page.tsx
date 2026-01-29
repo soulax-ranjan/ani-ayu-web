@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, Suspense } from 'react'
+import { useState, useMemo, Suspense, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Grid, SlidersHorizontal, X } from 'lucide-react'
 import Header from '@/components/Header'
@@ -13,6 +13,16 @@ import { Product as APIProduct } from '@/lib/api'
 
 // Convert API Product to Frontend Product format
 function transformAPIProduct(apiProduct: APIProduct): Product {
+  // Map category_id to category name
+  const getCategoryName = (categoryId: string): 'boys' | 'girls' => {
+    // Girls category UUID
+    if (categoryId === '22222222-2222-2222-2222-222222222222') {
+      return 'girls'
+    }
+    // All other categories are boys
+    return 'boys'
+  }
+
   return {
     id: apiProduct.id,
     name: apiProduct.name,
@@ -22,7 +32,7 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
     originalPrice: apiProduct.original_price,
     rating: apiProduct.rating,
     reviewCount: apiProduct.review_count,
-    category: apiProduct.category_id as 'boys' | 'girls',
+    category: getCategoryName(apiProduct.category_id),
     sizes: apiProduct.sizes,
     description: apiProduct.description,
     features: apiProduct.features,
@@ -45,26 +55,58 @@ function ProductsContent() {
     sortBy: 'popularity'
   })
 
-  // Build API parameters from filters
-  const apiParams = useMemo(() => ({
-    category: filters.category.length > 0 ? filters.category[0] : undefined,
-    minPrice: filters.priceRange[0],
-    maxPrice: filters.priceRange[1],
-    sizes: filters.sizes.length > 0 ? filters.sizes : undefined,
-    sort: filters.sortBy === 'price-low' ? 'price-asc' :
-      filters.sortBy === 'price-high' ? 'price-desc' :
-        filters.sortBy === 'rating' ? 'rating' : undefined,
-  }), [filters])
+  // Sync filters with URL changes
+  useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      category: categoryFromUrl ? [categoryFromUrl] : []
+    }))
+  }, [categoryFromUrl])
 
-  // Fetch products from API
-  const { data, loading, error } = useProducts(apiParams)
+  // Fetch ALL products from API (no filtering)
+  const { data, loading, error } = useProducts({})
 
-  const products = data?.products || []
+  const allProducts = (data?.products || []).map(transformAPIProduct)
 
-  // Filter to show only customizable products when no category is selected
-  const filteredProducts = products
-    .filter(product => categoryFromUrl ? true : product.customizable === true)
-    .map(transformAPIProduct)
+  // Filter products on the frontend
+  const filteredProducts = useMemo(() => {
+    let filtered = allProducts
+
+    // Filter by category
+    if (filters.category.length > 0) {
+      filtered = filtered.filter(p =>
+        filters.category.includes(p.category)
+      )
+    }
+
+    // Filter by price range
+    filtered = filtered.filter(p =>
+      p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]
+    )
+
+    // Filter by sizes
+    if (filters.sizes.length > 0) {
+      filtered = filtered.filter(p =>
+        p.sizes?.some(size => filters.sizes.includes(size))
+      )
+    }
+
+    // Sort products
+    if (filters.sortBy === 'price-low') {
+      filtered = [...filtered].sort((a, b) => a.price - b.price)
+    } else if (filters.sortBy === 'price-high') {
+      filtered = [...filtered].sort((a, b) => b.price - a.price)
+    } else if (filters.sortBy === 'rating') {
+      filtered = [...filtered].sort((a, b) => (b.rating || 0) - (a.rating || 0))
+    }
+
+    // Show only customizable products when no category is selected
+    if (filters.category.length === 0) {
+      filtered = filtered.filter(p => p.customizable === true)
+    }
+
+    return filtered
+  }, [allProducts, filters])
 
   const hasActiveFilters = filters.category.length > 0 || filters.sizes.length > 0 ||
     filters.priceRange[0] > 0 || filters.priceRange[1] < 10000

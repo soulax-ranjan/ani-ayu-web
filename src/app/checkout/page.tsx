@@ -108,12 +108,16 @@ export default function CheckoutPage() {
         // Correct structure based on user feedback: response.address.id
         const newAddressId = res.address?.id || res.id || res._id || (res.data && res.data.id)
 
+        console.log('🔍 Extracted address ID:', newAddressId)
+        console.log('🔍 Address ID type:', typeof newAddressId)
+        console.log('🔍 Is valid UUID format?', /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(newAddressId || ''))
+
         if (newAddressId) {
-          console.log('Address saved with ID:', newAddressId)
+          console.log('✅ Address saved with ID:', newAddressId)
           setAddressId(newAddressId)
           setCurrentStep('payment')
         } else {
-          console.error('Missing ID in address response. Full response:', res)
+          console.error('❌ Missing ID in address response. Full response:', res)
           setError("Failed to save address. Response received but ID missing. Check console for details.")
         }
       } catch (err: any) {
@@ -135,17 +139,29 @@ export default function CheckoutPage() {
     setError(null)
 
     try {
+      // Get cart item IDs
+      const cartItemIds = items.map(item => item.id)
+
       const checkoutData = {
         addressId,
-        paymentMethod
+        paymentMethod,
+        cartItemIds // Include cart items as per API requirement
       }
 
+      console.log('🛒 Placing order with data:', checkoutData)
+      console.log('📦 Guest ID:', localStorage.getItem('guest_id'))
+      console.log('🛍️ Cart items:', cartItemIds)
+
       const res = await apiClient.placeOrder(checkoutData)
+      console.log('✅ Order response:', res)
 
       if (res.success) {
         if (paymentMethod === 'cod') {
           router.push(`/checkout/success?orderId=${res.orderId}`)
-        } else if (paymentMethod === 'card' && res.razorpayOrderId) {
+        } else if (res.requiresPayment && res.razorpayOrderId && (paymentMethod === 'card' || paymentMethod === 'upi')) {
+
+          console.log('💳 Razorpay order received from checkout:', res.razorpayOrderId)
+          console.log('💰 Amount:', res.amount, 'Currency:', res.currency, 'Key:', res.key)
 
           // MOCK PAYMENT FLOW
           if (res.key === 'rzp_test_mock_key') {
@@ -176,25 +192,34 @@ export default function CheckoutPage() {
 
           // Open Razorpay
           const options = {
-            key: res.key,
-            amount: res.amount,
-            currency: res.currency,
+            key: res.key!,
+            amount: res.amount!,
+            currency: res.currency || 'INR',
             name: "Ani & Ayu",
-            description: "Order Payment", // Could contain order ID
+            description: "Order Payment",
             order_id: res.razorpayOrderId,
             handler: async function (response: any) {
+              setLoading(true) // Show loading during verification
               try {
                 const verifyRes = await apiClient.verifyPayment({
                   razorpayOrderId: response.razorpay_order_id,
                   razorpayPaymentId: response.razorpay_payment_id,
                   razorpaySignature: response.razorpay_signature
                 })
+
+                console.log('✅ Payment verified:', verifyRes)
+
                 if (verifyRes.success) {
+                  // Redirect to success page
                   router.push(`/checkout/success?orderId=${verifyRes.orderId}`)
+                } else {
+                  setError(verifyRes.message || "Payment verification failed")
+                  setLoading(false)
                 }
-              } catch (verifyErr) {
-                console.error("Payment verification failed", verifyErr)
-                setError("Payment verification failed. Please contact support.")
+              } catch (verifyErr: any) {
+                console.error("❌ Payment verification failed", verifyErr)
+                setError(verifyErr.message || "Payment verification failed. Please contact support.")
+                setLoading(false)
               }
             },
             prefill: {
@@ -209,15 +234,35 @@ export default function CheckoutPage() {
 
           const rzp1 = new window.Razorpay(options)
           rzp1.on('payment.failed', function (response: any) {
+            console.error('❌ Payment failed:', response.error)
             setError(`Payment Failed: ${response.error.description}`)
+            setLoading(false)
           });
           rzp1.open()
-          setLoading(false) // Wait for user interaction
         }
       }
     } catch (err: any) {
-      console.error(err)
-      setError(err.message || "Failed to place order.")
+      console.error('❌ Checkout error:', err)
+      console.error('Error details:', {
+        message: err.message,
+        status: err.status,
+        data: err.data
+      })
+
+      let errorMessage = err.message || "Failed to place order."
+
+      // Provide more specific error messages
+      if (err.message === 'Failed to fetch' || err.message === 'Network request failed') {
+        errorMessage = "Network error. Please check your internet connection and try again."
+      } else if (err.status === 400) {
+        errorMessage = err.data?.message || "Invalid order data. Please check your details."
+      } else if (err.status === 404) {
+        errorMessage = "Address not found. Please go back and re-enter your address."
+      } else if (err.status === 500) {
+        errorMessage = "Server error. Please try again in a moment."
+      }
+
+      setError(errorMessage)
       setLoading(false)
     }
   }

@@ -78,16 +78,16 @@ export interface Order {
   estimatedDelivery?: string
 }
 
-export type OrderStatus = 
+export type OrderStatus =
   | 'pending'
-  | 'confirmed' 
+  | 'confirmed'
   | 'processing'
   | 'shipped'
   | 'delivered'
   | 'cancelled'
   | 'refunded'
 
-export type PaymentStatus = 
+export type PaymentStatus =
   | 'pending'
   | 'processing'
   | 'completed'
@@ -95,7 +95,7 @@ export type PaymentStatus =
   | 'cancelled'
   | 'refunded'
 
-export type CheckoutStep = 
+export type CheckoutStep =
   | 'contact'
   | 'shipping'
   | 'payment'
@@ -103,3 +103,16 @@ export type CheckoutStep =
   | 'confirmation'
 
 // Re-export from existing types
+
+// Re-export payment types for convenience
+export type {
+  CheckoutRequest,
+  CheckoutResponse,
+  VerifyPaymentRequest,
+  VerifyPaymentResponse,
+  Payment,
+  PaymentStatus as PaymentStatusType,
+  PaymentMethodType,
+  PaymentError,
+  RazorpayResponse
+} from './payment'

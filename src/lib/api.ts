@@ -1,5 +1,6 @@
 // API configuration and client for Ani & Ayu e-commerce
-const API_BASE_URL = 'https://ani-ayu-api.onrender.com'
+//const API_BASE_URL = 'https://ani-ayu-api.onrender.com'
+const API_BASE_URL = 'http://localhost:3002'
 
 // Enhanced Product API response interface
 export interface Product {
@@ -13,12 +14,12 @@ export interface Product {
   original_price?: number
   discount_percent?: number
   currency?: string
-  
+
   // Images and media
   image_url: string
   images: string[]
   video_url?: string
-  
+
   // Core product info
   rating: number
   review_count: number
@@ -31,18 +32,18 @@ export interface Product {
   in_stock: boolean
   featured: boolean
   section?: number
-  
+
   // Enhanced fields
   sku?: string
   barcode?: string
   brand?: string
   tags?: string[]
   specifications?: Record<string, any>
-  
+
   // Inventory
   stock_quantity?: number
   low_stock_threshold?: number
-  
+
   // Physical attributes
   shipping_weight?: number
   dimensions?: {
@@ -51,18 +52,25 @@ export interface Product {
     height?: number
     unit?: string
   }
-  
+
   // Policies and metadata
   return_policy?: string
   warranty?: string
   meta_title?: string
   meta_description?: string
   meta_keywords?: string[]
-  
+
   // Status and features
   status?: 'active' | 'inactive' | 'draft' | 'archived'
   customizable?: boolean
-  
+
+  // Category object (populated)
+  category?: {
+    id: string
+    name: string
+    slug?: string
+  }
+
   // Timestamps
   created_at: string
   updated_at: string
@@ -179,7 +187,7 @@ class APIClient {
 
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${this.baseURL}${endpoint}`
-    
+
     // Get guest ID from localStorage if available
     let guestId = '';
     if (typeof window !== 'undefined') {
@@ -198,16 +206,16 @@ class APIClient {
 
     try {
       const response = await fetch(url, config)
-      
+
       if (!response.ok) {
         // Parse error response if possible
         let errorData;
         try {
-            errorData = await response.json();
+          errorData = await response.json();
         } catch (e) {
-            // ignore
+          // ignore
         }
-        
+
         const errorMessage = errorData?.message || `API Error: ${response.status} ${response.statusText}`;
         const error = new Error(errorMessage) as any;
         error.status = response.status;
@@ -239,9 +247,9 @@ class APIClient {
     const params = new URLSearchParams()
     params.append('featured', 'true')
     if (limit) params.append('limit', limit.toString())
-    
+
     const response = await this.request<{ products: Product[] }>(`/products?${params.toString()}`)
-    
+
     // Transform products to best sellers format with enhanced data
     const bestSellers: BestSeller[] = response.products.map((product, index) => ({
       id: product.id,
@@ -256,7 +264,7 @@ class APIClient {
       description: product.short_description || product.description,
       ageRange: product.age_range
     }))
-    
+
     return { bestSellers }
   }
 
@@ -302,14 +310,17 @@ class APIClient {
     filters: Record<string, unknown>
   }> {
     const searchParams = new URLSearchParams()
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
+          // Transform 'category' to 'categoryName' for backend
+          const paramKey = key === 'category' ? 'categoryName' : key
+
           if (Array.isArray(value)) {
-            value.forEach(v => searchParams.append(key, v))
+            value.forEach(v => searchParams.append(paramKey, v))
           } else {
-            searchParams.append(key, value.toString())
+            searchParams.append(paramKey, value.toString())
           }
         }
       })
@@ -412,7 +423,7 @@ class APIClient {
     state: string
     country: string
     postalCode: string
-  }): Promise<{ id: string; full_name: string; [key: string]: any }> {
+  }): Promise<{ id: string; full_name: string;[key: string]: any }> {
     return this.request('/addresses', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -420,10 +431,15 @@ class APIClient {
   }
 
   // Checkout & Payment
-  async placeOrder(data: { addressId: string; paymentMethod: 'cod' | 'card' }): Promise<{
+  async placeOrder(data: {
+    addressId: string
+    paymentMethod: 'cod' | 'card' | 'upi'
+    cartItemIds?: string[]
+  }): Promise<{
     success: boolean
     orderId: string
-    message?: string
+    message: string
+    requiresPayment?: boolean
     razorpayOrderId?: string
     amount?: number
     currency?: string
@@ -435,14 +451,36 @@ class APIClient {
     })
   }
 
+  async createRazorpayOrder(data: {
+    orderId: string
+    amount: number
+    currency?: string
+  }): Promise<{
+    success: boolean
+    razorpayOrderId: string
+    amount: number
+    currency: string
+    key: string
+  }> {
+    return this.request('/payments/create-order', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
   async verifyPayment(data: {
     razorpayOrderId: string
     razorpayPaymentId: string
     razorpaySignature: string
   }): Promise<{ success: boolean; orderId: string; message: string }> {
+    // Backend expects snake_case field names
     return this.request('/payments/verify', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        razorpay_order_id: data.razorpayOrderId,
+        razorpay_payment_id: data.razorpayPaymentId,
+        razorpay_signature: data.razorpaySignature
+      }),
     })
   }
 
@@ -497,7 +535,7 @@ export const getDiscountPercentage = (originalPrice: number, currentPrice: numbe
 
 export const getSessionId = (): string => {
   if (typeof window === 'undefined') return generateSessionId()
-  
+
   let sessionId = localStorage.getItem('ani_ayu_session_id')
   if (!sessionId) {
     sessionId = generateSessionId()
@@ -519,13 +557,13 @@ export const transformApiProduct = (apiProduct: Product): import('../types/produ
     originalPrice: apiProduct.original_price, // Legacy compatibility
     discount_percent: apiProduct.discount_percent || 0,
     currency: apiProduct.currency || 'INR',
-    
+
     // Images and media
     image: apiProduct.image_url || '', // Main image mapping
     image_url: apiProduct.image_url,
     images: apiProduct.images || [],
     video_url: apiProduct.video_url,
-    
+
     // Core product info
     rating: apiProduct.rating || 0,
     review_count: apiProduct.review_count || 0,
@@ -539,35 +577,35 @@ export const transformApiProduct = (apiProduct: Product): import('../types/produ
     ageRange: apiProduct.age_range, // Legacy compatibility
     material: apiProduct.material || '',
     occasion: apiProduct.occasion || '',
-    
+
     // Enhanced fields
     sku: apiProduct.sku,
     barcode: apiProduct.barcode,
     brand: apiProduct.brand,
     tags: apiProduct.tags || [],
     specifications: apiProduct.specifications || {},
-    
+
     // Inventory
     in_stock: apiProduct.in_stock !== false, // Default to true if undefined
     stock_quantity: apiProduct.stock_quantity,
     low_stock_threshold: apiProduct.low_stock_threshold || 5,
     featured: apiProduct.featured || false,
-    
+
     // Physical attributes
     shipping_weight: apiProduct.shipping_weight,
     dimensions: apiProduct.dimensions,
-    
+
     // Policies and metadata
     return_policy: apiProduct.return_policy,
     warranty: apiProduct.warranty,
     meta_title: apiProduct.meta_title,
     meta_description: apiProduct.meta_description,
     meta_keywords: apiProduct.meta_keywords || [],
-    
+
     // Status and features
     status: apiProduct.status || 'active',
     customizable: apiProduct.customizable || false,
-    
+
     // Timestamps
     created_at: apiProduct.created_at,
     updated_at: apiProduct.updated_at

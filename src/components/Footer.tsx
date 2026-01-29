@@ -5,7 +5,7 @@ import { Instagram, Facebook, Youtube, Mail, Phone, MapPin } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-gray-50 via-cream to-gray-50 text-ink">
+    <footer className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 text-white">
       <div className="mx-auto max-w-[1400px] px-4 md:px-6 lg:px-8">
 
         {/* Main Footer Content */}
@@ -13,23 +13,23 @@ export default function Footer() {
 
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-6">
+            <Link href="/" className="inline-block">
               <Image
-                src="/assets/logo/ani_ayu_logo.png"
+                src="/assets/logo/main-logo.webp"
                 alt="Ani & Ayu"
                 width={556}
                 height={148}
                 className="h-20 w-auto sm:h-20 md:h-24 lg:h-28 object-contain"
               />
             </Link>
-            <p className="text-gray-600 mb-6 max-w-md leading-relaxed text-sm md:text-base">
+            <p className="text-gray-300 mb-6 max-w-md leading-relaxed text-sm md:text-base">
               Beautiful traditional clothing for children, crafted with love and inspired by heritage.
               Making every occasion special for kids aged 2-13.
             </p>
 
             {/* Contact Info */}
             <div className="space-y-3 mb-6">
-              <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center gap-3 text-sm text-gray-300">
                 <div className="bg-primary/10 p-2 rounded-lg">
                   <Mail size={16} className="text-primary" />
                 </div>
@@ -37,7 +37,7 @@ export default function Footer() {
                   hello@aniayu.com
                 </a>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center gap-3 text-sm text-gray-300">
                 <div className="bg-primary/10 p-2 rounded-lg">
                   <Phone size={16} className="text-primary" />
                 </div>
@@ -49,7 +49,7 @@ export default function Footer() {
 
             {/* Social Media */}
             <div>
-              <h4 className="font-[var(--font-heading)] font-bold mb-4 text-gray-900 text-sm uppercase tracking-wider">
+              <h4 className="font-[var(--font-heading)] font-bold mb-4 text-white text-sm uppercase tracking-wider">
                 Follow Us
               </h4>
               <div className="flex gap-3">
@@ -86,14 +86,14 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-[var(--font-heading)] font-bold mb-6 text-gray-900 text-sm uppercase tracking-wider">
+            <h4 className="font-[var(--font-heading)] font-bold mb-6 text-white text-sm uppercase tracking-wider">
               Quick Links
             </h4>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/products"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   All Products
@@ -102,7 +102,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/products?category=girls"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Girls Collection
@@ -111,7 +111,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/products?category=boys"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Boys Collection
@@ -120,7 +120,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/orders"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Track Order
@@ -131,14 +131,14 @@ export default function Footer() {
 
           {/* Customer Care Section */}
           <div>
-            <h4 className="font-[var(--font-heading)] font-bold mb-6 text-gray-900 text-sm uppercase tracking-wider">
+            <h4 className="font-[var(--font-heading)] font-bold mb-6 text-white text-sm uppercase tracking-wider">
               Customer Care
             </h4>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/help/contact"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Contact Us
@@ -147,7 +147,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/help/shipping"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Shipping Info
@@ -156,7 +156,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/help/returns"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Returns & Exchanges
@@ -165,7 +165,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/help/size-guide"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Size Guide
@@ -174,7 +174,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/help/faq"
-                  className="text-gray-600 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   FAQ
@@ -185,27 +185,27 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-200 py-6">
+        <div className="border-t border-gray-700 py-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <div className="text-sm text-gray-600 text-center md:text-left">
+            <div className="text-sm text-gray-300 text-center md:text-left">
               © {new Date().getFullYear()} Ani & Ayu. All rights reserved. Made with ❤️ for little ones.
             </div>
             <div className="flex flex-wrap justify-center md:justify-end gap-6 text-sm">
               <Link
                 href="/legal/privacy"
-                className="text-gray-600 hover:text-primary transition-colors font-medium"
+                className="text-gray-300 hover:text-primary transition-colors font-medium"
               >
                 Privacy Policy
               </Link>
               <Link
                 href="/legal/terms"
-                className="text-gray-600 hover:text-primary transition-colors font-medium"
+                className="text-gray-300 hover:text-primary transition-colors font-medium"
               >
                 Terms of Service
               </Link>
               <Link
                 href="/legal/refund"
-                className="text-gray-600 hover:text-primary transition-colors font-medium"
+                className="text-gray-300 hover:text-primary transition-colors font-medium"
               >
                 Refund Policy
               </Link>

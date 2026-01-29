@@ -15,7 +15,7 @@ const promoBanners = [
     title: "Festival Ready",
     subtitle: "Traditional designs for special occasions",
     ctaText: "Explore Collection",
-    ctaLink: "/products?category=festival",
+    ctaLink: "/products",
     backgroundImage: "/assets/placeholders/festive-version-2.png",
     imageAlt: "Children in festival wear"
   },

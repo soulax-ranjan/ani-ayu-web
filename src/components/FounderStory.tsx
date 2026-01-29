@@ -10,35 +10,35 @@ export default function FounderStory() {
             <div className="inline-block px-4 py-2 bg-primary/10 rounded-full text-primary font-medium text-sm mb-6">
               Our Story
             </div>
-            
+
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-[var(--font-heading)] font-bold text-ink mb-6 leading-tight">
               Crafted with Love,
               <span className="block text-primary">Inspired by Tradition</span>
             </h2>
-            
+
             <div className="space-y-6 text-ink/80 leading-relaxed">
               <p className="text-lg md:text-xl">
-                "As an aunt to two beautiful little girls, I realized how difficult it was to find 
-                stunning, comfortable ethnic wear for children that honored our rich cultural heritage 
+                "As an aunt to two beautiful little girls, I realized how difficult it was to find
+                stunning, comfortable ethnic wear for children that honored our rich cultural heritage
                 while meeting the needs of today's active kids."
               </p>
-              
+
               <p className="text-base md:text-lg">
-                Founded by <strong className="text-ink font-semibold">Nalini</strong>, 
-                Ani & Ayu was born from love and inspiration. The brand is named after her two 
-                beautiful nieces - <strong className="text-primary">Ani</strong> and <strong className="text-primary">Ayu</strong> - 
+                Founded by <strong className="text-ink font-semibold">Nalini</strong>,
+                Ani & Ayu was born from love and inspiration. The brand is named after her two
+                beautiful nieces - <strong className="text-primary">Ani</strong> and <strong className="text-primary">Ayu</strong> -
                 whose playful spirits and need for comfortable yet traditional clothing sparked this journey.
               </p>
-              
+
               <p className="text-base md:text-lg">
-                Every piece in our collection is thoughtfully designed with premium fabrics, 
-                traditional craftsmanship, and modern sensibilities. We believe that ethnic 
+                Every piece in our collection is thoughtfully designed with premium fabrics,
+                traditional craftsmanship, and modern sensibilities. We believe that ethnic
                 wear should be accessible, beautiful, and made for the active lives of today's children.
               </p>
-              
+
               <div className="pt-6 border-t border-ink/10">
                 <p className="text-sm text-ink/60 italic">
-                  "Watching Ani and Ayu in their traditional outfits inspired me to create a brand 
+                  "Watching Ani and Ayu in their traditional outfits inspired me to create a brand
                   where every child can feel as beautiful and confident as they do."
                 </p>
                 <p className="text-sm font-semibold text-primary mt-2">
@@ -47,7 +47,7 @@ export default function FounderStory() {
               </div>
             </div>
           </div>
-          
+
           {/* Image */}
           <div className="order-1 lg:order-2">
             <div className="relative">
@@ -64,27 +64,27 @@ export default function FounderStory() {
                 {/* Soft overlay for better text contrast if needed */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
               </div>
-              
+
               {/* Decorative elements */}
               <div className="absolute -top-6 -right-6 w-24 h-24 bg-gold/20 rounded-full blur-xl" />
               <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-primary/10 rounded-full blur-2xl" />
-              
+
               {/* Small accent card */}
               <div className="absolute bottom-8 left-8 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl max-w-48">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
                   <span className="text-xs font-semibold text-ink/70 uppercase tracking-wide">
-                    Established 2020
+                    Established 2025
                   </span>
                 </div>
                 <p className="text-sm text-ink font-medium">
-                  Trusted by 10,000+ families across India
+                  Trusted by 1,000+ families across India
                 </p>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Values */}
         <div className="mt-16 pt-16 border-t border-ink/10">
           <div className="text-center mb-12">
@@ -95,7 +95,7 @@ export default function FounderStory() {
               The principles that guide everything we create
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center group">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
@@ -106,7 +106,7 @@ export default function FounderStory() {
                 Every stitch tells a story of dedication and attention to detail
               </p>
             </div>
-            
+
             <div className="text-center group">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                 <span className="text-2xl">🌸</span>
@@ -116,7 +116,7 @@ export default function FounderStory() {
                 Preserving traditions while embracing modern comfort and style
               </p>
             </div>
-            
+
             <div className="text-center group">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                 <span className="text-2xl">💝</span>
