@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import Header from "@/components/Header"
 import HeroCarousel from "@/components/HeroCarousel"
 import BestDesigns from "@/components/BestDesigns"
@@ -24,7 +25,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header />
+      <Suspense fallback={<div className="h-16 md:h-20 bg-cream" />}>
+        <Header />
+      </Suspense>
       <main className="flex flex-col">
         {/* Hero Carousel */}
         <HeroCarousel banners={bannersData.banners} />
