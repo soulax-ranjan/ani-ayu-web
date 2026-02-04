@@ -6,21 +6,30 @@ import SingleImageBanner from "@/components/SingleImageBanner"
 import FounderStory from "@/components/FounderStory"
 // import InstagramFeed from "@/components/InstagramFeed"
 import Footer from "@/components/Footer"
-import MascotCorner from "@/components/MascotCorner"
+import { apiClient, transformApiProduct } from "@/lib/api"
 
-// Disable static generation (components fetch dynamic data)
-export const dynamic = 'force-dynamic'
-export const runtime = 'edge'
+// Enable ISR (Incremental Static Regeneration) with 5 minute revalidation
+export const revalidate = 300
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Parallel data fetching
+  const [bannersData, bestSellersData, productsData] = await Promise.all([
+    apiClient.getBanners().catch(() => ({ banners: [] })),
+    apiClient.getBestSellers(6).catch(() => ({ bestSellers: [] })),
+    apiClient.getProducts({ limit: 100 }).catch(() => ({ products: [], pagination: { page: 1, limit: 100, total: 0, totalPages: 0, hasNext: false, hasPrev: false }, filters: {} }))
+  ])
+
+  // Transform products for BannerProductSections
+  const products = productsData.products.map(transformApiProduct)
+
   return (
     <>
       <Header />
       <main className="flex flex-col">
         {/* Hero Carousel */}
-        <HeroCarousel />
-        <BestDesigns />
-        <BannerProductSections />
+        <HeroCarousel banners={bannersData.banners} />
+        <BestDesigns bestSellers={bestSellersData.bestSellers} />
+        <BannerProductSections products={products} />
         <SingleImageBanner />
         <FounderStory />
         {/* <InstagramFeed /> */}

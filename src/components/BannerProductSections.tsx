@@ -115,59 +115,28 @@ const sections = [
   }
 ]
 
-export default function BannerProductSections() {
-  const [section1Products, setSection1Products] = useState<Product[]>([])
-  const [section2Products, setSection2Products] = useState<Product[]>([])
-  const [section3Products, setSection3Products] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+interface BannerProductSectionsProps {
+  products?: Product[]
+}
 
-  useEffect(() => {
-    const fetchAllSectionProducts = async () => {
-      try {
-        // Fetch all products and then filter by section
-        const response = await apiClient.getProducts({
-          limit: 100, // Get more products to ensure we have products for each section
-        })
-        const allProducts = response.products.map(convertApiProduct)
+// ... imports remain the same but I'll paste the whole relevant block to be safe or use replace_file_content on the function body.
+// Actually, let's just replace the whole component function since the imports and helper are fine.
 
-        // Filter products by section
-        const section1 = allProducts.filter(p => p.section === 1).slice(0, 4)
-        const section2 = allProducts.filter(p => p.section === 2).slice(0, 4)
-        const section3 = allProducts.filter(p => p.section === 3).slice(0, 4)
+export default function BannerProductSections({ products: initialProducts }: BannerProductSectionsProps) {
+  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(!initialProducts)
 
-        console.log('API Products by section:', {
-          total: allProducts.length,
-          section1: section1.length,
-          section2: section2.length,
-          section3: section3.length,
-          allSections: allProducts.map(p => ({ id: p.id, name: p.name, section: p.section, image: p.image }))
-        })
+  // Use initialProducts if available, otherwise fetchedProducts
+  const products = initialProducts || fetchedProducts
 
-        setSection1Products(section1)
-        setSection2Products(section2)
-        setSection3Products(section3)
-
-      } catch (error) {
-        console.error('Failed to fetch section products:', error)
-        // Set empty if API fails
-        setSection1Products([])
-        setSection2Products([])
-        setSection3Products([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchAllSectionProducts()
-  }, [])
-
+  // Derived state for sections
   const sections = [
     {
       id: 1,
       bannerImage: '/assets/placeholders/n4-3.jpg',
       bannerAlt: 'Daily Comfort Collection',
       bannerLink: '/products?section=1',
-      products: section1Products,
+      products: products.filter(p => p.section === 1).slice(0, 4),
       sectionTitle: 'Daily Comfort'
     },
     {
@@ -175,7 +144,7 @@ export default function BannerProductSections() {
       bannerImage: '/assets/placeholders/n8-2.jpg',
       bannerAlt: 'Festival Collection',
       bannerLink: '/products?section=2',
-      products: section2Products,
+      products: products.filter(p => p.section === 2).slice(0, 4),
       sectionTitle: 'Festival Ready'
     },
     {
@@ -183,10 +152,34 @@ export default function BannerProductSections() {
       bannerImage: '/assets/placeholders/n13-1.jpg',
       bannerAlt: 'Playtime Collection',
       bannerLink: '/products?section=3',
-      products: section3Products,
+      products: products.filter(p => p.section === 3).slice(0, 4),
       sectionTitle: 'Playtime Essentials'
     }
   ]
+
+  useEffect(() => {
+    // If we have initial products, we don't need to fetch
+    if (initialProducts) return
+
+    const fetchAllSectionProducts = async () => {
+      try {
+        // Fetch all products and then filter by section
+        const response = await apiClient.getProducts({
+          limit: 100, // Get more products to ensure we have products for each section
+        })
+        const allProducts = response.products.map(convertApiProduct)
+        setFetchedProducts(allProducts)
+
+      } catch (error) {
+        console.error('Failed to fetch section products:', error)
+        setFetchedProducts([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAllSectionProducts()
+  }, [initialProducts])
 
   if (loading) {
     return (

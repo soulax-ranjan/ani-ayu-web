@@ -39,7 +39,8 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
     ageRange: apiProduct.age_range,
     material: apiProduct.material,
     occasion: apiProduct.occasion,
-    customizable: apiProduct.customizable
+    customizable: apiProduct.customizable,
+    allProduct: apiProduct.allProduct
   }
 }
 
@@ -100,9 +101,9 @@ function ProductsContent() {
       filtered = [...filtered].sort((a, b) => (b.rating || 0) - (a.rating || 0))
     }
 
-    // Show only customizable products when no category is selected
+    // Show only products marked for "all products" display when no category is selected
     if (filters.category.length === 0) {
-      filtered = filtered.filter(p => p.customizable === true)
+      filtered = filtered.filter(p => p.allProduct === true)
     }
 
     return filtered

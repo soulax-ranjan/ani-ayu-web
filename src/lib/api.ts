@@ -1,7 +1,7 @@
 // API configuration and client for Ani & Ayu e-commerce
 //const API_BASE_URL = 'https://ani-ayu-api.onrender.com'
-const API_BASE_URL = 'https://ani-ayu-api-9b22.onrender.com'
-
+//const API_BASE_URL = 'https://ani-ayu-api-9b22.onrender.com'
+const API_BASE_URL = 'https://api.aniayu.in'
 // Enhanced Product API response interface
 export interface Product {
   id: string
@@ -32,6 +32,7 @@ export interface Product {
   in_stock: boolean
   featured: boolean
   section?: number
+  allProduct?: boolean // Used to filter products for Shop All page
 
   // Enhanced fields
   sku?: string
@@ -608,6 +609,7 @@ export const transformApiProduct = (apiProduct: Product): import('../types/produ
     stock_quantity: apiProduct.stock_quantity,
     low_stock_threshold: apiProduct.low_stock_threshold || 5,
     featured: apiProduct.featured || false,
+    section: apiProduct.section,
 
     // Physical attributes
     shipping_weight: apiProduct.shipping_weight,
@@ -623,6 +625,7 @@ export const transformApiProduct = (apiProduct: Product): import('../types/produ
     // Status and features
     status: apiProduct.status || 'active',
     customizable: apiProduct.customizable || false,
+    allProduct: apiProduct.allProduct || false,
 
     // Timestamps
     created_at: apiProduct.created_at,

@@ -5,12 +5,20 @@ import { useState, useEffect } from "react"
 import { ArrowRight } from "lucide-react"
 import { useBanners } from "@/lib/hooks"
 
-export default function HeroBanner() {
+import { Banner } from "@/lib/api"
+
+interface HeroBannerProps {
+  banners?: Banner[]
+}
+
+export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) {
   const { data: bannersData, loading, error } = useBanners()
   const [currentSlide, setCurrentSlide] = useState(0)
 
-  // Use all banners from API data
-  const banners = bannersData?.banners || []
+  // Use server data if available, otherwise fell back to client fetch
+  const banners = serverBanners || bannersData?.banners || []
+  const isLoading = !serverBanners && loading
+  const errorMessage = !serverBanners ? error : null
 
   // Auto-rotate carousel
   useEffect(() => {
@@ -23,7 +31,7 @@ export default function HeroBanner() {
     return () => clearInterval(interval)
   }, [banners.length])
 
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="w-screen !m-0 !border-none !p-0 relative">
         <div className="relative w-full aspect-[16/9] !m-0 !border-none !p-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/30 animate-pulse">
@@ -36,13 +44,13 @@ export default function HeroBanner() {
     )
   }
 
-  if (error) {
+  if (errorMessage) {
     return (
       <section className="w-screen !m-0 !border-none !p-0">
         <div className="relative w-full aspect-[16/9] !m-0 !border-none !p-0 bg-red-100 flex items-center justify-center">
           <div className="text-center">
             <p className="text-red-600 font-semibold">Error loading banners</p>
-            <p className="text-sm text-red-500">{error}</p>
+            <p className="text-sm text-red-500">{errorMessage}</p>
           </div>
         </div>
       </section>

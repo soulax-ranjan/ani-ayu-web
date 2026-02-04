@@ -4,13 +4,21 @@ import Image from "next/image"
 import Link from "next/link"
 import { useBestSellers } from "@/lib/hooks"
 
-export default function BestDesigns() {
+import { BestSeller } from "@/lib/api"
+
+interface BestDesignsProps {
+  bestSellers?: BestSeller[]
+}
+
+export default function BestDesigns({ bestSellers: serverBestSellers }: BestDesignsProps) {
   const { data: bestSellersData, loading, error } = useBestSellers(6) // Get top 6
 
   // Use API data only
-  const designs = bestSellersData?.bestSellers || []
+  const designs = serverBestSellers || bestSellersData?.bestSellers || []
+  const isLoading = !serverBestSellers && loading
+  const errorMessage = !serverBestSellers ? error : null
 
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="w-full py-6 bg-cream">
         <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
@@ -32,7 +40,7 @@ export default function BestDesigns() {
     )
   }
 
-  if (error) {
+  if (errorMessage) {
     return (
       <section className="w-full py-6 bg-cream">
         <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
@@ -40,7 +48,7 @@ export default function BestDesigns() {
             <h2 className="mb-3 text-3xl font-[var(--font-heading)] font-bold text-ink md:mb-4 md:text-4xl">
               Our Best Picks
             </h2>
-            <p className="text-red-600">Error loading best sellers: {error}</p>
+            <p className="text-red-600">Error loading best sellers: {errorMessage}</p>
           </div>
         </div>
       </section>
