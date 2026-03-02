@@ -2,6 +2,7 @@
 
 import { useState, useMemo, Suspense, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { Grid, SlidersHorizontal, X } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -40,7 +41,8 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
     material: apiProduct.material,
     occasion: apiProduct.occasion,
     customizable: apiProduct.customizable,
-    allProduct: apiProduct.allProduct
+    allProduct: apiProduct.allProduct,
+    status: apiProduct.status || 'active'
   }
 }
 
@@ -106,6 +108,9 @@ function ProductsContent() {
       filtered = filtered.filter(p => p.allProduct === true)
     }
 
+    // Only show active products
+    filtered = filtered.filter(p => p.status === 'active')
+
     return filtered
   }, [allProducts, filters])
 
@@ -146,8 +151,15 @@ function ProductsContent() {
           <div>
             {loading ? (
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading products...</p>
+                <div className="relative w-20 h-20 mx-auto animate-pulse">
+                  <Image
+                    src="/assets/logo/small-logo.png"
+                    alt="Loading..."
+                    width={80}
+                    height={80}
+                    className="object-contain"
+                  />
+                </div>
               </div>
             ) : error ? (
               <div className="text-center py-12">
@@ -254,8 +266,15 @@ export default function ProductsPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading products...</p>
+          <div className="relative w-20 h-20 mx-auto animate-pulse">
+            <Image
+              src="/assets/logo/small-logo.png"
+              alt="Loading..."
+              width={80}
+              height={80}
+              className="object-contain"
+            />
+          </div>
         </div>
       </div>
     }>

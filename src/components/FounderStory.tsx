@@ -2,7 +2,7 @@ import Image from "next/image"
 
 export default function FounderStory() {
   return (
-    <section className="w-full py-16 md:py-20 bg-gradient-to-br from-cream to-mint/30">
+    <section className="w-full py-16 md:py-20">
       <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Content */}
@@ -78,7 +78,7 @@ export default function FounderStory() {
                   </span>
                 </div>
                 <p className="text-sm text-ink font-medium">
-                  Trusted by 1,000+ families across India
+                  Made with love, since 2025
                 </p>
               </div>
             </div>

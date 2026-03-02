@@ -36,25 +36,21 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           {/* Badges */}
-          <div className="absolute top-3 inset-x-3 flex justify-between items-start z-10">
-            {discountPercent ? (
+          {discountPercent && (
+            <div className="absolute top-3 left-3 z-10">
               <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm flex items-center gap-1">
                 <Sparkles size={12} className="fill-current" />
                 <span>{discountPercent}% OFF</span>
               </div>
-            ) : <div />}
-
-            <span className="bg-white/95 backdrop-blur-md text-gray-800 text-[10px] font-extrabold px-3 py-1.5 rounded-full shadow-lg border border-white/40 uppercase tracking-[0.1em]">
-              Preorder
-            </span>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Content Section */}
         <div className="flex flex-col p-4 space-y-3">
 
           {/* Title */}
-          <h3 className="font-heading text-base font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300 min-h-[2.5rem]">
+          <h3 className="font-heading text-base font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
 
@@ -71,12 +67,6 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
               </span>
             )}
           </div>
-
-          {/* View Details Hint */}
-          <div className="pt-2 text-sm text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            View Details →
-          </div>
-
         </div>
 
       </div>

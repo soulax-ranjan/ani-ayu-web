@@ -33,18 +33,18 @@ export default function Footer() {
                 <div className="bg-primary/10 p-2 rounded-lg">
                   <Mail size={16} className="text-primary" />
                 </div>
-                <a href="mailto:hello@aniayu.com" className="hover:text-primary transition-colors">
-                  hello@aniayu.com
+                <a href="mailto:support@aniayu.com" className="hover:text-primary transition-colors">
+                  support@aniayu.com
                 </a>
               </div>
-              <div className="flex items-center gap-3 text-sm text-gray-300">
+              {/* <div className="flex items-center gap-3 text-sm text-gray-300">
                 <div className="bg-primary/10 p-2 rounded-lg">
                   <Phone size={16} className="text-primary" />
                 </div>
                 <a href="tel:+911234567890" className="hover:text-primary transition-colors">
                   +91 123 456 7890
                 </a>
-              </div>
+              </div> */}
             </div>
 
             {/* Social Media */}
@@ -54,7 +54,7 @@ export default function Footer() {
               </h4>
               <div className="flex gap-3">
                 <a
-                  href="https://instagram.com/aniayu"
+                  href="https://www.instagram.com/ani_ayu_kids"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
@@ -62,7 +62,7 @@ export default function Footer() {
                 >
                   <Instagram size={20} className="text-white" />
                 </a>
-                <a
+                {/* <a
                   href="https://facebook.com/aniayu"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -79,7 +79,7 @@ export default function Footer() {
                   className="bg-gradient-to-br from-red-500 to-red-700 p-3 rounded-xl hover:shadow-lg hover:shadow-red-500/30 transition-all hover:scale-110 transform duration-200 group"
                 >
                   <Youtube size={20} className="text-white" />
-                </a>
+                </a> */}
               </div>
             </div>
           </div>
@@ -160,24 +160,6 @@ export default function Footer() {
                 >
                   <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                   Returns & Exchanges
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/help/size-guide"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Size Guide
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/help/faq"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  FAQ
                 </Link>
               </li>
             </ul>

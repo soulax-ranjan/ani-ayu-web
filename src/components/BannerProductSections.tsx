@@ -197,7 +197,8 @@ export default function BannerProductSections({ products: initialProducts }: Ban
       {sections.map((section, index) => (
         <div
           key={section.id}
-          className={index % 2 === 0 ? 'bg-white' : 'bg-cream/30'}
+          className={index % 2 === 0 ? '' : ''}
+          style={{ background: index % 2 === 0 ? '#f0ece6' : '#f7f4f0' }}
         >
           <BannerProductSection
             bannerImage={section.bannerImage}

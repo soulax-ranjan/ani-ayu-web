@@ -1,7 +1,8 @@
 // API configuration and client for Ani & Ayu e-commerce
 //const API_BASE_URL = 'https://ani-ayu-api.onrender.com'
 //const API_BASE_URL = 'https://ani-ayu-api-9b22.onrender.com'
-const API_BASE_URL = 'https://api.aniayu.in'
+const API_BASE_URL = 'http://localhost:3002'
+//const API_BASE_URL = 'http://localhost:3002'
 // Enhanced Product API response interface
 export interface Product {
   id: string
@@ -40,6 +41,7 @@ export interface Product {
   brand?: string
   tags?: string[]
   specifications?: Record<string, any>
+  size_chart?: Record<string, any>
 
   // Inventory
   stock_quantity?: number
@@ -244,15 +246,24 @@ class APIClient {
     return this.request<{ topPicks: TopPick[] }>('/homepage/top-picks')
   }
 
-  async getBestSellers(limit?: number): Promise<{ bestSellers: BestSeller[] }> {
+  async getBestSellers(limit: number = 8): Promise<{ bestSellers: BestSeller[] }> {
+    // Fetch all active products (featured first) to fill up to `limit`
     const params = new URLSearchParams()
-    params.append('featured', 'true')
-    if (limit) params.append('limit', limit.toString())
+    params.append('limit', '100') // fetch enough to pick from
 
     const response = await this.request<{ products: Product[] }>(`/products?${params.toString()}`)
+    const activeProducts = response.products.filter(p => p.status === 'active')
 
-    // Transform products to best sellers format with enhanced data
-    const bestSellers: BestSeller[] = response.products.map((product, index) => ({
+    // Sort: featured first, then by rating desc as tiebreaker
+    const sorted = [...activeProducts].sort((a, b) => {
+      if (a.featured && !b.featured) return -1
+      if (!a.featured && b.featured) return 1
+      return (b.rating || 0) - (a.rating || 0)
+    })
+
+    const selected = sorted.slice(0, limit)
+
+    const bestSellers: BestSeller[] = selected.map((product, index) => ({
       id: product.id,
       name: product.name,
       price: product.price,
@@ -328,7 +339,24 @@ class APIClient {
     }
 
     const query = searchParams.toString() ? `?${searchParams.toString()}` : ''
-    return this.request(`/products${query}`)
+    const response = await this.request<{
+      products: Product[]
+      pagination: {
+        page: number
+        limit: number
+        total: number
+        totalPages: number
+        hasNext: boolean
+        hasPrev: boolean
+      }
+      filters: Record<string, unknown>
+    }>(`/products${query}`)
+
+    if (response && response.products) {
+      response.products = response.products.filter(p => p.status === 'active')
+    }
+
+    return response
   }
 
   async getProduct(id: string): Promise<Product> {
@@ -336,7 +364,11 @@ class APIClient {
   }
 
   async getRelatedProducts(id: string): Promise<{ products: Product[] }> {
-    return this.request<{ products: Product[] }>(`/products/${id}/related`)
+    const response = await this.request<{ products: Product[] }>(`/products/${id}/related`)
+    if (response && response.products) {
+      response.products = response.products.filter(p => p.status === 'active')
+    }
+    return response
   }
 
   // Category APIs
@@ -603,6 +635,7 @@ export const transformApiProduct = (apiProduct: Product): import('../types/produ
     brand: apiProduct.brand,
     tags: apiProduct.tags || [],
     specifications: apiProduct.specifications || {},
+    size_chart: apiProduct.size_chart,
 
     // Inventory
     in_stock: apiProduct.in_stock !== false, // Default to true if undefined

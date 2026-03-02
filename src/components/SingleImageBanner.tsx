@@ -2,7 +2,7 @@ import Image from "next/image"
 
 export default function SingleImageBanner() {
   return (
-    <section className="w-full py-6 md:py-8 lg:py-12">
+    <section className="w-full">
       <div className="mx-auto max-w-[1400px] px-4 md:px-6 lg:px-8">
         <div className="relative w-full h-[300px] md:h-[450px] lg:h-[600px] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl group">
           <Image

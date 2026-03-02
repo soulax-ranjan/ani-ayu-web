@@ -35,6 +35,7 @@ export interface Product {
   brand?: string
   tags?: string[]
   specifications?: Record<string, any>
+  size_chart?: Record<string, any>
 
   // Inventory
   in_stock?: boolean
