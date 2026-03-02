@@ -24,7 +24,7 @@ export default function FounderStory() {
               </p>
 
               <p className="text-base md:text-lg">
-                Founded by <strong className="text-ink font-semibold">Nalini</strong>,
+                Founded by <strong className="text-ink font-semibold">Nalini Gautam</strong>,
                 Ani & Ayu was born from love and inspiration. The brand is named after her two
                 beautiful nieces - <strong className="text-primary">Ani</strong> and <strong className="text-primary">Ayu</strong> -
                 whose playful spirits and need for comfortable yet traditional clothing sparked this journey.
@@ -42,7 +42,7 @@ export default function FounderStory() {
                   where every child can feel as beautiful and confident as they do."
                 </p>
                 <p className="text-sm font-semibold text-primary mt-2">
-                  - Nalini, Founder
+                  - Nalini Gautam, Founder
                 </p>
               </div>
             </div>
@@ -55,7 +55,7 @@ export default function FounderStory() {
               <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
                 <Image
                   src="/assets/mascot-sketch.png"
-                  alt="Ani & Ayu Founder - Nalini with her inspiration"
+                  alt="Ani & Ayu Founder - Nalini Gautam with her inspiration"
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"

@@ -353,8 +353,8 @@ export default function ProductDetailsPage({ params }: Props) {
                       key={index}
                       onClick={() => setSelectedImageIndex(index)}
                       className={`relative w-20 aspect-[3/4] flex-shrink-0 rounded-lg overflow-hidden transition-all ${selectedImageIndex === index
-                          ? 'shadow-lg scale-105'
-                          : 'bg-gray-100 hover:shadow-sm hover:scale-102'
+                        ? 'shadow-lg scale-105'
+                        : 'bg-gray-100 hover:shadow-sm hover:scale-102'
                         }`}
                     >
                       <Image
@@ -415,7 +415,7 @@ export default function ProductDetailsPage({ params }: Props) {
                     </summary>
                     <div className="pb-4 text-sm text-gray-600 animate-in slide-in-from-top-1 duration-200">
                       <ul className="space-y-1 mt-2">
-                        {product.features.flatMap(block => block.split('\n')).map((line, i) => {
+                        {(product.features ?? []).flatMap(block => block.split('\n')).map((line, i) => {
                           // Clean up line
                           const text = line.trim();
                           if (!text) return null;

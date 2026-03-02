@@ -1,7 +1,7 @@
 // API configuration and client for Ani & Ayu e-commerce
 //const API_BASE_URL = 'https://ani-ayu-api.onrender.com'
 //const API_BASE_URL = 'https://ani-ayu-api-9b22.onrender.com'
-const API_BASE_URL = 'http://localhost:3002'
+const API_BASE_URL = 'https://api.aniayu.in'
 //const API_BASE_URL = 'http://localhost:3002'
 // Enhanced Product API response interface
 export interface Product {
@@ -20,7 +20,6 @@ export interface Product {
   image_url: string
   images: string[]
   video_url?: string
-
   // Core product info
   rating: number
   review_count: number
