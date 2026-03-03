@@ -60,19 +60,19 @@ export default function BestDesigns({ bestSellers: serverBestSellers }: BestDesi
         <SectionHeader />
 
         {/* Grid: 2 / 3 / 4 columns */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
           {designs.map((d, index) => (
             <Link key={d.id} href={`/products/${d.id}`}>
               <article
                 className="group overflow-hidden rounded-xl bg-white ring-1 ring-stone-200/80 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
               >
                 {/* Image */}
-                <div className="relative w-full h-52 sm:h-56 lg:h-60">
+                <div className="relative w-full h-72 sm:h-80 lg:h-96">
                   <Image
                     src={d.image}
                     alt={d.name}
                     fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 group-hover:scale-115"
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                     priority={index === 0}
                   />
@@ -97,8 +97,8 @@ export default function BestDesigns({ bestSellers: serverBestSellers }: BestDesi
                   <div className="flex items-center justify-between">
                     <div className="flex items-baseline gap-1.5">
                       <span
-                        className="text-sm text-[#111827]"
-                        style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}
+                        className="text-lg"
+                        style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, color: '#3a7d6e', letterSpacing: '-0.02em' }}
                       >
                         ₹{d.price.toLocaleString()}
                       </span>
@@ -109,7 +109,7 @@ export default function BestDesigns({ bestSellers: serverBestSellers }: BestDesi
                       )}
                     </div>
                     {d.originalPrice > d.price && (
-                      <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-full"
+                      <span className="text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full"
                         style={{ fontFamily: 'var(--font-heading)' }}
                       >
                         {Math.round(((d.originalPrice - d.price) / d.originalPrice) * 100)}% off
@@ -132,11 +132,11 @@ function SectionHeader() {
       {/* Pill badge */}
       <div className="flex items-center gap-2 mb-5">
         <span
-          className="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-50 px-3.5 py-1 text-xs font-semibold uppercase tracking-widest text-amber-700"
+          className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-widest text-primary"
         >
           <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500"></span>
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
           </span>
           Curated for you
         </span>
@@ -148,7 +148,7 @@ function SectionHeader() {
           className="text-3xl md:text-4xl lg:text-5xl font-[var(--font-heading)] leading-tight text-ink"
           style={{ letterSpacing: '-0.02em' }}
         >
-          <span className="font-light italic text-amber-600">Loved</span>{' '}
+          <span className="font-light italic text-primary">Loved</span>{' '}
           <span className="font-black">by little ones</span>
         </h2>
         {/* Decorative ruled line */}

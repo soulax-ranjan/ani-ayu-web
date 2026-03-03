@@ -44,7 +44,7 @@ export default function CheckoutPage() {
   })
 
   const [addressId, setAddressId] = useState<string | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'card'>('card')
+  const [paymentMethod] = useState<'card'>('card')
   const hasTrackedStart = useState(false) // Using ref-like state to track once if strict mode double invokes, but useEffect with empty dep is usually fine.
 
   useEffect(() => {
@@ -226,9 +226,7 @@ export default function CheckoutPage() {
           amount: totals.total,
           payment_method: paymentMethod
         })
-        if (paymentMethod === 'cod') {
-          router.push(`/checkout/success?orderId=${res.orderId}`)
-        } else if (res.requiresPayment && res.razorpayOrderId && (paymentMethod === 'card' || paymentMethod === 'upi')) {
+        if (res.requiresPayment && res.razorpayOrderId) {
 
           console.log('💳 Razorpay order received from checkout:', res.razorpayOrderId)
           console.log('💰 Amount:', res.amount, 'Currency:', res.currency, 'Key:', res.key)
@@ -522,25 +520,14 @@ export default function CheckoutPage() {
                     <div className="space-y-6">
                       <h2 className="text-xl font-semibold text-ink">Payment Information</h2>
                       <div className="space-y-3">
-                        <label className={`block p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === 'card' ? 'border-primary bg-primary/10 ring-1 ring-primary' : 'border-gray-200 hover:border-gray-300'}`}>
+                        <label className="block p-4 border border-primary bg-primary/10 ring-1 ring-primary rounded-lg">
                           <div className="flex items-center gap-3">
-                            <input type="radio" name="payment" className="accent-primary" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} />
+                            <input type="radio" name="payment" className="accent-primary" checked readOnly />
                             <div className="flex-1">
-                              <div className="font-medium text-ink">Credit/Debit Card (Razorpay)</div>
+                              <div className="font-medium text-ink">Credit/Debit Card / UPI (Razorpay)</div>
                               <div className="text-sm text-gray-500">Safe and secure payments via Razorpay</div>
                             </div>
-                            <CreditCard className="text-gray-400" />
-                          </div>
-                        </label>
-
-                        <label className={`block p-4 border rounded-lg cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-primary bg-primary/10 ring-1 ring-primary' : 'border-gray-200 hover:border-gray-300'}`}>
-                          <div className="flex items-center gap-3">
-                            <input type="radio" name="payment" className="accent-primary" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} />
-                            <div className="flex-1">
-                              <div className="font-medium text-ink">Cash on Delivery</div>
-                              <div className="text-sm text-gray-500">Pay when you receive your order</div>
-                            </div>
-                            <div className="text-green-600 font-bold">₹</div>
+                            <CreditCard className="text-primary" />
                           </div>
                         </label>
                       </div>
@@ -565,15 +552,15 @@ export default function CheckoutPage() {
                   {currentStep === 'payment' ? (
                     <Button
                       onClick={handlePlaceOrder}
-                      className="bg-primary hover:bg-primary/90 text-black min-w-[140px]"
+                      className="bg-primary hover:bg-primary/90 text-white min-w-[140px]"
                       disabled={loading}
                     >
-                      {loading ? <Loader2 className="animate-spin" /> : paymentMethod === 'cod' ? 'Place Order' : 'Pay Now'}
+                      {loading ? <Loader2 className="animate-spin" /> : 'Pay Now'}
                     </Button>
                   ) : (
                     <Button
                       onClick={handleNextStep}
-                      className="bg-primary hover:bg-primary/90 text-black"
+                      className="bg-primary hover:bg-primary/90 text-white"
                       disabled={loading}
                     >
                       {loading ? <Loader2 className="animate-spin" /> : 'Continue'}

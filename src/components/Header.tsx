@@ -155,8 +155,8 @@ export default function Header() {
                   className={`
                     group relative px-5 py-4 rounded-2xl font-semibold transition-all duration-300 text-center tracking-wide
                     ${isActive
-                      ? 'bg-gradient-to-r from-[#FF725E] via-[#FF6B4A] to-[#FF8A7A] text-white shadow-xl shadow-[#FF725E]/30 transform scale-105'
-                      : 'text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-[#FF725E] hover:to-[#FF8A7A] hover:shadow-lg hover:shadow-[#FF725E]/20 hover:scale-105 active:scale-95'
+                      ? 'bg-primary text-white shadow-xl shadow-primary/30 transform scale-105'
+                      : 'text-gray-700 hover:text-white hover:bg-primary hover:shadow-lg hover:shadow-primary/20 hover:scale-105 active:scale-95'
                     }
                   `}
                 >
@@ -167,7 +167,7 @@ export default function Header() {
                   )}
                   {/* Hover glow */}
                   {!isActive && (
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#FF725E] to-[#FF8A7A] opacity-0 group-hover:opacity-10 transition-all duration-300" />
+                    <div className="absolute inset-0 rounded-2xl bg-primary opacity-0 group-hover:opacity-10 transition-all duration-300" />
                   )}
                 </Link>
               );

@@ -9,24 +9,22 @@ const config = {
   theme: {
     extend: {
       colors: {
-        primary: "#F6B400",     // brand gold
-        "primary-hover": "#D99600",     // gold hover/darker
-        accent: "#3A7D44",     // leaf green
-        ink: "#1E1E1E",     // primary text (dark)
-        "muted-text": "#6B6B6B",     // muted text
-        cream: "#FFF9EE",     // warm cream background
-        "card-bg": "#FFFFFF",     // white card background
-        "border-color": "#E5E5E5",     // light borders
+        primary: "#3a7d6e",        // brand teal
+        "primary-hover": "#2d6358", // teal darker hover
+        accent: "#3a7d6e",
+        ink: "#1E1E1E",
+        "muted-text": "#6B6B6B",
+        cream: "#FFF9EE",
+        "card-bg": "#FFFFFF",
+        "border-color": "#E5E5E5",
         placeholder: "#F4F4F4",
-        // Legacy aliases for existing components
         mint: "#FFF9EE",
-        secondary: "#3A7D44",
-        tertiary: "#F6B400",
-        // Category colors using the new palette
-        "sky-blue": "#F6B400",     // boys category (use gold)
-        "coral-pink": "#3A7D44",     // sale/offer (use green)
-        "mint-green": "#3A7D44",     // accent (leaf green)
-        "purple-pop": "#F6B400"     // girls category (use gold)
+        secondary: "#3a7d6e",
+        tertiary: "#3a7d6e",
+        "sky-blue": "#3a7d6e",
+        "coral-pink": "#3a7d6e",
+        "mint-green": "#3a7d6e",
+        "purple-pop": "#3a7d6e"
       },
       borderRadius: {
         md: "12px",

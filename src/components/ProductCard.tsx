@@ -20,7 +20,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
 
   return (
     <Link href={`/products/${product.id}`} className={`group relative block ${className}`}>
-      <div className="relative h-full bg-gradient-to-br from-white to-gray-50/50 rounded-[28px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-500 border border-gray-100/50 hover:border-amber-200/60 hover:-translate-y-1">
+      <div className="relative h-full bg-gradient-to-br from-white to-gray-50/50 rounded-[28px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-500 border border-gray-100/50 hover:border-primary/30 hover:-translate-y-1">
 
         {/* Image Section */}
         <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100/30">
@@ -38,7 +38,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           {/* Badges */}
           {discountPercent && (
             <div className="absolute top-3 left-3 z-10">
-              <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm flex items-center gap-1">
+              <div className="bg-primary text-white text-xs font-black px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm flex items-center gap-1">
                 <Sparkles size={12} className="fill-current" />
                 <span>{discountPercent}% OFF</span>
               </div>
@@ -50,19 +50,19 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
         <div className="flex flex-col p-4 space-y-3">
 
           {/* Title */}
-          <h3 className="font-heading text-base font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300">
+          <h3 className="font-heading text-base font-semibold text-ink leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
 
           {/* Price */}
           <div className="flex flex-col">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-gray-900 tracking-tight">
+              <span className="text-2xl font-black text-primary tracking-tight">
                 ₹{product.price.toLocaleString()}
               </span>
             </div>
             {product.originalPrice && product.originalPrice > product.price && (
-              <span className="text-xs text-gray-400 line-through font-medium">
+              <span className="text-xs text-[#a8a29e] line-through font-medium">
                 ₹{product.originalPrice.toLocaleString()}
               </span>
             )}

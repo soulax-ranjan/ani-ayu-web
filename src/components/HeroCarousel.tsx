@@ -102,7 +102,7 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
                   <div className="flex justify-center">
                     <Link
                       href={banner.ctaLink}
-                      className="inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-primary text-black font-bold rounded-full hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg shadow-primary/30 text-sm md:text-base"
+                      className="inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-primary text-white font-bold rounded-full hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg shadow-primary/30 text-sm md:text-base"
                     >
                       {banner.ctaText}
                       <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
