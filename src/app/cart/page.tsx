@@ -53,7 +53,7 @@ export default function CartPage() {
       <main className="min-h-screen bg-cream">
         <div className="max-w-[1200px] mx-auto px-4 py-8">
           {/* Page Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
               <h1 className="text-2xl md:text-3xl font-[var(--font-heading)] font-bold text-ink mb-2">Shopping Cart</h1>
               <p className="text-gray-600">
@@ -87,33 +87,32 @@ export default function CartPage() {
 
               {/* Cart Item Cards */}
               {items.map((item, index) => (
-                <div key={`${item.product.id}-${item.size}`} className="bg-white rounded-lg p-6 shadow-card">
-                  <div className="flex gap-4">
+                <div key={`${item.product.id}-${item.size}`} className="bg-white rounded-lg p-4 sm:p-6 shadow-card">
+                  <div className="flex flex-col max-[400px]:items-center sm:flex-row gap-4">
                     {/* Product Image */}
                     <Link href={`/products/${item.product.id}`} className="flex-shrink-0">
-                      <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-cream">
+                      <div className="w-full max-[400px]:aspect-square max-[400px]:h-auto sm:w-24 sm:h-24 md:w-32 md:h-32 w-24 h-24 rounded-lg overflow-hidden bg-cream relative">
                         <Image
                           src={item.product.image}
                           alt={item.product.name}
-                          width={128}
-                          height={128}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
                         />
                       </div>
                     </Link>
 
                     {/* Product Details */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 w-full">
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <Link
                             href={`/products/${item.product.id}`}
-                            className="font-semibold text-ink hover:text-primary transition-colors block truncate"
+                            className="font-semibold text-ink hover:text-primary transition-colors block line-clamp-2 break-words text-sm sm:text-base"
                           >
                             {item.product.name}
                           </Link>
 
-                          <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs sm:text-sm text-gray-600">
                             <span>Size: <span className="font-medium">{item.size}</span></span>
                             <span className="capitalize">Category: {item.product.category}</span>
                           </div>
@@ -131,30 +130,30 @@ export default function CartPage() {
                         </div>
 
                         {/* Quantity Controls */}
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center border border-gray-200 rounded-lg">
+                        <div className="flex items-center justify-between sm:justify-start gap-4 mt-2 sm:mt-0">
+                          <div className="flex items-center border border-gray-200 rounded-lg h-9 sm:h-auto">
                             <button
                               onClick={() => updateQuantity(item.product.id, item.size, item.quantity - 1)}
-                              className="p-2 hover:bg-gray-50 transition-colors"
+                              className="p-1 sm:p-2 hover:bg-gray-50 transition-colors w-8 sm:w-auto h-full flex items-center justify-center"
                               aria-label="Decrease quantity"
                             >
-                              <Minus size={16} />
+                              <Minus size={14} className="sm:w-4 sm:h-4" />
                             </button>
-                            <span className="px-3 py-2 font-medium min-w-[3rem] text-center">
+                            <span className="px-2 sm:px-3 py-1 sm:py-2 text-sm sm:text-base font-medium min-w-[2.5rem] sm:min-w-[3rem] text-center border-x border-gray-100 flex items-center justify-center">
                               {item.quantity}
                             </span>
                             <button
                               onClick={() => updateQuantity(item.product.id, item.size, item.quantity + 1)}
-                              className="p-2 hover:bg-gray-50 transition-colors"
+                              className="p-1 sm:p-2 hover:bg-gray-50 transition-colors w-8 sm:w-auto h-full flex items-center justify-center"
                               aria-label="Increase quantity"
                             >
-                              <Plus size={16} />
+                              <Plus size={14} className="sm:w-4 sm:h-4" />
                             </button>
                           </div>
 
                           <button
                             onClick={() => removeItem(item.product.id, item.size)}
-                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                            className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors ml-auto sm:ml-0"
                             aria-label="Remove item"
                           >
                             <Trash2 size={18} />
