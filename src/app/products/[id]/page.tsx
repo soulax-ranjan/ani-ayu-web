@@ -319,9 +319,9 @@ export default function ProductDetailsPage({ params }: Props) {
 
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
             {/* Left Column: Images */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-full min-w-0">
               {/* Main Image */}
-              <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-gray-50">
+              <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
                 <Image
                   src={productImages[selectedImageIndex]}
                   alt={product.name}
@@ -370,14 +370,14 @@ export default function ProductDetailsPage({ params }: Props) {
             </div>
 
             {/* Right Column: Product Details - Sticky */}
-            <div className="flex flex-col lg:sticky lg:top-24 h-fit">
+            <div className="flex flex-col lg:sticky lg:top-24 h-fit min-w-0">
               <div className="mb-6">
-                <h1 className="font-serif text-4xl md:text-5xl font-light text-gray-900 mb-4 leading-tight tracking-tight">
+                <h1 className="font-serif text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-2 md:mb-4 leading-tight tracking-tight break-words">
                   {product.name}
                 </h1>
 
-                <div className="flex items-center justify-between mt-4">
-                  <div className="flex items-baseline gap-3">
+                <div className="flex flex-wrap items-center justify-between mt-4 gap-y-3">
+                  <div className="flex flex-wrap items-baseline gap-3">
                     <span className="text-3xl font-bold text-primary">
                       ₹{(product.price || 0).toLocaleString()}
                     </span>
@@ -397,8 +397,8 @@ export default function ProductDetailsPage({ params }: Props) {
               </div>
 
               {/* Description */}
-              <div className="mb-10">
-                <p className="text-gray-800 text-base leading-relaxed">
+              <div className="mb-10 min-w-0">
+                <p className="text-gray-800 text-base leading-relaxed break-words whitespace-pre-wrap">
                   {product.description}
                 </p>
               </div>
@@ -426,9 +426,9 @@ export default function ProductDetailsPage({ params }: Props) {
                             const label = parts[0].trim();
                             const value = parts.slice(1).join(':').trim();
                             return (
-                              <li key={i} className="grid grid-cols-[140px_1fr] gap-2 py-1 border-b border-gray-50 last:border-0">
+                              <li key={i} className="flex flex-col sm:grid sm:grid-cols-[140px_1fr] gap-1 sm:gap-2 py-2 sm:py-1 border-b border-gray-50 last:border-0 break-words">
                                 <span className="font-semibold text-gray-900">{label}</span>
-                                <span>{value}</span>
+                                <span className="text-gray-700 min-w-0 break-words">{value}</span>
                               </li>
                             );
                           }
@@ -462,7 +462,7 @@ export default function ProductDetailsPage({ params }: Props) {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
                     {(() => {
                       const availableSizes = (product.size_chart && Object.keys(product.size_chart).length > 0)
                         ? Object.keys(product.size_chart)
@@ -554,9 +554,9 @@ export default function ProductDetailsPage({ params }: Props) {
                             const label = parts[0].trim();
                             const value = parts.slice(1).join(':').trim();
                             return (
-                              <li key={i} className="grid grid-cols-[140px_1fr] gap-2 py-1 border-b border-gray-50 last:border-0">
+                              <li key={i} className="flex flex-col sm:grid sm:grid-cols-[140px_1fr] gap-1 sm:gap-2 py-2 sm:py-1 border-b border-gray-50 last:border-0 break-words">
                                 <span className="font-semibold text-gray-900">{label}</span>
-                                <span>{value}</span>
+                                <span className="text-gray-700 min-w-0 break-words">{value}</span>
                               </li>
                             );
                           }
