@@ -137,15 +137,6 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/help/contact"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/help/shipping"
                   className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
                 >
@@ -162,35 +153,33 @@ export default function Footer() {
                   Returns & Exchanges
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/legal/privacy"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/legal/terms"
+                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
+                >
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                  Terms of Service
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Section */}
         <div className="border-t border-gray-700 py-6">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-            <div className="text-sm text-gray-300 text-center md:text-left">
+          <div className="flex items-center justify-center">
+            <div className="text-sm text-gray-300 text-center">
               © {new Date().getFullYear()} Ani & Ayu. All rights reserved. Made with ❤️ for little ones.
-            </div>
-            <div className="flex flex-wrap justify-center md:justify-end gap-6 text-sm">
-              <Link
-                href="/legal/privacy"
-                className="text-gray-300 hover:text-primary transition-colors font-medium"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/legal/terms"
-                className="text-gray-300 hover:text-primary transition-colors font-medium"
-              >
-                Terms of Service
-              </Link>
-              <Link
-                href="/legal/refund"
-                className="text-gray-300 hover:text-primary transition-colors font-medium"
-              >
-                Refund Policy
-              </Link>
             </div>
           </div>
         </div>

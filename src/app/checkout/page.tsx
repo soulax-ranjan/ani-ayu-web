@@ -207,10 +207,15 @@ export default function CheckoutPage() {
       // Get cart item IDs
       const cartItemIds = items.map(item => item.id)
 
-      const checkoutData = {
+      const checkoutData: any = {
         addressId,
         paymentMethod,
         cartItemIds // Include cart items as per API requirement
+      }
+
+      if (couponApplied && couponCode) {
+        checkoutData.couponCode = couponCode.trim();
+        checkoutData.coupon_code = couponCode.trim(); // Fallback for snake_case backend expectation
       }
 
       console.log('🛒 Placing order with data:', checkoutData)
@@ -297,6 +302,11 @@ export default function CheckoutPage() {
             },
             theme: {
               color: "#F4A261" // Example primary color
+            },
+            modal: {
+              ondismiss: function () {
+                setLoading(false)
+              }
             }
           }
 

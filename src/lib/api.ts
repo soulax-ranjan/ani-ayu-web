@@ -1,8 +1,8 @@
 // API configuration and client for Ani & Ayu e-commerce
 //const API_BASE_URL = 'https://ani-ayu-api.onrender.com'
 //const API_BASE_URL = 'https://ani-ayu-api-9b22.onrender.com'
-const API_BASE_URL = 'https://api.aniayu.in'
-//const API_BASE_URL = 'http://localhost:3002'
+//const API_BASE_URL = 'https://api.aniayu.in'
+const API_BASE_URL = 'http://localhost:3002'
 // Enhanced Product API response interface
 export interface Product {
   id: string
@@ -485,6 +485,8 @@ class APIClient {
     addressId: string
     paymentMethod: 'cod' | 'card' | 'upi'
     cartItemIds?: string[]
+    couponCode?: string
+    coupon_code?: string
   }): Promise<{
     success: boolean
     orderId: string
@@ -543,11 +545,8 @@ class APIClient {
     return this.request(`/orders`)
   }
 
-  async trackOrder(data: { email: string; phone: string }): Promise<any[]> {
-    return this.request('/orders/track', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    })
+  async trackOrderById(orderId: string): Promise<any> {
+    return this.request(`/orders/track/${orderId}`)
   }
 
   // Health check

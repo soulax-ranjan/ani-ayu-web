@@ -52,17 +52,15 @@ export default function FounderStory() {
           <div className="order-1 lg:order-2">
             <div className="relative">
               {/* Main founder image */}
-              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
+              <div className="relative aspect-[4/5] rounded-3xl flex items-center justify-center">
                 <Image
                   src="/assets/mascot-sketch.png"
                   alt="Ani & Ayu Founder - Nalini Gautam with her inspiration"
                   fill
-                  className="object-cover"
+                  className="object-contain drop-shadow-lg p-6"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
-                {/* Soft overlay for better text contrast if needed */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
               </div>
 
               {/* Decorative elements */}
