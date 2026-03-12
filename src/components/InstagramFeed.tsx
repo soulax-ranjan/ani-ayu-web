@@ -15,19 +15,19 @@ export default function InstagramFeed() {
               Follow Us on Instagram
             </h2>
             <p className="text-ink/70 mb-8 leading-relaxed">
-              Tag us <strong className="text-primary">@_aniayu_store</strong> and use{" "}
+              Tag us <strong className="text-primary">@aniayukids</strong> and use{" "}
               <strong className="text-primary">#AniAyuMoments</strong> to be featured on our page!
               We love seeing your little ones shine in our outfits.
             </p>
 
             <Link
-              href="https://www.instagram.com/_aniayu_store/"
+              href="https://www.instagram.com/aniayukids/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               <Instagram size={20} />
-              Follow @_aniayu_store
+              Follow @aniayukids
             </Link>
           </div>
         </div>

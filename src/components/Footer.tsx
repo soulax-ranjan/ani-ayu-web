@@ -54,7 +54,7 @@ export default function Footer() {
               </h4>
               <div className="flex gap-3">
                 <a
-                  href="https://www.instagram.com/ani_ayu_kids"
+                  href="https://www.instagram.com/aniayukids/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
