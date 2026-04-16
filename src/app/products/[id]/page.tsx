@@ -396,12 +396,12 @@ export default function ProductDetailsPage({ params }: Props) {
                 <p className="text-xs text-gray-500 mt-1">Tax included. Shipping calculated at checkout.</p>
               </div>
 
-              {/* Description */}
-              <div className="mb-10 min-w-0">
+              {/* Description - commented out */}
+              {/* <div className="mb-10 min-w-0">
                 <p className="text-gray-800 text-base leading-relaxed break-words whitespace-pre-wrap">
                   {product.description}
                 </p>
-              </div>
+              </div> */}
 
               {/* Product Features - Expandable (Moved) */}
               {false && product.features && (
@@ -450,7 +450,7 @@ export default function ProductDetailsPage({ params }: Props) {
               {/* Selectors */}
               <div className="mb-10">
                 <div>
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex justify-between items-center mb-3">
                     <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900">Select Size</h3>
                     {product.sizes && (
                       <button
@@ -462,25 +462,24 @@ export default function ProductDetailsPage({ params }: Props) {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
-                    {(() => {
-                      const availableSizes = (product.size_chart && Object.keys(product.size_chart).length > 0)
-                        ? Object.keys(product.size_chart)
-                        : (product.sizes || []);
-
-                      return availableSizes.map(size => (
-                        <button
-                          key={size}
-                          onClick={() => setSelectedSize(size)}
-                          className={`h-12 flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-200 ${selectedSize === size
-                            ? 'bg-gray-900 text-white shadow-md ring-2 ring-gray-900 ring-offset-2'
-                            : 'bg-gray-50 text-gray-700 border border-gray-200 hover:border-gray-400 hover:bg-white'
-                            }`}
-                        >
-                          {size}
-                        </button>
-                      ));
-                    })()}
+                  {/* Size Dropdown */}
+                  <div className="relative">
+                    <select
+                      value={selectedSize}
+                      onChange={(e) => setSelectedSize(e.target.value)}
+                      className="w-full h-12 pl-4 pr-10 rounded-xl border-2 border-gray-200 bg-white text-sm font-medium text-gray-800 appearance-none cursor-pointer focus:outline-none focus:border-gray-900 transition-colors hover:border-gray-400"
+                    >
+                      <option value="" disabled>Choose a size…</option>
+                      {(() => {
+                        const availableSizes = (product.size_chart && Object.keys(product.size_chart).length > 0)
+                          ? Object.keys(product.size_chart)
+                          : (product.sizes || []);
+                        return availableSizes.map(size => (
+                          <option key={size} value={size}>{size}</option>
+                        ));
+                      })()}
+                    </select>
+                    <ChevronDown size={16} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" />
                   </div>
                 </div>
               </div>
@@ -531,47 +530,23 @@ export default function ProductDetailsPage({ params }: Props) {
                 </button>
               </div>
 
-              {/* Product Features - Expandable */}
+              {/* Product Details - Modern Always-Visible Card */}
               {product.features && product.features.length > 0 && (
                 <div className="mb-8">
-                  <details className="group">
-                    <summary className="flex cursor-pointer list-none items-center justify-between py-5 font-bold text-gray-900 transition-colors hover:text-primary">
-                      <span className="text-sm uppercase tracking-wider">Product Details</span>
-                      <span className="transition-transform duration-200 group-open:rotate-180">
-                        <ChevronDown size={20} className="text-gray-400" />
-                      </span>
-                    </summary>
-                    <div className="pb-6 animate-in slide-in-from-top-2 duration-300">
-                      <div className="space-y-3 text-sm">
-                        {product.features.flatMap(block => block.split('\n')).map((line, i) => {
-                          // Clean up line
-                          const text = line.trim();
-                          if (!text) return null;
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Product Details</h3>
+                  <div className="rounded-2xl border border-gray-100 bg-gray-50/60 divide-y divide-gray-100 overflow-hidden">
+                    {product.features.flatMap(block => block.split('\n')).map((line, i) => {
+                      const text = line.trim();
+                      if (!text) return null;
 
-                          const parts = text.split(':');
-                          // Check if it looks like a Key: Value pair
-                          if (parts.length > 1 && parts[0].trim().length < 40) {
-                            const label = parts[0].trim();
-                            const value = parts.slice(1).join(':').trim();
-                            return (
-                              <li key={i} className="flex flex-col sm:grid sm:grid-cols-[140px_1fr] gap-1 sm:gap-2 py-2 sm:py-1 border-b border-gray-50 last:border-0 break-words">
-                                <span className="font-semibold text-gray-900">{label}</span>
-                                <span className="text-gray-700 min-w-0 break-words">{value}</span>
-                              </li>
-                            );
-                          }
-
-                          // Standard feature item
-                          return (
-                            <li key={i} className="flex gap-2 py-1 pl-1">
-                              <span className="text-primary mt-1.5 text-[8px]">●</span>
-                              <span>{text}</span>
-                            </li>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </details>
+                      return (
+                        <div key={i} className="flex items-start gap-3 px-4 py-3">
+                          <span className="text-primary mt-2 text-[7px] flex-shrink-0">●</span>
+                          <span className="text-sm text-gray-800 leading-relaxed">{text}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
