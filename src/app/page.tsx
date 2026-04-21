@@ -10,6 +10,7 @@ import Footer from "@/components/Footer"
 import { apiClient, transformApiProduct } from "@/lib/api"
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
 
 export default async function HomePage() {
   const [bannersData, bestSellersData, productsData] = await Promise.all([

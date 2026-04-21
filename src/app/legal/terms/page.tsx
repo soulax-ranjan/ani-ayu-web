@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
 
+export const runtime = 'edge'
+
 export const metadata = {
     title: "Terms of Service | Ani & Ayu",
     description: "Terms of Service for Ani & Ayu",

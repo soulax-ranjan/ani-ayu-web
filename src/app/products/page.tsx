@@ -1,5 +1,8 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
+
 import { useState, useMemo, Suspense, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
