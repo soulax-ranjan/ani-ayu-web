@@ -91,12 +91,12 @@ export default function CartPage() {
                   <div className="flex flex-col max-[400px]:items-center sm:flex-row gap-4">
                     {/* Product Image */}
                     <Link href={`/products/${item.product.id}`} className="flex-shrink-0">
-                      <div className="w-full max-[400px]:aspect-square max-[400px]:h-auto sm:w-24 sm:h-24 md:w-32 md:h-32 w-24 h-24 rounded-lg overflow-hidden bg-cream relative">
+                      <div className="w-24 h-24 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-cream relative">
                         <Image
                           src={item.product.image}
                           alt={item.product.name}
                           fill
-                          className="object-cover"
+                          className="object-contain"
                         />
                       </div>
                     </Link>

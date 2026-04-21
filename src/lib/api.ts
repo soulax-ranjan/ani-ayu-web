@@ -207,7 +207,7 @@ class APIClient {
     }
 
     try {
-      const response = await fetch(url, config)
+      const response = await fetch(url, { ...config, cache: 'no-store' })
 
       if (!response.ok) {
         // Parse error response if possible

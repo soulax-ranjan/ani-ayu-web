@@ -9,7 +9,7 @@ import InstagramFeed from "@/components/InstagramFeed"
 import Footer from "@/components/Footer"
 import { apiClient, transformApiProduct } from "@/lib/api"
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const [bannersData, bestSellersData, productsData] = await Promise.all([

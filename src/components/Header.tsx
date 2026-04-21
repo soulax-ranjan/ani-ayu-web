@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { Search, User, ShoppingBag, Menu, X } from 'lucide-react';
+import { Search, PackageSearch, ShoppingBag, Menu, X } from 'lucide-react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useCartStore } from '@/store/cartStore';
@@ -92,25 +92,14 @@ export default function Header() {
           </button>
           */}
 
-          <div className="relative group">
-            <button
-              aria-label="Account"
-              className="p-3 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95 group-hover:bg-gray-100"
-            >
-              <User size={20} className="text-gray-600 hover:text-primary" />
-            </button>
-
-            {/* Profile Dropdown */}
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-              <Link
-                href="/orders"
-                className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors font-medium border-l-2 border-transparent hover:border-primary"
-              >
-                Track Order
-              </Link>
-              {/* Future items like My Profile, Logout can go here */}
-            </div>
-          </div>
+          <Link
+            href="/orders"
+            aria-label="Track Order"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 hover:scale-105 active:scale-95 text-gray-600 hover:text-primary"
+          >
+            <PackageSearch size={20} />
+            <span className="hidden sm:inline text-sm font-semibold">Track Order</span>
+          </Link>
           <Link
             href="/cart"
             aria-label="Shopping bag"
