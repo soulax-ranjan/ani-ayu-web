@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import Image from 'next/image'
 import Link from 'next/link'
@@ -15,11 +15,25 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
 export default function CartPage() {
-  const { items, totals, updateQuantity, removeItem, clearCart, totalItems, fetchCart } = useCartStore()
+  const [mounted, setMounted] = useState(false)
+  const { items, totals, updateQuantity, removeItem, clearCart, totalItems, fetchCart, error } = useCartStore()
 
   useEffect(() => {
+    setMounted(true)
     fetchCart()
   }, [fetchCart])
+
+  if (!mounted) {
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen bg-cream/30 flex items-center justify-center">
+           <div className="animate-pulse w-8 h-8 rounded-full bg-primary/50"></div>
+        </main>
+        <Footer />
+      </>
+    )
+  }
 
   if (totalItems === 0) {
     return (
@@ -74,6 +88,12 @@ export default function CartPage() {
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {/* Clear Cart Button */}
+              {error && (
+                <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-6 text-sm font-medium border border-red-100 flex justify-between items-start">
+                  <span>{error}</span>
+                  <button onClick={() => useCartStore.setState({ error: null })} className="text-red-400 hover:text-red-600">×</button>
+                </div>
+              )}
               <div className="flex justify-between items-center mb-6">
                 <h2 className="font-semibold text-ink text-lg">Cart Items</h2>
                 <button
@@ -131,7 +151,8 @@ export default function CartPage() {
 
                         {/* Quantity Controls */}
                         <div className="flex items-center justify-between sm:justify-start gap-4 mt-2 sm:mt-0">
-                          <div className="flex items-center border border-gray-200 rounded-lg h-9 sm:h-auto">
+                          <div className="flex items-center border border-gray-200 rounded-lg h-9 sm:h-auto px-2">
+                            {/* Temporarily disabled pending backend API implementation
                             <button
                               onClick={() => updateQuantity(item.product.id, item.size, item.quantity - 1)}
                               className="p-1 sm:p-2 hover:bg-gray-50 transition-colors w-8 sm:w-auto h-full flex items-center justify-center"
@@ -139,9 +160,11 @@ export default function CartPage() {
                             >
                               <Minus size={14} className="sm:w-4 sm:h-4" />
                             </button>
-                            <span className="px-2 sm:px-3 py-1 sm:py-2 text-sm sm:text-base font-medium min-w-[2.5rem] sm:min-w-[3rem] text-center border-x border-gray-100 flex items-center justify-center">
-                              {item.quantity}
+                            */}
+                            <span className="px-2 sm:px-3 py-1 sm:py-2 text-sm sm:text-base font-medium min-w-[2.5rem] sm:min-w-[3rem] text-center flex items-center justify-center">
+                              Qty: {item.quantity}
                             </span>
+                            {/* Temporarily disabled pending backend API implementation
                             <button
                               onClick={() => updateQuantity(item.product.id, item.size, item.quantity + 1)}
                               className="p-1 sm:p-2 hover:bg-gray-50 transition-colors w-8 sm:w-auto h-full flex items-center justify-center"
@@ -149,6 +172,7 @@ export default function CartPage() {
                             >
                               <Plus size={14} className="sm:w-4 sm:h-4" />
                             </button>
+                            */}
                           </div>
 
                           <button

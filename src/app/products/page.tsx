@@ -13,17 +13,21 @@ import ProductCard from '@/components/ProductCard'
 import ProductFilters from '@/components/ProductFilters'
 import { useProducts } from '@/lib/hooks'
 import { Filters, Product } from '@/types/product'
-import { Product as APIProduct } from '@/lib/api'
+import { Product as APIProduct, IS_PRODUCTION } from '@/lib/api'
 
 // Convert API Product to Frontend Product format
 function transformAPIProduct(apiProduct: APIProduct): Product {
-  // Map category_id to category name
-  const getCategoryName = (categoryId: string): 'boys' | 'girls' => {
-    // Girls category UUID
-    if (categoryId === '22222222-2222-2222-2222-222222222222') {
+  // Map category_id to category name/slug
+  const getCategoryName = (product: APIProduct): string => {
+    // Use the populated category slug or name if available
+    if (product.category?.slug) return product.category.slug;
+    if (product.category?.name) return product.category.name.toLowerCase();
+
+    // Fallback to legacy UUID check
+    if (product.category_id === '22222222-2222-2222-2222-222222222222') {
       return 'girls'
     }
-    // All other categories are boys
+    // All other categories are boys for now, or match existing logic
     return 'boys'
   }
 
@@ -36,7 +40,8 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
     originalPrice: apiProduct.original_price,
     rating: apiProduct.rating,
     reviewCount: apiProduct.review_count,
-    category: getCategoryName(apiProduct.category_id),
+    category: getCategoryName(apiProduct),
+    category_id: apiProduct.category_id,
     sizes: apiProduct.sizes,
     description: apiProduct.description,
     features: apiProduct.features,
@@ -45,6 +50,7 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
     occasion: apiProduct.occasion,
     customizable: apiProduct.customizable,
     allProduct: apiProduct.allProduct,
+    section: apiProduct.section,
     status: apiProduct.status || 'active'
   }
 }
@@ -52,22 +58,25 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
 function ProductsContent() {
   const searchParams = useSearchParams()
   const categoryFromUrl = searchParams?.get('category') || ''
+  const sectionFromUrl = searchParams?.get('section')
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   const [filters, setFilters] = useState<Filters>({
     category: categoryFromUrl ? [categoryFromUrl] : [],
     priceRange: [0, 10000],
     sizes: [],
-    sortBy: 'popularity'
+    sortBy: 'popularity',
+    section: sectionFromUrl ? parseInt(sectionFromUrl) : undefined
   })
 
   // Sync filters with URL changes
   useEffect(() => {
     setFilters(prev => ({
       ...prev,
-      category: categoryFromUrl ? [categoryFromUrl] : []
+      category: categoryFromUrl ? [categoryFromUrl] : [],
+      section: sectionFromUrl ? parseInt(sectionFromUrl) : undefined
     }))
-  }, [categoryFromUrl])
+  }, [categoryFromUrl, sectionFromUrl])
 
   // Fetch ALL products from API (no filtering)
   const { data, loading, error } = useProducts({})
@@ -78,11 +87,30 @@ function ProductsContent() {
   const filteredProducts = useMemo(() => {
     let filtered = allProducts
 
-    // Filter by category
-    if (filters.category.length > 0) {
+    // Known real categories from the API
+    const knownCategories = ['boys', 'girls']
+
+    // Check if the requested category is a real one we can filter by
+    const hasKnownCategory = filters.category.length > 0 &&
+      filters.category.some(cat => knownCategories.includes(cat.toLowerCase()))
+
+    // Filter by category (only if it's a real/known category)
+    if (hasKnownCategory) {
       filtered = filtered.filter(p =>
-        filters.category.includes(p.category)
+        filters.category.some(cat =>
+          p.category.toLowerCase() === cat.toLowerCase() ||
+          p.category_id === cat
+        )
       )
+    }
+
+    // Filter by section (only if section data exists on products)
+    if (filters.section) {
+      const sectionProducts = filtered.filter(p => p.section === filters.section)
+      // Only apply section filter if it actually returns results
+      if (sectionProducts.length > 0) {
+        filtered = sectionProducts
+      }
     }
 
     // Filter by price range
@@ -106,13 +134,15 @@ function ProductsContent() {
       filtered = [...filtered].sort((a, b) => (b.rating || 0) - (a.rating || 0))
     }
 
-    // Show only products marked for "all products" display when no category is selected
-    if (filters.category.length === 0) {
+    // Show only products marked for "all products" display when no real category/section filter is active
+    if (!hasKnownCategory && !filters.section) {
       filtered = filtered.filter(p => p.allProduct === true)
     }
 
-    // Only show active products
-    filtered = filtered.filter(p => p.status === 'active')
+    // Only show active products in production; in dev show all
+    if (IS_PRODUCTION) {
+      filtered = filtered.filter(p => p.status === 'active')
+    }
 
     return filtered
   }, [allProducts, filters])
@@ -125,7 +155,8 @@ function ProductsContent() {
       category: [],
       priceRange: [0, 10000],
       sizes: [],
-      sortBy: 'popularity'
+      sortBy: 'popularity',
+      section: undefined
     })
   }
 

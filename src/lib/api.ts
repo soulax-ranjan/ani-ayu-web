@@ -2,8 +2,11 @@
 //const API_BASE_URL = 'https://ani-ayu-api.onrender.com'
 //const API_BASE_URL = 'https://ani-ayu-api-9b22.onrender.com'
 const API_BASE_URL = 'https://api.aniayu.in'
-//const API_BASE_URL = 'http://localhost:3002'
-// Enhanced Product API response interface
+//const API_BASE_URL = 'http://localhost:3002' // Local dev only — won't work on real devices
+
+// In production: only show active products. In development (localhost): show all statuses.
+export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+
 export interface Product {
   id: string
   name: string
@@ -196,10 +199,12 @@ class APIClient {
       guestId = localStorage.getItem('guest_id') || '';
     }
 
+    const isBodyRequest = options?.body !== undefined;
+
     const config: RequestInit = {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        ...(isBodyRequest ? { 'Content-Type': 'application/json' } : {}),
         ...(guestId ? { 'x-guest-id': guestId } : {}),
         ...options?.headers,
       },
@@ -251,7 +256,9 @@ class APIClient {
     params.append('limit', '100') // fetch enough to pick from
 
     const response = await this.request<{ products: Product[] }>(`/products?${params.toString()}`)
-    const activeProducts = response.products.filter(p => p.status === 'active')
+    const activeProducts = IS_PRODUCTION
+      ? response.products.filter(p => p.status === 'active')
+      : response.products
 
     // Sort: featured first, then by rating desc as tiebreaker
     const sorted = [...activeProducts].sort((a, b) => {
@@ -352,7 +359,9 @@ class APIClient {
     }>(`/products${query}`)
 
     if (response && response.products) {
-      response.products = response.products.filter(p => p.status === 'active')
+      if (IS_PRODUCTION) {
+        response.products = response.products.filter(p => p.status === 'active')
+      }
     }
 
     return response
@@ -365,7 +374,9 @@ class APIClient {
   async getRelatedProducts(id: string): Promise<{ products: Product[] }> {
     const response = await this.request<{ products: Product[] }>(`/products/${id}/related`)
     if (response && response.products) {
-      response.products = response.products.filter(p => p.status === 'active')
+      if (IS_PRODUCTION) {
+        response.products = response.products.filter(p => p.status === 'active')
+      }
     }
     return response
   }
@@ -385,7 +396,8 @@ class APIClient {
 
   // Cart APIs
   async getCart(sessionId?: string): Promise<Cart> {
-    const url = sessionId ? `/cart/${sessionId}` : '/cart'
+    const timestamp = Date.now()
+    const url = sessionId ? `/cart/${sessionId}?_t=${timestamp}` : `/cart?_t=${timestamp}`
     return this.request<Cart>(url)
   }
 
@@ -547,6 +559,12 @@ class APIClient {
 
   async trackOrderById(orderId: string): Promise<any> {
     return this.request(`/orders/track/${orderId}`)
+  }
+
+  async deleteOrder(orderId: string): Promise<{ success: boolean; message: string }> {
+    return this.request(`/orders/${orderId}`, {
+      method: 'DELETE'
+    })
   }
 
   // Health check

@@ -6,7 +6,7 @@ const promoBanners = [
     title: "Daily Comfort",
     subtitle: "Soft cotton sets for everyday fun",
     ctaText: "Shop Now",
-    ctaLink: "/products?category=daily-comfort",
+    ctaLink: "/products",
     backgroundImage: "/assets/placeholders/ph-hero-1.png",
     imageAlt: "Kids in comfortable daily wear"
   },
@@ -24,7 +24,7 @@ const promoBanners = [
     title: "Playtime Essentials",
     subtitle: "Durable and fun clothing for active kids",
     ctaText: "Shop Collection",
-    ctaLink: "/products?category=playtime",
+    ctaLink: "/products",
     backgroundImage: "/assets/placeholders/ph-hero-2.jpg",
     imageAlt: "Kids playing in comfortable clothes"
   }

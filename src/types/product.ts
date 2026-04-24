@@ -87,4 +87,5 @@ export interface Filters {
   priceRange: [number, number]
   sizes: string[]
   sortBy: 'price-low' | 'price-high' | 'popularity' | 'rating'
+  section?: number
 }
