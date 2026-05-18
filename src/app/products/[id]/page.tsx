@@ -79,6 +79,8 @@ export default function ProductDetailsPage({ params }: Props) {
   const [showToast, setShowToast] = useState(false)
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false)
   const [sizeUnit, setSizeUnit] = useState<'inches' | 'cm'>('inches')
+  const [mainImageLoaded, setMainImageLoaded] = useState(false)
+  const [thumbsLoaded, setThumbsLoaded] = useState<boolean[]>([])
 
   // Fetch product data from API
   const { data: productData, loading: productLoading, error: productError } = useProduct(resolvedParams.id)
@@ -217,6 +219,7 @@ export default function ProductDetailsPage({ params }: Props) {
   // Transform product data (now safe since we've checked for null)
   const product = transformAPIProduct(productData)
   const relatedProducts = relatedData?.products?.map(transformAPIProduct) || []
+  const isOutOfStock = product.status === 'out_of_stock' || product.in_stock === false
 
   const handleAddToCart = async () => {
     if (!selectedSize) {
@@ -322,11 +325,22 @@ export default function ProductDetailsPage({ params }: Props) {
             <div className="flex flex-col gap-4 w-full min-w-0">
               {/* Main Image */}
               <div className="relative aspect-[3/4] w-full rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
+
+                {/* Shimmer skeleton */}
+                {!mainImageLoaded && (
+                  <div className="absolute inset-0 z-10 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                    <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+                  </div>
+                )}
+
                 <Image
                   src={productImages[selectedImageIndex]}
                   alt={product.name}
                   fill
-                  className="object-cover"
+                  onLoad={() => setMainImageLoaded(true)}
+                  className={`object-cover transition-opacity duration-500 ${
+                    mainImageLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
                   priority
                 />
 
@@ -351,17 +365,34 @@ export default function ProductDetailsPage({ params }: Props) {
                   {productImages.map((image: string, index: number) => (
                     <button
                       key={index}
-                      onClick={() => setSelectedImageIndex(index)}
-                      className={`relative w-20 aspect-[3/4] flex-shrink-0 rounded-lg overflow-hidden transition-all ${selectedImageIndex === index
-                        ? 'shadow-lg scale-105'
-                        : 'bg-gray-100 hover:shadow-sm hover:scale-102'
-                        }`}
+                      onClick={() => {
+                        setSelectedImageIndex(index)
+                        setMainImageLoaded(false)
+                      }}
+                      className={`relative w-20 aspect-[3/4] flex-shrink-0 rounded-lg overflow-hidden transition-all ${
+                        selectedImageIndex === index
+                          ? 'shadow-lg scale-105'
+                          : 'bg-gray-100 hover:shadow-sm hover:scale-102'
+                      }`}
                     >
+                      {/* Thumb shimmer */}
+                      {!thumbsLoaded[index] && (
+                        <div className="absolute inset-0 z-10 overflow-hidden bg-gray-100">
+                          <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+                        </div>
+                      )}
                       <Image
                         src={image}
                         alt={`View ${index + 1}`}
                         fill
-                        className="object-cover"
+                        onLoad={() => setThumbsLoaded(prev => {
+                          const next = [...prev]
+                          next[index] = true
+                          return next
+                        })}
+                        className={`object-cover transition-opacity duration-300 ${
+                          thumbsLoaded[index] ? 'opacity-100' : 'opacity-0'
+                        }`}
                       />
                     </button>
                   ))}
@@ -456,6 +487,7 @@ export default function ProductDetailsPage({ params }: Props) {
                       <button
                         onClick={() => setIsSizeChartOpen(true)}
                         className="text-xs text-gray-600 hover:text-primary underline underline-offset-2 transition-colors"
+                        disabled={isOutOfStock}
                       >
                         Size Guide
                       </button>
@@ -467,7 +499,12 @@ export default function ProductDetailsPage({ params }: Props) {
                     <select
                       value={selectedSize}
                       onChange={(e) => setSelectedSize(e.target.value)}
-                      className="w-full h-12 pl-4 pr-10 rounded-xl border-2 border-gray-200 bg-white text-sm font-medium text-gray-800 appearance-none cursor-pointer focus:outline-none focus:border-gray-900 transition-colors hover:border-gray-400"
+                      disabled={isOutOfStock}
+                      className={`w-full h-12 pl-4 pr-10 rounded-xl border-2 bg-white text-sm font-medium appearance-none focus:outline-none transition-colors ${
+                        isOutOfStock
+                          ? 'border-gray-100 text-gray-400 cursor-not-allowed bg-gray-50'
+                          : 'border-gray-200 text-gray-800 cursor-pointer focus:border-gray-900 hover:border-gray-400'
+                      }`}
                     >
                       <option value="" disabled>Choose a size…</option>
                       {(() => {
@@ -486,48 +523,57 @@ export default function ProductDetailsPage({ params }: Props) {
 
               {/* Action Buttons */}
               <div className="space-y-3 mb-10">
-                <button
-                  onClick={async () => {
-                    if (!selectedSize) {
-                      alert('Please select a size')
-                      return
-                    }
-                    setIsAddingToCart(true)
-                    const success = await addItem(product, selectedSize, quantity)
-                    setIsAddingToCart(false)
+                {isOutOfStock ? (
+                  <div className="w-full h-14 rounded-xl bg-gray-100 border-2 border-gray-200 flex items-center justify-center gap-2 text-gray-400 font-semibold text-base cursor-not-allowed select-none">
+                    <span className="w-2 h-2 rounded-full bg-gray-400 inline-block" />
+                    Currently Out of Stock
+                  </div>
+                ) : (
+                  <>
+                    <button
+                      onClick={async () => {
+                        if (!selectedSize) {
+                          alert('Please select a size')
+                          return
+                        }
+                        setIsAddingToCart(true)
+                        const success = await addItem(product, selectedSize, quantity)
+                        setIsAddingToCart(false)
 
-                    if (success) {
-                      trackEvent('Add to Cart', {
-                        product_id: product.id,
-                        product_name: product.name,
-                        price: product.price,
-                        size: selectedSize,
-                        quantity: quantity,
-                        category: categoryName,
-                        source: 'Buy Now'
-                      })
-                      router.push('/checkout')
-                    }
-                  }}
-                  className="w-full bg-primary hover:bg-primary-hover text-white font-semibold h-14 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center text-base tracking-wide"
-                >
-                  Buy Now
-                </button>
+                        if (success) {
+                          trackEvent('Add to Cart', {
+                            product_id: product.id,
+                            product_name: product.name,
+                            price: product.price,
+                            size: selectedSize,
+                            quantity: quantity,
+                            category: categoryName,
+                            source: 'Buy Now'
+                          })
+                          router.push('/checkout')
+                        }
+                      }}
+                      className="w-full bg-primary hover:bg-primary-hover text-white font-semibold h-14 rounded-xl shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center text-base tracking-wide"
+                    >
+                      Buy Now
+                    </button>
 
-                <button
-                  onClick={handleAddToCart}
-                  disabled={isAddingToCart}
-                  className="w-full bg-white border-2 border-gray-900 hover:bg-gray-900 text-gray-900 hover:text-white font-semibold h-14 rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center gap-2 text-base"
-                >
-                  {isAddingToCart ? (
-                    <div className="w-5 h-5 border-2 border-gray-400 border-t-gray-900 rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      <ShoppingBag size={20} />
-                      <span>Add to Bag</span>
-                    </>
-                  )}
-                </button>
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={isAddingToCart}
+                      className="w-full bg-white border-2 border-gray-900 hover:bg-gray-900 text-gray-900 hover:text-white font-semibold h-14 rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] flex items-center justify-center gap-2 text-base"
+                    >
+                      {isAddingToCart ? (
+                        <div className="w-5 h-5 border-2 border-gray-400 border-t-gray-900 rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <ShoppingBag size={20} />
+                          <span>Add to Bag</span>
+                        </>
+                      )}
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Product Details - Modern Always-Visible Card */}

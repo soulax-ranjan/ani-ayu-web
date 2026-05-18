@@ -150,10 +150,17 @@ export default function CheckoutPage() {
     }
   }
 
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
+  const handleApplyCoupon = async (codeToApply?: string | React.MouseEvent) => {
+    const code = typeof codeToApply === 'string' ? codeToApply : couponCode;
+    
+    if (!code.trim()) {
       setCouponError('Please enter a coupon code')
       return
+    }
+
+    // Set the state if a code was passed
+    if (typeof codeToApply === 'string') {
+      setCouponCode(code);
     }
 
     setCouponLoading(true)
@@ -161,7 +168,7 @@ export default function CheckoutPage() {
 
     try {
       const result = await apiClient.verifyCoupon({
-        code: couponCode.trim().toUpperCase(),
+        code: code.trim().toUpperCase(),
         orderAmount: totals.total
       })
 
@@ -631,6 +638,44 @@ export default function CheckoutPage() {
                       {couponError && (
                         <p className="text-xs text-red-600">{couponError}</p>
                       )}
+                      
+                      {/* Available Coupons */}
+                      <div className="mt-3 p-3 bg-gray-50 border border-gray-100 rounded-lg">
+                        <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Available Offers</p>
+                        <div className="flex flex-col gap-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                              <span className="text-xs font-bold bg-white border border-gray-200 px-2 py-1 rounded border-dashed tracking-wide text-ink w-fit">FIRSTBUY10</span>
+                              <span className="text-xs text-muted-text">10% off your first order</span>
+                            </div>
+                            <button
+                              onClick={() => handleApplyCoupon('FIRSTBUY10')}
+                              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+                            >
+                              Apply
+                            </button>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
+                              <span className="text-xs font-bold bg-white border border-gray-200 px-2 py-1 rounded border-dashed tracking-wide text-ink w-fit">ANIAYU15</span>
+                              <span className="text-xs text-muted-text">15% off on orders above ₹10,000</span>
+                            </div>
+                            <button
+                              onClick={() => handleApplyCoupon('ANIAYU15')}
+                              disabled={totals.total < 10000}
+                              className={`text-xs font-semibold transition-colors ${
+                                totals.total >= 10000 
+                                  ? 'text-primary hover:text-primary/80' 
+                                  : 'text-gray-400 cursor-not-allowed'
+                              }`}
+                              title={totals.total < 10000 ? "Add more items to unlock" : ""}
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">

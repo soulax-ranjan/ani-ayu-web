@@ -61,7 +61,7 @@ export interface Product {
   meta_keywords?: string[]
 
   // Status and features
-  status?: 'active' | 'inactive' | 'draft' | 'archived'
+  status?: 'active' | 'inactive' | 'draft' | 'archived' | 'out_of_stock'
   customizable?: boolean
   allProduct?: boolean
 

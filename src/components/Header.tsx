@@ -22,8 +22,14 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-cream/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
       {/* Promo Strip */}
-      <div className="bg-[#e8af23] text-white py-2 px-4 text-center text-xs md:text-sm font-medium tracking-wide">
-        Use code <strong className="font-bold bg-white/20 px-2 py-0.5 rounded mx-1">FIRSTBUY25</strong> for an exclusive discount on your first buy!
+      <div className="bg-gray-900 text-white overflow-hidden flex whitespace-nowrap py-2.5 text-xs md:text-sm font-medium tracking-wide">
+        <div className="animate-marquee flex gap-8 w-max">
+          {[...Array(6)].map((_, i) => (
+            <span key={i} className="flex-shrink-0">
+              Use code <strong className="font-bold text-yellow-400 bg-white/10 px-2 py-0.5 rounded mx-1 tracking-wider">FIRSTBUY10</strong> for a 10% discount on your first buy!
+            </span>
+          ))}
+        </div>
       </div>
       <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
         {/* Logo */}
