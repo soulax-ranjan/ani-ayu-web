@@ -7,7 +7,7 @@ import Script from "next/script"
 import SessionInit from "@/components/SessionInit"
 import AnalyticsInit from "@/components/AnalyticsInit"
 
-const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-heading" })
+const poppins = Poppins({ subsets: ["latin", "devanagari"], weight: ["400", "500", "600", "700"], variable: "--font-heading" })
 
 export const metadata: Metadata = {
   title: "Ani & Ayu — Indian Ethnic Kidswear",

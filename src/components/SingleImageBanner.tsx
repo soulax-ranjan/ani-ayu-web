@@ -10,9 +10,11 @@ export default function SingleImageBanner() {
             alt="Premium Collection"
             fill
             className="object-cover"
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 1400px"
             priority
-            quality={95}
+            quality={75}
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwMCIgaGVpZ2h0PSI2MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjM2E3ZDZlIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZjVlNmQzIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjE0MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2cpIi8+PC9zdmc+"
           />
 
           {/* Stronger Gradient Overlay */}

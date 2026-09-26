@@ -1,187 +1,112 @@
-
 import Image from "next/image"
 import Link from "next/link"
-import { Instagram, Facebook, Youtube, Mail, Phone, MapPin } from "lucide-react"
+import { Instagram, Mail, Heart, ArrowUpRight } from "lucide-react"
+
+const LINK_GROUPS = [
+  {
+    title: "Shop",
+    links: [
+      { label: "All Products", href: "/products" },
+      { label: "Girls Collection", href: "/products?category=girls" },
+      { label: "Boys Collection", href: "/products?category=boys" },
+      { label: "Track Order", href: "/orders" },
+    ],
+  },
+  {
+    title: "Customer Care",
+    links: [
+      { label: "Shipping Info", href: "/help/shipping" },
+      { label: "Returns & Exchanges", href: "/help/returns" },
+      { label: "Privacy Policy", href: "/legal/privacy" },
+      { label: "Terms of Service", href: "/legal/terms" },
+    ],
+  },
+]
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 text-white">
-      <div className="mx-auto max-w-[1400px] px-4 md:px-6 lg:px-8">
+    <footer className="relative overflow-hidden bg-[#1f4a41] text-white border-t-2 border-[#e6c88a]/60">
+      {/* Soft decorative glows, matching the values band */}
+      <div className="pointer-events-none absolute -top-32 -left-24 w-96 h-96 rounded-full bg-primary/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 -right-24 w-96 h-96 rounded-full bg-[#d9b36c]/10 blur-3xl" />
 
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 py-12 md:py-16">
-
-          {/* Brand Section */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-block">
+      <div className="relative mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10 pt-12 md:pt-14 pb-10">
+          {/* Brand */}
+          <div className="col-span-2 lg:col-span-5">
+            <Link href="/" className="inline-block" aria-label="Ani & Ayu home">
               <Image
                 src="/assets/logo/main-logo.webp"
                 alt="Ani & Ayu"
                 width={556}
                 height={148}
-                className="h-20 w-auto sm:h-20 md:h-24 lg:h-28 object-contain"
+                className="h-28 md:h-32 w-auto object-contain -ml-3 -my-7"
               />
             </Link>
-            <p className="text-gray-300 mb-6 max-w-md leading-relaxed text-sm md:text-base">
+            <p className="mt-5 max-w-sm text-sm md:text-base text-white/70 leading-relaxed">
               Beautiful traditional clothing for children, crafted with love and inspired by heritage.
               Making every occasion special for kids aged 2-13.
             </p>
 
-            {/* Contact Info */}
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center gap-3 text-sm text-gray-300">
-                <div className="bg-primary/10 p-2 rounded-lg">
-                  <Mail size={16} className="text-primary" />
-                </div>
-                <a href="mailto:support@aniayu.com" className="hover:text-primary transition-colors">
-                  support@aniayu.com
-                </a>
-              </div>
-              {/* <div className="flex items-center gap-3 text-sm text-gray-300">
-                <div className="bg-primary/10 p-2 rounded-lg">
-                  <Phone size={16} className="text-primary" />
-                </div>
-                <a href="tel:+911234567890" className="hover:text-primary transition-colors">
-                  +91 123 456 7890
-                </a>
-              </div> */}
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <a
+                href="mailto:support@aniayu.com"
+                className="inline-flex items-center gap-2 rounded-full ring-1 ring-white/15 px-4 py-2 text-sm text-white/80 hover:ring-[#e6c88a] hover:text-[#e6c88a] transition-colors"
+              >
+                <Mail size={16} />
+                support@aniayu.com
+              </a>
+              <a
+                href="https://www.instagram.com/aniayukids/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full ring-1 ring-white/15 px-4 py-2 text-sm text-white/80 hover:ring-[#e6c88a] hover:text-[#e6c88a] transition-colors"
+              >
+                <Instagram size={16} />
+                @aniayukids
+              </a>
             </div>
+          </div>
 
-            {/* Social Media */}
-            <div>
-              <h4 className="font-[var(--font-heading)] font-bold mb-4 text-white text-sm uppercase tracking-wider">
-                Follow Us
+          {/* Link groups */}
+          {LINK_GROUPS.map((group) => (
+            <nav key={group.title} className="lg:col-span-3" aria-label={group.title}>
+              <h4 className="text-xs font-semibold uppercase tracking-[0.25em] text-[#e6c88a] mb-5">
+                {group.title}
               </h4>
-              <div className="flex gap-3">
-                <a
-                  href="https://www.instagram.com/aniayukids/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="bg-gradient-to-br from-pink-500 to-purple-600 p-3 rounded-xl hover:shadow-lg hover:shadow-pink-500/30 transition-all hover:scale-110 transform duration-200 group"
-                >
-                  <Instagram size={20} className="text-white" />
-                </a>
-                {/* <a
-                  href="https://facebook.com/aniayu"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="bg-gradient-to-br from-blue-500 to-blue-700 p-3 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition-all hover:scale-110 transform duration-200 group"
-                >
-                  <Facebook size={20} className="text-white" />
-                </a>
-                <a
-                  href="https://youtube.com/aniayu"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="YouTube"
-                  className="bg-gradient-to-br from-red-500 to-red-700 p-3 rounded-xl hover:shadow-lg hover:shadow-red-500/30 transition-all hover:scale-110 transform duration-200 group"
-                >
-                  <Youtube size={20} className="text-white" />
-                </a> */}
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-[var(--font-heading)] font-bold mb-6 text-white text-sm uppercase tracking-wider">
-              Quick Links
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/products"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  All Products
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=girls"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Girls Collection
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products?category=boys"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Boys Collection
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/orders"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Track Order
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Customer Care Section */}
-          <div>
-            <h4 className="font-[var(--font-heading)] font-bold mb-6 text-white text-sm uppercase tracking-wider">
-              Customer Care
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/help/shipping"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/help/returns"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Returns & Exchanges
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/legal/privacy"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/legal/terms"
-                  className="text-gray-300 hover:text-primary transition-colors flex items-center gap-2 group text-sm md:text-base"
-                >
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                  Terms of Service
-                </Link>
-              </li>
-            </ul>
-          </div>
+              <ul className="space-y-3">
+                {group.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="group inline-flex items-center gap-1 text-sm md:text-[15px] text-white/75 hover:text-white transition-colors"
+                    >
+                      {link.label}
+                      <ArrowUpRight
+                        size={14}
+                        className="text-[#e6c88a] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+                      />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
         </div>
 
-        {/* Bottom Section */}
-        <div className="border-t border-gray-700 py-6">
-          <div className="flex items-center justify-center">
-            <div className="text-sm text-gray-300 text-center">
-              © {new Date().getFullYear()} Ani & Ayu. All rights reserved. Made with ❤️ for little ones.
-            </div>
-          </div>
+        {/* Oversized brand wordmark, clipped so it sits on the divider */}
+        <div className="overflow-hidden -mt-4 lg:-mt-10" aria-hidden>
+          <p className="pointer-events-none select-none font-logo text-center leading-[1.1] text-white/[0.05] text-[18vw] lg:text-[200px] translate-y-[12%]">
+            Ani & Ayu
+          </p>
+        </div>
+
+        {/* Bottom bar */}
+        <div className="relative border-t border-white/10 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs md:text-sm text-white/60">
+          <p>© {new Date().getFullYear()} Ani & Ayu. All rights reserved.</p>
+          <p className="inline-flex items-center gap-1.5">
+            Made with <Heart size={14} className="fill-[#e6c88a] text-[#e6c88a]" /> for little ones
+          </p>
         </div>
       </div>
     </footer>

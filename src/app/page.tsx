@@ -3,8 +3,9 @@ import Header from "@/components/Header"
 import HeroCarousel from "@/components/HeroCarousel"
 import BestDesigns from "@/components/BestDesigns"
 import BannerProductSections from "@/components/BannerProductSections"
-import SingleImageBanner from "@/components/SingleImageBanner"
 import FounderStory from "@/components/FounderStory"
+import InstagramGallery from "@/components/InstagramGallery"
+import Testimonials from "@/components/Testimonials"
 import InstagramFeed from "@/components/InstagramFeed"
 import Footer from "@/components/Footer"
 import { apiClient, transformApiProduct } from "@/lib/api"
@@ -46,9 +47,9 @@ export default async function HomePage() {
           <BannerProductSections products={products} />
         </div>
 
-        {/* ── 4. Single Image Banner ── light stone wrapper */}
-        <div style={{ background: '#f0ece6', padding: '3rem 0' }}>
-          <SingleImageBanner />
+        {/* ── 4. Instagram Gallery ── crisp white */}
+        <div style={{ background: '#ffffff' }}>
+          <InstagramGallery />
         </div>
 
         {/* ── 5. Founder Story ── soft ivory stone */}
@@ -56,7 +57,12 @@ export default async function HomePage() {
           <FounderStory />
         </div>
 
-        {/* ── 6. Instagram CTA ── warm stone */}
+        {/* ── 6. Testimonials ── crisp white */}
+        <div style={{ background: '#ffffff' }}>
+          <Testimonials />
+        </div>
+
+        {/* ── 7. Instagram CTA ── warm stone */}
         <div style={{ background: '#f0ece6' }}>
           <InstagramFeed />
         </div>

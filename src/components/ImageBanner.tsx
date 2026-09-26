@@ -14,6 +14,9 @@ export default function ImageBanner({ imageUrl, alt, link }: ImageBannerProps) {
         src={imageUrl}
         alt={alt}
         fill
+        loading="lazy"
+        placeholder="blur"
+        blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZjBlY2U2Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZTBkNWNhIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI1MDAiIGZpbGw9InVybCgjZykiLz48L3N2Zz4="
         className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
         sizes="(max-width: 768px) 100vw, 33vw"
       />

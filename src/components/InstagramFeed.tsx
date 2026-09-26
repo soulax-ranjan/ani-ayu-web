@@ -3,18 +3,18 @@ import { Instagram } from "lucide-react"
 
 export default function InstagramFeed() {
   return (
-    <section className="w-full py-16 md:py-20">
+    <section className="w-full py-12 md:py-16">
       <div className="mx-auto max-w-[1400px] px-4 md:px-6 lg:px-8">
         {/* Call to Action */}
         <div className="text-center">
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl max-w-2xl mx-auto">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-7 md:p-10 shadow-xl max-w-2xl mx-auto">
             <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 mb-6">
               <Instagram size={26} className="text-white" />
             </div>
             <h2 className="text-2xl md:text-3xl font-[var(--font-heading)] font-bold text-ink mb-3">
               Follow Us on Instagram
             </h2>
-            <p className="text-ink/70 mb-8 leading-relaxed">
+            <p className="text-ink/70 mb-6 leading-relaxed">
               Tag us <strong className="text-primary">@aniayukids</strong> and use{" "}
               <strong className="text-primary">#AniAyuMoments</strong> to be featured on our page!
               We love seeing your little ones shine in our outfits.

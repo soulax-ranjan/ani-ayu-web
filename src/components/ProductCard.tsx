@@ -92,14 +92,14 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           {/* Price */}
           <div className="flex flex-col">
             <div className="flex items-baseline gap-2">
-              <span className={`text-2xl font-black tracking-tight ${
+              <span className={`font-heading text-2xl font-bold tabular-nums ${
                 isOutOfStock ? 'text-gray-400' : 'text-primary'
               }`}>
                 ₹{product.price.toLocaleString()}
               </span>
             </div>
             {product.originalPrice && product.originalPrice > product.price && (
-              <span className="text-xs text-[#a8a29e] line-through font-medium">
+              <span className="font-heading text-xs text-[#a8a29e] line-through font-medium tabular-nums">
                 ₹{product.originalPrice.toLocaleString()}
               </span>
             )}

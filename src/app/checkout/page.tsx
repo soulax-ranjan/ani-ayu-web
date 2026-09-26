@@ -373,8 +373,8 @@ export default function CheckoutPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Checkout Form */}
-            <div className="lg:col-span-2">
+            {/* Checkout Form — order-2 on mobile (below summary), order-1 on desktop (left) */}
+            <div className="lg:col-span-2 order-2 lg:order-1">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 {/* Progress Steps */}
                 <div className="p-4 sm:p-6 border-b border-gray-100">
@@ -587,8 +587,8 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Order Summary */}
-            <div className="lg:col-span-1">
+            {/* Order Summary — order-1 on mobile (above form), order-2 on desktop (right) */}
+            <div className="lg:col-span-1 order-1 lg:order-2">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-6">
                 <h2 className="font-semibold text-ink mb-4">Order Summary</h2>
 
