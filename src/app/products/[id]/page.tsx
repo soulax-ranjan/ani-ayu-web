@@ -11,7 +11,7 @@ import {
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
-import { useProduct, useRelatedProducts } from '@/lib/hooks'
+import { useProduct, useRelatedProducts, useMatchingProducts } from '@/lib/hooks'
 import { useCartStore } from '@/store/cartStore'
 import { Product as APIProduct } from '@/lib/api'
 import { Product } from '@/types/product'
@@ -126,6 +126,7 @@ export default function ProductDetailsPage({ params }: Props) {
   // Fetch product data from API
   const { data: productData, loading: productLoading, error: productError } = useProduct(resolvedParams.id)
   const { data: relatedData } = useRelatedProducts(resolvedParams.id)
+  const { data: matchingData } = useMatchingProducts(resolvedParams.id)
 
   const { addItem } = useCartStore()
 
@@ -227,7 +228,13 @@ export default function ProductDetailsPage({ params }: Props) {
   }
 
   const product = transformAPIProduct(productData)
-  const relatedProducts = relatedData?.products?.map(transformAPIProduct) || []
+  const matchingGroups = (matchingData?.groups || []).map(group => ({
+    tag: group.tag,
+    products: group.products.map(transformAPIProduct)
+  }))
+  // Don't repeat products already shown in a matching group
+  const matchingIds = new Set(matchingGroups.flatMap(group => group.products.map(p => p.id)))
+  const relatedProducts = (relatedData?.products?.map(transformAPIProduct) || []).filter(p => !matchingIds.has(p.id))
   const isOutOfStock = product.status === 'out_of_stock' || product.in_stock === false
   const hasDiscount = (product.originalPrice ?? 0) > product.price
   const savePercent = hasDiscount ? Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100) : 0
@@ -353,7 +360,7 @@ export default function ProductDetailsPage({ params }: Props) {
       {showToast && (
         <div className="fixed top-24 inset-x-4 sm:inset-x-auto sm:right-6 z-50 sm:w-80 rounded-2xl bg-[#1f4a41] text-white shadow-2xl p-4 flex items-center gap-3 animate-in slide-in-from-top-2 fade-in duration-300">
           <div className="relative w-12 h-14 shrink-0 rounded-lg overflow-hidden bg-white/10">
-            <Image src={productImages[0]} alt="" fill sizes="48px" className="object-cover" />
+            <Image src={productImages[0]} alt="" fill sizes="48px" className="object-cover object-[center_15%]" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="flex items-center gap-1.5 text-sm font-semibold"><Check size={16} className="text-[#e6c88a]" /> Added to bag</p>
@@ -390,7 +397,7 @@ export default function ProductDetailsPage({ params }: Props) {
                     <button
                       key={image}
                       onClick={() => openImagePreview(index)}
-                      className="relative shrink-0 w-full aspect-[4/5] snap-center bg-gradient-to-b from-[#fbf6ee] to-[#f1e7da]"
+                      className="relative shrink-0 w-full aspect-[3/4] snap-center bg-gradient-to-b from-[#fbf6ee] to-[#f1e7da]"
                       aria-label={`View image ${index + 1} full screen`}
                     >
                       <Image
@@ -399,7 +406,7 @@ export default function ProductDetailsPage({ params }: Props) {
                         fill
                         priority={index === 0}
                         sizes="100vw"
-                        className="object-cover"
+                        className="object-contain"
                       />
                     </button>
                   ))}
@@ -429,7 +436,7 @@ export default function ProductDetailsPage({ params }: Props) {
                           selectedImageIndex === index ? 'ring-2 ring-primary ring-offset-2 ring-offset-[#fdfbf7]' : 'opacity-70 hover:opacity-100'
                         }`}
                       >
-                        <Image src={image} alt="" fill sizes="80px" className="object-cover" />
+                        <Image src={image} alt="" fill sizes="80px" className="object-cover object-[center_15%]" />
                       </button>
                     ))}
                   </div>
@@ -442,7 +449,7 @@ export default function ProductDetailsPage({ params }: Props) {
                     fill
                     priority
                     sizes="(max-width: 1200px) 55vw, 620px"
-                    className="object-cover"
+                    className="object-contain"
                   />
                   {hasDiscount && (
                     <span className="absolute top-4 left-4 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-semibold text-primary shadow-sm tabular-nums">
@@ -638,6 +645,27 @@ export default function ProductDetailsPage({ params }: Props) {
               </div>
             </div>
           </div>
+
+          {/* Products sharing a tag, e.g. the other pieces of a sibling set */}
+          {matchingGroups.map(group => (
+            <section key={group.tag} className="mt-16 md:mt-20">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary mb-2">Shop the set</p>
+              <div className="flex items-end justify-between gap-4 mb-6 md:mb-8">
+                <h2 className="font-heading text-2xl md:text-3xl font-bold text-ink">{group.tag}</h2>
+                <Link
+                  href={`/products?tag=${encodeURIComponent(group.tag)}`}
+                  className="shrink-0 text-sm font-semibold text-primary hover:underline"
+                >
+                  View all
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+                {group.products.map(matchingProduct => (
+                  <ProductCard key={matchingProduct.id} product={matchingProduct} />
+                ))}
+              </div>
+            </section>
+          ))}
 
           {/* Related products */}
           {relatedProducts.length > 0 && (

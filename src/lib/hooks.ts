@@ -96,6 +96,11 @@ export function useRelatedProducts(id: string) {
   return useAPI<{ products: Product[] }>(fetchData, [id])
 }
 
+export function useMatchingProducts(id: string) {
+  const fetchData = useCallback(() => apiClient.getMatchingProducts(id), [id])
+  return useAPI<{ groups: { tag: string; products: Product[] }[] }>(fetchData, [id])
+}
+
 // Category hooks
 export function useCategories() {
   const fetchData = useCallback(() => apiClient.getCategories(), [])

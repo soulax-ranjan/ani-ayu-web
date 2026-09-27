@@ -397,6 +397,11 @@ class APIClient {
     return this.request<Product>(`/products/${id}`)
   }
 
+  // Products sharing a tag with this product (e.g. the other pieces of a sibling set), grouped by tag
+  async getMatchingProducts(id: string): Promise<{ groups: { tag: string; products: Product[] }[] }> {
+    return this.request(`/products/${id}/matching`)
+  }
+
   async getRelatedProducts(id: string): Promise<{ products: Product[] }> {
     const response = await this.request<{ products: Product[] }>(`/products/${id}/related`)
     if (response && response.products) {

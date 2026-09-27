@@ -69,7 +69,7 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
 
   return (
     <section className="w-full relative overflow-hidden bg-gradient-to-br from-primary/5 via-white to-accent/5">
-      <div className="relative w-full h-[500px] md:h-[550px] overflow-hidden group">
+      <div className="relative w-full h-[500px] md:h-[560px] lg:h-[min(72vh,700px)] overflow-hidden group">
         {/* Carousel Container */}
         <div
           className="flex transition-all duration-700 ease-out w-full h-full"
@@ -88,22 +88,22 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
                 className="w-full h-full object-cover object-center"
               />
 
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
+              {/* Soft warm shade in the bottom-left corner, behind the text only - keeps the photo bright */}
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_0%_100%,rgba(45,30,15,0.5)_0%,rgba(45,30,15,0.18)_45%,transparent_75%)]"></div>
 
-              {/* Content Overlay - Bottom Aligned */}
-              <div className="absolute inset-0 flex items-end justify-center pb-8 md:pb-16">
-                <div className="text-center text-white max-w-4xl px-4 md:px-8">
-                  <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4 leading-tight">
-                    {banner.title}
-                  </h1>
-                  <p className="text-sm md:text-lg lg:text-xl mb-4 md:mb-6 text-white/90 leading-relaxed max-w-2xl mx-auto">
-                    {banner.subtitle}
-                  </p>
-                  <div className="flex justify-center">
+              {/* Content - bottom-left, aligned with the page content */}
+              <div className="absolute inset-0 flex items-end">
+                <div className="w-full max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 pb-12 md:pb-16">
+                  <div className="max-w-[16rem] sm:max-w-xs lg:max-w-sm text-left text-white">
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 leading-[1.1] [text-shadow:0_2px_16px_rgba(45,30,15,0.45)]">
+                      {banner.title}
+                    </h1>
+                    <p className="text-sm md:text-lg mb-5 md:mb-7 text-white/95 leading-relaxed [text-shadow:0_1px_10px_rgba(45,30,15,0.5)]">
+                      {banner.subtitle}
+                    </p>
                     <Link
                       href={banner.ctaLink && banner.ctaLink.trim() !== '' ? banner.ctaLink : '/products'}
-                      className="inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-primary text-white font-bold rounded-full hover:bg-primary/90 transition-all duration-300 hover:scale-105 shadow-lg shadow-primary/30 text-sm md:text-base"
+                      className="inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-white text-ink font-semibold rounded-full hover:bg-[#e6c88a] transition-colors duration-300 shadow-lg shadow-black/10 text-sm md:text-base"
                     >
                       {banner.ctaText || 'Explore Collection'}
                       <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
@@ -115,24 +115,22 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
           ))}
         </div>
 
-        {/* Modern Carousel Dots */}
+        {/* Slide indicators - bottom-right, aligned with the page content */}
         {banners.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
-            {banners.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`relative w-3 h-3 rounded-full transition-all duration-300 transform hover:scale-125 ${index === currentSlide
-                  ? 'bg-gradient-to-r from-primary to-accent shadow-lg shadow-primary/50 scale-110'
-                  : 'bg-white/60 hover:bg-white/80 backdrop-blur-sm'
+          <div className="pointer-events-none absolute inset-x-0 bottom-5 md:bottom-7 z-20">
+            <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 flex justify-end gap-2">
+              {banners.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`pointer-events-auto h-1.5 rounded-full transition-all duration-500 ${
+                    index === currentSlide ? 'w-8 bg-white' : 'w-3 bg-white/50 hover:bg-white/80'
                   }`}
-                aria-label={`Go to slide ${index + 1}`}
-              >
-                {index === currentSlide && (
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-accent animate-pulse"></div>
-                )}
-              </button>
-            ))}
+                  aria-label={`Go to slide ${index + 1}`}
+                  aria-current={index === currentSlide}
+                />
+              ))}
+            </div>
           </div>
         )}
 

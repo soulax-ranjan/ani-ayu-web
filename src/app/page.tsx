@@ -3,12 +3,14 @@ import Header from "@/components/Header"
 import HeroCarousel from "@/components/HeroCarousel"
 import BestDesigns from "@/components/BestDesigns"
 import BannerProductSections from "@/components/BannerProductSections"
+import SiblingSets, { type SiblingSet } from "@/components/SiblingSets"
+import FestiveEdit, { type FestiveCollection } from "@/components/FestiveEdit"
 import FounderStory from "@/components/FounderStory"
 import InstagramGallery from "@/components/InstagramGallery"
 import Testimonials from "@/components/Testimonials"
 import InstagramFeed from "@/components/InstagramFeed"
 import Footer from "@/components/Footer"
-import { apiClient, transformApiProduct } from "@/lib/api"
+import { apiClient, transformApiProduct, IS_PRODUCTION } from "@/lib/api"
 import type { Product } from "@/types/product"
 
 export const dynamic = 'force-dynamic'
@@ -34,6 +36,25 @@ export default async function HomePage() {
     return shown < 4
   }).map(toCardProduct)
 
+  // Tag-driven sections. A tag belongs to a section when it starts with the prefix (spacing/case ignored,
+  // so "SiblingSet" works too); products are grouped by the exact full tag.
+  const liveProducts = productsData.products.filter((p) => !IS_PRODUCTION || p.status === 'active')
+  const groupByTag = (prefix: string, minSize: number) => {
+    const groups = new Map<string, typeof liveProducts>()
+    liveProducts.forEach((p) => {
+      new Set((p.tags || []).map((t) => t.trim())).forEach((tag) => {
+        if (!tag.toLowerCase().replace(/\s+/g, '').startsWith(prefix)) return
+        groups.set(tag, [...(groups.get(tag) || []), p])
+      })
+    })
+    return [...groups]
+      .filter(([, group]) => group.length >= minSize)
+      .map(([tag, group]) => ({ tag, products: group.map((p) => toCardProduct(transformApiProduct(p))) }))
+  }
+  // Sibling sets need at least two matching pieces; a festive edit shows whatever carries the tag
+  const siblingSets: SiblingSet[] = groupByTag('siblingset', 2)
+  const festiveCollections: FestiveCollection[] = groupByTag('festive', 1)
+
   return (
     <>
       <Suspense fallback={<div className="h-16 md:h-20 bg-cream" />}>
@@ -45,10 +66,20 @@ export default async function HomePage() {
         {/* ── 1. Hero Carousel ── full bleed, no bg */}
         <HeroCarousel banners={bannersData.banners} />
 
+        {/* ── 1b. Festive edit ── deep teal band, from "Festive - …" tags, hidden when none */}
+        <FestiveEdit collections={festiveCollections} />
+
         {/* ── 2. Best Designs ── crisp white */}
         <div style={{ background: '#ffffff' }}>
           <BestDesigns bestSellers={bestSellersData.bestSellers} />
         </div>
+
+        {/* ── 2b. Sibling Sets ── soft ivory, hidden when no tagged pairs */}
+        {siblingSets.length > 0 && (
+          <div style={{ background: '#f7f4f0' }}>
+            <SiblingSets sets={siblingSets} />
+          </div>
+        )}
 
         {/* ── 3. Banner + Product Sections ── warm stone greige */}
         <div style={{ background: '#f0ece6' }}>

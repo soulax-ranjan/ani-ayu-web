@@ -380,7 +380,7 @@ export default function CheckoutPage() {
           <li key={item.id} className="flex gap-3">
             <div className="relative w-14 aspect-[4/5] shrink-0 rounded-xl overflow-hidden bg-gradient-to-b from-[#fbf6ee] to-[#f1e7da]">
               {item.product.image && (
-                <Image src={item.product.image} alt={item.product.name} fill sizes="56px" className="object-cover" />
+                <Image src={item.product.image} alt={item.product.name} fill sizes="56px" className="object-cover object-[center_15%]" />
               )}
               <span className="absolute -top-0 -right-0 min-w-5 h-5 px-1 rounded-bl-lg bg-ink/70 text-white text-[10px] font-semibold grid place-items-center tabular-nums">
                 {item.quantity}

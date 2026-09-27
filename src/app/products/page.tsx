@@ -3,10 +3,10 @@
 export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
-import { useState, useMemo, Suspense, useEffect } from 'react'
+import { useState, useMemo, Suspense, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import { Grid, SlidersHorizontal, X } from 'lucide-react'
+import { Grid, SlidersHorizontal, X, ChevronDown, Check } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
@@ -51,6 +51,7 @@ function transformAPIProduct(apiProduct: APIProduct): Product {
     customizable: apiProduct.customizable,
     allProduct: apiProduct.allProduct,
     section: apiProduct.section,
+    tags: apiProduct.tags || [],
     status: apiProduct.status || 'active'
   }
 }
@@ -59,7 +60,23 @@ function ProductsContent() {
   const searchParams = useSearchParams()
   const categoryFromUrl = searchParams?.get('category') || ''
   const sectionFromUrl = searchParams?.get('section')
+  const tagFromUrl = searchParams?.get('tag') || ''
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [isSortOpen, setIsSortOpen] = useState(false)
+  const sortRef = useRef<HTMLDivElement>(null)
+
+  // Close the sort menu on outside click or Escape
+  useEffect(() => {
+    if (!isSortOpen) return
+    const onClick = (e: MouseEvent) => { if (!sortRef.current?.contains(e.target as Node)) setIsSortOpen(false) }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsSortOpen(false) }
+    document.addEventListener('mousedown', onClick)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onClick)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [isSortOpen])
 
   const [filters, setFilters] = useState<Filters>({
     category: categoryFromUrl ? [categoryFromUrl] : [],
@@ -104,6 +121,11 @@ function ProductsContent() {
       )
     }
 
+    // Filter by tag (e.g. /products?tag=Sibling%20Set%20-%20Mint%20Green from a product page)
+    if (tagFromUrl) {
+      filtered = filtered.filter(p => p.tags?.includes(tagFromUrl))
+    }
+
     // Filter by section (only if section data exists on products)
     if (filters.section) {
       const sectionProducts = filtered.filter(p => p.section === filters.section)
@@ -135,7 +157,7 @@ function ProductsContent() {
     }
 
     // Show only products marked for "all products" display when no real category/section filter is active
-    if (!hasKnownCategory && !filters.section) {
+    if (!hasKnownCategory && !filters.section && !tagFromUrl) {
       filtered = filtered.filter(p => p.allProduct === true)
     }
 
@@ -145,7 +167,7 @@ function ProductsContent() {
     }
 
     return filtered
-  }, [allProducts, filters])
+  }, [allProducts, filters, tagFromUrl])
 
   const priceActive = filters.priceRange[0] > 0 || filters.priceRange[1] < PRICE_MAX
   const activeCount = filters.category.length + filters.sizes.length + (priceActive ? 1 : 0)
@@ -158,8 +180,8 @@ function ProductsContent() {
     return [...sizes].sort((a, b) => (parseFloat(a) || 0) - (parseFloat(b) || 0))
   }, [data])
 
-  const pageTitle =
-    filters.category.length === 1 ? (filters.category[0] === 'girls' ? 'Girls' : filters.category[0] === 'boys' ? 'Boys' : 'Shop All') : 'Shop All'
+  const pageTitle = tagFromUrl ||
+    (filters.category.length === 1 ? (filters.category[0] === 'girls' ? 'Girls' : filters.category[0] === 'boys' ? 'Boys' : 'Shop All') : 'Shop All')
 
   const resetFilters = () => {
     setFilters({
@@ -188,19 +210,50 @@ function ProductsContent() {
             </div>
 
             <div className="flex items-center gap-2">
-              <select
-                aria-label="Sort products"
-                value={filters.sortBy}
-                onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as Filters['sortBy'] })}
-                className="hidden md:block rounded-full bg-white ring-1 ring-stone-200 hover:ring-primary/60 px-4 py-2.5 text-sm font-medium text-ink outline-none focus:ring-2 focus:ring-primary cursor-pointer"
-              >
-                {SORT_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>Sort: {option.label}</option>
-                ))}
-              </select>
+              <div ref={sortRef} className="relative hidden md:block">
+                <button
+                  onClick={() => setIsSortOpen((v) => !v)}
+                  aria-haspopup="listbox"
+                  aria-expanded={isSortOpen}
+                  className="inline-flex h-11 items-center gap-2 rounded-full bg-white ring-1 ring-stone-200 hover:ring-primary/60 pl-4 pr-3.5 text-sm text-ink transition-colors"
+                >
+                  <span className="text-ink/55">Sort:</span>
+                  <span className="font-semibold">{SORT_OPTIONS.find((o) => o.value === filters.sortBy)?.label}</span>
+                  <ChevronDown size={16} className={`text-ink/50 transition-transform ${isSortOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isSortOpen && (
+                  <ul
+                    role="listbox"
+                    aria-label="Sort products"
+                    className="absolute right-0 top-full mt-2 z-30 w-56 rounded-2xl bg-white ring-1 ring-stone-200 shadow-xl p-1.5"
+                  >
+                    {SORT_OPTIONS.map((option) => {
+                      const active = filters.sortBy === option.value
+                      return (
+                        <li key={option.value}>
+                          <button
+                            role="option"
+                            aria-selected={active}
+                            onClick={() => {
+                              setFilters({ ...filters, sortBy: option.value })
+                              setIsSortOpen(false)
+                            }}
+                            className={`w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-left transition-colors ${
+                              active ? 'bg-primary/10 font-semibold text-primary' : 'text-ink/80 hover:bg-stone-100'
+                            }`}
+                          >
+                            {option.label}
+                            {active && <Check size={16} />}
+                          </button>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
+              </div>
               <button
                 onClick={() => setIsFilterOpen(true)}
-                className="inline-flex items-center gap-2 rounded-full bg-white ring-1 ring-stone-200 hover:ring-primary/60 hover:text-primary px-4 py-2.5 text-sm font-semibold text-ink transition-colors"
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-white ring-1 ring-stone-200 hover:ring-primary/60 hover:text-primary px-4 text-sm font-semibold text-ink transition-colors"
               >
                 <SlidersHorizontal size={16} />
                 Filters

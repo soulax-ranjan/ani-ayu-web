@@ -102,7 +102,7 @@ export default function CartPage() {
                       href={`/products/${item.product.id}`}
                       className="relative w-24 md:w-28 aspect-[4/5] shrink-0 rounded-2xl overflow-hidden bg-gradient-to-b from-[#fbf6ee] to-[#f1e7da]"
                     >
-                      <Image src={item.product.image} alt={item.product.name} fill sizes="112px" className="object-cover" />
+                      <Image src={item.product.image} alt={item.product.name} fill sizes="112px" className="object-cover object-[center_15%]" />
                     </Link>
 
                     <div className="flex-1 min-w-0 flex flex-col">

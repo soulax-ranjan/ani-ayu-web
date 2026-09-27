@@ -24,14 +24,14 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
 
   return (
     <Link href={`/products/${product.id}`} className={`group relative block ${className}`}>
-      <div className={`relative h-full bg-gradient-to-br from-white to-gray-50/50 rounded-2xl md:rounded-[28px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100/50 transition-all duration-500 ${
+      <div className={`relative h-full bg-white rounded-2xl md:rounded-[28px] overflow-hidden ring-1 ring-stone-200/70 shadow-[0_2px_12px_-4px_rgba(120,90,50,0.14)] transition-all duration-500 ease-out ${
         isOutOfStock
           ? 'opacity-80'
-          : 'hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] hover:border-primary/30 hover:-translate-y-1'
+          : 'hover:-translate-y-1 hover:ring-[#e6c88a] hover:shadow-[0_22px_40px_-18px_rgba(120,90,50,0.38)]'
       }`}>
 
         {/* Image Section */}
-        <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100/30">
+        <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-b from-[#fdfbf7] to-[#f1e7da]">
 
           {/* Shimmer skeleton — visible until image loads */}
           {!isLoaded && (
@@ -45,17 +45,24 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
             alt={product.name}
             fill
             onLoad={() => setIsLoaded(true)}
-            className={`object-cover transition-all duration-700 ${
+            className={`object-cover object-[center_15%] transition-all duration-700 ease-out ${
               isLoaded ? 'opacity-100' : 'opacity-0'
             } ${
-              isOutOfStock ? 'grayscale-[40%]' : 'group-hover:scale-110'
+              isOutOfStock ? 'grayscale-[40%]' : 'brightness-[1.05] contrast-[1.04] saturate-[1.1] group-hover:scale-105 group-hover:brightness-[1.09]'
             }`}
             sizes="(max-width: 1024px) 50vw, 33vw"
           />
 
-          {/* Gradient Overlay on Hover */}
+          {/* Studio lighting: soft key light from above, gentle vignette, grounding shadow at the base */}
           {!isOutOfStock && (
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <>
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-transparent" />
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,transparent_55%,rgba(60,40,20,0.12)_100%)]" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/5 bg-gradient-to-t from-[rgba(60,40,20,0.10)] to-transparent" />
+              <div className="pointer-events-none absolute inset-0 rounded-t-[inherit] ring-1 ring-inset ring-white/40" />
+              {/* Light sheen that sweeps across on hover */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-1/2 -translate-x-[150%] skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform duration-1000 ease-out group-hover:translate-x-[250%]" />
+            </>
           )}
 
           {/* Out of Stock Banner */}
