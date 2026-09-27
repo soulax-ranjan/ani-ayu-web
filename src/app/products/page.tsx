@@ -10,7 +10,7 @@ import { Grid, SlidersHorizontal, X } from 'lucide-react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
-import ProductFilters from '@/components/ProductFilters'
+import ProductFilters, { PRICE_MAX, SORT_OPTIONS } from '@/components/ProductFilters'
 import { useProducts } from '@/lib/hooks'
 import { Filters, Product } from '@/types/product'
 import { Product as APIProduct, IS_PRODUCTION } from '@/lib/api'
@@ -63,7 +63,7 @@ function ProductsContent() {
 
   const [filters, setFilters] = useState<Filters>({
     category: categoryFromUrl ? [categoryFromUrl] : [],
-    priceRange: [0, 10000],
+    priceRange: [0, PRICE_MAX],
     sizes: [],
     sortBy: 'popularity',
     section: sectionFromUrl ? parseInt(sectionFromUrl) : undefined
@@ -147,15 +147,26 @@ function ProductsContent() {
     return filtered
   }, [allProducts, filters])
 
-  const hasActiveFilters = filters.category.length > 0 || filters.sizes.length > 0 ||
-    filters.priceRange[0] > 0 || filters.priceRange[1] < 10000
+  const priceActive = filters.priceRange[0] > 0 || filters.priceRange[1] < PRICE_MAX
+  const activeCount = filters.category.length + filters.sizes.length + (priceActive ? 1 : 0)
+  const hasActiveFilters = activeCount > 0
+
+  // Age sizes that actually exist on products, youngest first ("2-3 Years", "3-4 Years", ...)
+  const availableSizes = useMemo(() => {
+    const sizes = new Set<string>()
+    ;(data?.products || []).forEach((p) => p.sizes?.forEach((size) => sizes.add(size)))
+    return [...sizes].sort((a, b) => (parseFloat(a) || 0) - (parseFloat(b) || 0))
+  }, [data])
+
+  const pageTitle =
+    filters.category.length === 1 ? (filters.category[0] === 'girls' ? 'Girls' : filters.category[0] === 'boys' ? 'Boys' : 'Shop All') : 'Shop All'
 
   const resetFilters = () => {
     setFilters({
       category: [],
-      priceRange: [0, 10000],
+      priceRange: [0, PRICE_MAX],
       sizes: [],
-      sortBy: 'popularity',
+      sortBy: filters.sortBy,
       section: undefined
     })
   }
@@ -165,20 +176,88 @@ function ProductsContent() {
       <Header />
       <main className="min-h-screen bg-cream">
         <div className="max-w-[1400px] mx-auto px-4 py-6 md:py-8">
-          {/* Filter Button - Right Aligned */}
-          <div className="mb-6 md:mb-8 flex justify-end">
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-2 bg-gradient-to-r from-primary to-amber-400 hover:from-amber-500 hover:to-primary text-gray-900 px-4 md:px-6 py-2.5 md:py-3 rounded-full font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:-translate-y-0.5 active:scale-95"
-            >
-              <SlidersHorizontal size={20} />
-              <span className="hidden sm:inline">Filters</span>
-              {hasActiveFilters && (
-                <span className="bg-white text-primary text-xs px-2 py-0.5 rounded-full font-bold">
-                  {filters.category.length + filters.sizes.length}
-                </span>
+          {/* Toolbar */}
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <h1 className="font-heading text-2xl md:text-3xl font-bold text-ink">{pageTitle}</h1>
+              {!loading && (
+                <p className="mt-1 text-sm text-ink/60 tabular-nums">
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'style' : 'styles'}
+                </p>
               )}
-            </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <select
+                aria-label="Sort products"
+                value={filters.sortBy}
+                onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as Filters['sortBy'] })}
+                className="hidden md:block rounded-full bg-white ring-1 ring-stone-200 hover:ring-primary/60 px-4 py-2.5 text-sm font-medium text-ink outline-none focus:ring-2 focus:ring-primary cursor-pointer"
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>Sort: {option.label}</option>
+                ))}
+              </select>
+              <button
+                onClick={() => setIsFilterOpen(true)}
+                className="inline-flex items-center gap-2 rounded-full bg-white ring-1 ring-stone-200 hover:ring-primary/60 hover:text-primary px-4 py-2.5 text-sm font-semibold text-ink transition-colors"
+              >
+                <SlidersHorizontal size={16} />
+                Filters
+                {activeCount > 0 && (
+                  <span className="grid place-items-center w-5 h-5 rounded-full bg-primary text-white text-[11px] tabular-nums">
+                    {activeCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Quick category tabs + active filter chips */}
+          <div className="mb-6 md:mb-8 flex items-center gap-2 overflow-x-auto -mx-4 px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {[{ value: '', label: 'All' }, { value: 'girls', label: 'Girls' }, { value: 'boys', label: 'Boys' }].map((tab) => {
+              const active = tab.value ? filters.category.length === 1 && filters.category[0] === tab.value : filters.category.length === 0
+              return (
+                <button
+                  key={tab.label}
+                  onClick={() => setFilters({ ...filters, category: tab.value ? [tab.value] : [] })}
+                  className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+                    active ? 'bg-primary text-white' : 'bg-white text-ink/70 ring-1 ring-stone-200 hover:text-primary hover:ring-primary/60'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              )
+            })}
+
+            {(filters.sizes.length > 0 || priceActive) && <span className="shrink-0 w-px h-6 bg-stone-300 mx-1" />}
+
+            {filters.sizes.map((size) => (
+              <button
+                key={size}
+                onClick={() => setFilters({ ...filters, sizes: filters.sizes.filter((s) => s !== size) })}
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-2 text-sm font-medium hover:bg-primary/15"
+                aria-label={`Remove ${size}`}
+              >
+                {size}
+                <X size={14} />
+              </button>
+            ))}
+            {priceActive && (
+              <button
+                onClick={() => setFilters({ ...filters, priceRange: [0, PRICE_MAX] })}
+                className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-primary/10 text-primary px-3 py-2 text-sm font-medium hover:bg-primary/15 tabular-nums"
+                aria-label="Remove price filter"
+              >
+                ₹{filters.priceRange[0].toLocaleString('en-IN')} – {filters.priceRange[1] >= PRICE_MAX ? 'any' : `₹${filters.priceRange[1].toLocaleString('en-IN')}`}
+                <X size={14} />
+              </button>
+            )}
+            {hasActiveFilters && (
+              <button onClick={resetFilters} className="shrink-0 px-2 py-2 text-sm font-medium text-ink/60 underline underline-offset-4 hover:text-primary">
+                Clear all
+              </button>
+            )}
           </div>
 
           {/* Products Grid */}
@@ -220,7 +299,7 @@ function ProductsContent() {
                 )}
               </div>
             ) : (
-              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
                 {filteredProducts.map(product => (
                   <ProductCard
                     key={product.id}
@@ -233,57 +312,51 @@ function ProductsContent() {
         </div>
       </main>
 
-      {/* Filter Slider Panel */}
+      {/* Filter drawer */}
       {isFilterOpen && (
         <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/60 z-40 transition-opacity"
-            onClick={() => setIsFilterOpen(false)}
-          />
+          <div className="fixed inset-0 bg-ink/40 backdrop-blur-[2px] z-40" onClick={() => setIsFilterOpen(false)} />
 
-          {/* Slider Panel */}
-          <div className="fixed right-0 top-0 bottom-0 w-full sm:w-96 bg-white z-50 shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Filters"
+            className="fixed right-0 top-0 bottom-0 w-full sm:w-[420px] bg-[#fdfbf7] z-50 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300"
+          >
             {/* Header */}
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 md:p-6 z-10">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900">Filters</h2>
+            <div className="flex items-center justify-between px-5 md:px-6 py-4 border-b border-stone-200/70 bg-white">
+              <div className="flex items-baseline gap-2">
+                <h2 className="font-heading text-xl font-bold text-ink">Filters</h2>
+                {activeCount > 0 && <span className="text-sm text-ink/50 tabular-nums">({activeCount})</span>}
+              </div>
+              <div className="flex items-center gap-1">
+                {hasActiveFilters && (
+                  <button onClick={resetFilters} className="px-3 py-2 text-sm font-medium text-primary hover:underline underline-offset-4">
+                    Clear all
+                  </button>
+                )}
                 <button
                   onClick={() => setIsFilterOpen(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 rounded-full hover:bg-stone-100 transition-colors"
                   aria-label="Close filters"
                 >
-                  <X size={24} className="text-gray-600" />
+                  <X size={22} className="text-ink/70" />
                 </button>
               </div>
-
-              {/* Reset Button */}
-              {hasActiveFilters && (
-                <button
-                  onClick={resetFilters}
-                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-4 py-2.5 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
-                >
-                  <X size={18} />
-                  Reset All Filters
-                </button>
-              )}
             </div>
 
-            {/* Filters Content */}
-            <div className="p-4 md:p-6">
-              <ProductFilters
-                filters={filters}
-                onFiltersChange={setFilters}
-              />
+            {/* Options */}
+            <div className="flex-1 overflow-y-auto px-5 md:px-6">
+              <ProductFilters filters={filters} onFiltersChange={setFilters} availableSizes={availableSizes} />
             </div>
 
-            {/* Apply Button (Sticky Footer) */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 md:p-6">
+            {/* Footer */}
+            <div className="border-t border-stone-200/70 bg-white px-5 md:px-6 py-4">
               <button
                 onClick={() => setIsFilterOpen(false)}
-                className="w-full bg-gradient-to-r from-primary to-amber-400 hover:from-amber-500 hover:to-primary text-gray-900 px-6 py-3.5 rounded-full font-bold shadow-lg shadow-primary/30 transition-all duration-300 hover:shadow-xl"
+                className="w-full rounded-full bg-primary hover:bg-primary-hover text-white py-3.5 font-semibold shadow-lg shadow-primary/25 transition-colors tabular-nums"
               >
-                Show {filteredProducts.length} Products
+                Show {filteredProducts.length} {filteredProducts.length === 1 ? 'style' : 'styles'}
               </button>
             </div>
           </div>

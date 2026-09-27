@@ -22,8 +22,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-stone-200/70 shadow-[0_1px_12px_-6px_rgba(120,90,50,0.15)]">
       {/* Promo Strip */}
-      <div className="bg-[#1f4a41] text-white/90 py-3 md:py-3.5 px-4 text-center text-xs md:text-sm font-medium tracking-wider">
-        Use code <strong className="font-bold text-[#e6c88a] bg-white/10 ring-1 ring-[#e6c88a]/40 px-2.5 py-1 rounded-md mx-1.5 tracking-widest">FIRSTBUY10</strong> for a 10% discount on your first buy!
+      <div className="bg-[#1f4a41] text-white/90 py-2.5 md:py-3.5 px-4 text-center text-xs md:text-sm font-medium tracking-wider whitespace-nowrap">
+        <span className="hidden sm:inline">Use code </span><strong className="font-bold text-[#e6c88a] bg-white/10 ring-1 ring-[#e6c88a]/40 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md mx-1 sm:mx-1.5 tracking-widest">FIRSTBUY10</strong><span className="sm:hidden">for 10% off your first buy</span><span className="hidden sm:inline">for a 10% discount on your first buy!</span>
       </div>
       <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between">
         {/* Logo */}

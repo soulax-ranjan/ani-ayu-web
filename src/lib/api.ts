@@ -183,6 +183,32 @@ export interface HomepageData {
 }
 
 // API Client Class
+// Order returned by the phone lookup; personal details are masked by the API
+export interface TrackedOrder {
+  orderNumber: string | null
+  createdAt: string
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+  paymentStatus: string | null
+  paymentMethod: string | null
+  totalAmount: number
+  discountAmount: number | null
+  items: {
+    name: string | null
+    image: string | null
+    quantity: number
+    size: string | null
+    color: string | null
+    price: number | null
+  }[]
+  delivery: {
+    name: string | null
+    phone: string | null
+    city: string | null
+    state: string | null
+    postalCode: string | null
+  }
+}
+
 class APIClient {
   private baseURL: string
 
@@ -559,6 +585,13 @@ class APIClient {
 
   async trackOrderById(orderId: string): Promise<any> {
     return this.request(`/orders/track/${orderId}`)
+  }
+
+  async lookupOrdersByPhone(phone: string): Promise<{ success: boolean; orders: TrackedOrder[] }> {
+    return this.request('/orders/lookup', {
+      method: 'POST',
+      body: JSON.stringify({ phone })
+    })
   }
 
   async deleteOrder(orderId: string): Promise<{ success: boolean; message: string }> {

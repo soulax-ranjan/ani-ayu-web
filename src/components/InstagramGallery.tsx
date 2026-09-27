@@ -49,7 +49,7 @@ export default function InstagramGallery() {
 
         {/* Posts - swipeable row on mobile, vertical reel tiles in a grid on desktop */}
         <div
-          className={`flex md:grid md:grid-cols-3 ${LG_COLS[cols]} md:mx-auto gap-3 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-4 px-4 md:px-0 pb-2 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
+          className={`flex md:grid md:grid-cols-3 ${LG_COLS[cols]} md:mx-auto gap-3 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-px-4 md:scroll-px-0 -mx-4 px-4 md:px-0 pb-2 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
           style={{ maxWidth: cols * 300 }}
         >
           {INSTAGRAM_POSTS.map((post, index) => (

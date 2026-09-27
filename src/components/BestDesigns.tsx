@@ -77,13 +77,11 @@ export default function BestDesigns({ bestSellers: serverBestSellers }: BestDesi
                       src={d.image}
                       alt={d.name}
                       fill
-                      loading={index === 0 ? 'eager' : 'lazy'}
+                      loading="lazy"
                       placeholder="blur"
                       blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjZjVmMWViIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZThlMGQ1Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSI1MDAiIGZpbGw9InVybCgjZykiLz48L3N2Zz4="
-                      quality={90}
                       className="object-cover brightness-[1.04] contrast-[1.03] saturate-[1.1] transition duration-700 ease-out group-hover:scale-105 group-hover:brightness-[1.08]"
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      priority={index === 0}
                     />
 
                     {/* Soft top light */}

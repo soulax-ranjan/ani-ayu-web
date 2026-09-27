@@ -15,8 +15,8 @@ export default function TermsOfServicePage() {
             <Suspense fallback={<div className="h-16 md:h-20 bg-cream" />}>
                 <Header />
             </Suspense>
-            <main className="flex flex-col min-h-screen bg-cream px-4 py-12 md:py-20 text-ink">
-                <div className="max-w-4xl mx-auto w-full bg-white rounded-2xl shadow-sm p-6 md:p-12">
+            <main className="flex flex-col min-h-screen bg-cream px-4 py-8 md:py-20 text-ink">
+                <div className="max-w-4xl mx-auto w-full bg-white rounded-2xl shadow-sm p-5 md:p-12">
                     <h1 className="text-3xl md:text-5xl font-[var(--font-heading)] font-bold mb-8 text-center text-primary">
                         Terms of Service
                     </h1>
@@ -29,7 +29,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">1. General Information</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">1. General Information</h3>
                             <p className="text-slate-700 mb-4">
                                 This website is operated by <strong>Aarunya Threads</strong>. Throughout the site, the terms “we,” “us,” and “our” refer to Aarunya Threads and the brand <strong>Ani & Ayu</strong>.
                             </p>
@@ -41,7 +41,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">2. Products & Services</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">2. Products & Services</h3>
                             <p className="text-slate-700 mb-4">
                                 We offer children’s clothing and related accessories designed for comfort, style, and everyday use.
                             </p>
@@ -56,7 +56,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">3. Pricing & Payments</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">3. Pricing & Payments</h3>
                             <p className="text-slate-700 mb-4">
                                 All prices are listed in <strong>Indian Rupees (INR)</strong> unless stated otherwise and include applicable taxes as per Indian regulations.
                             </p>
@@ -71,11 +71,11 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">4. Orders & Acceptance</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">4. Orders & Acceptance</h3>
                             <p className="text-slate-700 mb-4">
                                 We reserve the right to refuse or cancel any order for reasons including but not limited to:
                             </p>
-                            <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                            <ul className="list-disc pl-5 md:pl-6 text-slate-700 space-y-2 mb-4">
                                 <li>Product availability issues</li>
                                 <li>Errors in product pricing or description</li>
                                 <li>Suspected fraudulent or unauthorized transactions</li>
@@ -89,7 +89,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">5. Shipping & Delivery</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">5. Shipping & Delivery</h3>
                             <p className="text-slate-700 mb-4">
                                 Shipping timelines provided during checkout are estimates and may vary depending on delivery location, courier service delays, or unforeseen circumstances.
                             </p>
@@ -101,7 +101,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">6. Returns & Refunds</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">6. Returns & Refunds</h3>
                             <p className="text-slate-700 mb-4">
                                 Please refer to our Return & Refund Policy for complete details.
                             </p>
@@ -113,7 +113,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">7. User Accounts</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">7. User Accounts</h3>
                             <p className="text-slate-700 mb-4">
                                 If you create an account on our website, you are responsible for maintaining the confidentiality of your login credentials and for all activities under your account.
                             </p>
@@ -125,7 +125,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">8. Intellectual Property</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">8. Intellectual Property</h3>
                             <p className="text-slate-700 mb-4">
                                 All website content including logos, product images, designs, text, graphics, and branding related to <strong>Ani & Ayu</strong> are the intellectual property of <strong>Aarunya Threads</strong> and protected under applicable laws.
                             </p>
@@ -137,7 +137,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">9. Product Use & Safety</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">9. Product Use & Safety</h3>
                             <p className="text-slate-700 mb-4">
                                 Our products are designed for children; however, adult supervision is recommended where applicable. Customers are responsible for ensuring appropriate size selection and safe usage.
                             </p>
@@ -149,11 +149,11 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">10. Limitation of Liability</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">10. Limitation of Liability</h3>
                             <p className="text-slate-700 mb-4">
                                 To the maximum extent permitted by law, Aarunya Threads shall not be liable for:
                             </p>
-                            <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                            <ul className="list-disc pl-5 md:pl-6 text-slate-700 space-y-2 mb-4">
                                 <li>Indirect or incidental damages</li>
                                 <li>Allergic reactions or fabric sensitivities</li>
                                 <li>Delivery delays beyond our control</li>
@@ -167,7 +167,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">11. Privacy</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">11. Privacy</h3>
                             <p className="text-slate-700">
                                 Your use of our website is also governed by our Privacy Policy, which explains how we collect, use, and protect your information.
                             </p>
@@ -176,7 +176,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">12. Third-Party Links</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">12. Third-Party Links</h3>
                             <p className="text-slate-700">
                                 Our website may contain links to third-party services or websites. We are not responsible for their content, policies, or practices.
                             </p>
@@ -185,7 +185,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">13. Governing Law</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">13. Governing Law</h3>
                             <p className="text-slate-700">
                                 These Terms shall be governed by and interpreted in accordance with the laws of <strong>India</strong>. Any disputes shall fall under the jurisdiction of the competent courts of <strong>Hyderabad, Telangana</strong>.
                             </p>
@@ -194,7 +194,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">14. Changes to Terms</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">14. Changes to Terms</h3>
                             <p className="text-slate-700">
                                 We reserve the right to update or modify these Terms at any time. Changes will be effective immediately upon posting on this page.
                             </p>
@@ -203,7 +203,7 @@ export default function TermsOfServicePage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">15. Contact Information</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">15. Contact Information</h3>
                             <p className="text-slate-700 mb-2">
                                 <strong>Aarunya Threads</strong>
                             </p>

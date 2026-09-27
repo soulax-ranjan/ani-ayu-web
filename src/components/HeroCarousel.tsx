@@ -83,8 +83,8 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
                 alt={banner.title}
                 fill
                 priority={index === 0}
-                loading={index === 0 ? 'eager' : 'lazy'}
-                sizes="(max-width: 768px) 100vw, 100vw"
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+                sizes="100vw"
                 className="w-full h-full object-cover object-center"
               />
 

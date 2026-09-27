@@ -44,8 +44,8 @@ export default function Footer() {
               />
             </Link>
             <p className="mt-5 max-w-sm text-sm md:text-base text-white/70 leading-relaxed">
-              Beautiful traditional clothing for children, crafted with love and inspired by heritage.
-              Making every occasion special for kids aged 2-13.
+              Festive ethnic wear for little ones aged 2–13, rooted in Indian tradition and made soft
+              enough for twirling, playing and every celebration in between.
             </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">

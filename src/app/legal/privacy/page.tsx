@@ -15,8 +15,8 @@ export default function PrivacyPolicyPage() {
             <Suspense fallback={<div className="h-16 md:h-20 bg-cream" />}>
                 <Header />
             </Suspense>
-            <main className="flex flex-col min-h-screen bg-cream px-4 py-12 md:py-20 text-ink">
-                <div className="max-w-4xl mx-auto w-full bg-white rounded-2xl shadow-sm p-6 md:p-12">
+            <main className="flex flex-col min-h-screen bg-cream px-4 py-8 md:py-20 text-ink">
+                <div className="max-w-4xl mx-auto w-full bg-white rounded-2xl shadow-sm p-5 md:p-12">
                     <h1 className="text-3xl md:text-5xl font-[var(--font-heading)] font-bold mb-8 text-center text-primary">
                         Privacy Policy
                     </h1>
@@ -33,13 +33,13 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">1. Information We Collect</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">1. Information We Collect</h3>
                             <p className="text-slate-700 mb-2">We may collect the following types of personal information:</p>
 
                             <div className="space-y-4">
                                 <div>
                                     <h4 className="font-semibold text-slate-800 mb-2">Personal Details</h4>
-                                    <ul className="list-disc pl-6 text-slate-700 space-y-1">
+                                    <ul className="list-disc pl-5 md:pl-6 text-slate-700 space-y-1">
                                         <li>Name</li>
                                         <li>Email address</li>
                                         <li>Phone number</li>
@@ -49,7 +49,7 @@ export default function PrivacyPolicyPage() {
 
                                 <div>
                                     <h4 className="font-semibold text-slate-800 mb-2">Order Information</h4>
-                                    <ul className="list-disc pl-6 text-slate-700 space-y-1">
+                                    <ul className="list-disc pl-5 md:pl-6 text-slate-700 space-y-1">
                                         <li>Products purchased</li>
                                         <li>Payment transaction details (processed securely via third-party providers)</li>
                                     </ul>
@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
 
                                 <div>
                                     <h4 className="font-semibold text-slate-800 mb-2">Technical Information</h4>
-                                    <ul className="list-disc pl-6 text-slate-700 space-y-1">
+                                    <ul className="list-disc pl-5 md:pl-6 text-slate-700 space-y-1">
                                         <li>IP address</li>
                                         <li>Browser type</li>
                                         <li>Device information</li>
@@ -74,9 +74,9 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">2. How We Use Your Information</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">2. How We Use Your Information</h3>
                             <p className="text-slate-700 mb-2">We use your information to:</p>
-                            <ul className="list-disc pl-6 text-slate-700 space-y-2">
+                            <ul className="list-disc pl-5 md:pl-6 text-slate-700 space-y-2">
                                 <li>Process and deliver your orders</li>
                                 <li>Communicate order updates and customer support</li>
                                 <li>Improve our website and services</li>
@@ -88,9 +88,9 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">3. Sharing of Information</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">3. Sharing of Information</h3>
                             <p className="text-slate-700 mb-2">We may share your information with trusted third parties only when necessary, including:</p>
-                            <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                            <ul className="list-disc pl-5 md:pl-6 text-slate-700 space-y-2 mb-4">
                                 <li>Payment gateway providers</li>
                                 <li>Shipping and logistics partners</li>
                                 <li>Website hosting and analytics providers</li>
@@ -104,7 +104,7 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">4. Cookies & Tracking Technologies</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">4. Cookies & Tracking Technologies</h3>
                             <p className="text-slate-700 mb-4">
                                 Our website may use cookies and similar technologies to enhance your browsing experience, remember preferences, and analyze website traffic.
                             </p>
@@ -116,7 +116,7 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">5. Data Security</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">5. Data Security</h3>
                             <p className="text-slate-700 mb-4">
                                 We implement appropriate technical and organizational security measures to protect your personal information from unauthorized access, misuse, or disclosure.
                             </p>
@@ -128,9 +128,9 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">6. Your Rights</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">6. Your Rights</h3>
                             <p className="text-slate-700 mb-2">You have the right to:</p>
-                            <ul className="list-disc pl-6 text-slate-700 space-y-2 mb-4">
+                            <ul className="list-disc pl-5 md:pl-6 text-slate-700 space-y-2 mb-4">
                                 <li>Access the personal data we hold about you</li>
                                 <li>Request correction or updates to your information</li>
                                 <li>Request deletion of your data (subject to legal obligations)</li>
@@ -144,7 +144,7 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">7. Children’s Privacy</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">7. Children’s Privacy</h3>
                             <p className="text-slate-700">
                                 Our products are intended for purchase by adults for children. We do not knowingly collect personal information directly from children under the age of 18.
                             </p>
@@ -153,7 +153,7 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">8. Third-Party Links</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">8. Third-Party Links</h3>
                             <p className="text-slate-700">
                                 Our website may contain links to external websites. We are not responsible for the privacy practices or content of third-party sites.
                             </p>
@@ -162,7 +162,7 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">9. Changes to This Policy</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">9. Changes to This Policy</h3>
                             <p className="text-slate-700">
                                 We may update this Privacy Policy from time to time. Changes will be posted on this page with the updated policy.
                             </p>
@@ -171,7 +171,7 @@ export default function PrivacyPolicyPage() {
                         <hr className="border-slate-200" />
 
                         <section>
-                            <h3 className="text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">10. Contact Information</h3>
+                            <h3 className="text-xl md:text-2xl font-[var(--font-heading)] font-semibold text-slate-800 mb-4">10. Contact Information</h3>
                             <p className="text-slate-700 mb-4">
                                 If you have questions about this Privacy Policy or how your data is handled, please contact us:
                             </p>

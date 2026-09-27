@@ -8,30 +8,30 @@ export default function ReturnsPolicyPage() {
     return (
         <div className="flex flex-col min-h-screen bg-[#faf9f6]">
             <Header />
-            <main className="flex-1 py-16 px-4 sm:px-6">
+            <main className="flex-1 py-10 md:py-16 px-4 sm:px-6">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <div className="w-16 h-16 bg-white border border-gray-100 shadow-sm rounded-full flex items-center justify-center mx-auto mb-5 relative group">
                             <div className="absolute inset-0 rounded-full bg-primary/20 scale-0 group-hover:scale-110 transition-transform duration-300 ease-out"></div>
                             <RefreshCcw className="text-primary w-8 h-8 relative z-10 drop-shadow-sm group-hover:scale-110 transition-transform duration-300" />
                         </div>
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-ink mb-4 tracking-tight">Returns & Exchange Policy</h1>
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-ink mb-4 tracking-tight">Returns & Exchange Policy</h1>
                         <p className="text-gray-500 text-base max-w-lg mx-auto leading-relaxed">Everything you need to know about our returns, exchanges, and damaged item procedures.</p>
                     </div>
 
-                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100/50 p-8 md:p-12 mb-8 relative overflow-hidden animate-in fade-in zoom-in-95 duration-500 delay-100">
+                    <div className="bg-white rounded-3xl shadow-xl border border-gray-100/50 p-5 sm:p-8 md:p-12 mb-8 relative overflow-hidden animate-in fade-in zoom-in-95 duration-500 delay-100">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-primary-light"></div>
 
-                        <div className="space-y-12 text-gray-600 leading-relaxed max-w-3xl mx-auto">
+                        <div className="space-y-8 sm:space-y-12 text-gray-600 leading-relaxed max-w-3xl mx-auto">
 
                             {/* No Returns */}
                             <section className="relative">
-                                <div className="flex items-start gap-4">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                                     <div className="mt-1 w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0 border border-red-100">
                                         <XCircle className="w-5 h-5 text-red-500" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-ink mb-4">No Returns</h2>
+                                        <h2 className="text-xl sm:text-2xl font-bold text-ink mb-4">No Returns</h2>
                                         <p className="mb-4">
                                             Since all our outfits are customized and made with special care, we do not accept returns or offer refunds once an order has been placed and delivered.
                                         </p>
@@ -49,12 +49,12 @@ export default function ReturnsPolicyPage() {
 
                             {/* Exchange Policy */}
                             <section>
-                                <div className="flex items-start gap-4">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                                     <div className="mt-1 w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center shrink-0 border border-primary/10">
                                         <RefreshCcw className="w-5 h-5 text-primary" />
                                     </div>
                                     <div className="w-full">
-                                        <h2 className="text-2xl font-bold text-ink mb-4">Exchange Policy</h2>
+                                        <h2 className="text-xl sm:text-2xl font-bold text-ink mb-4">Exchange Policy</h2>
                                         <p className="mb-4 font-medium text-ink">We offer exchanges only for size-related issues.</p>
                                         <p className="mb-6 bg-primary/5 text-primary font-bold px-4 py-3 rounded-xl border border-primary/10 inline-block">
                                             Please contact us within 48 hours of receiving your order to request a size exchange.
@@ -83,12 +83,12 @@ export default function ReturnsPolicyPage() {
 
                             {/* Exchange Process */}
                             <section>
-                                <div className="flex items-start gap-4">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                                     <div className="mt-1 w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
                                         <ListChecks className="w-5 h-5 text-blue-600" />
                                     </div>
                                     <div className="w-full">
-                                        <h2 className="text-2xl font-bold text-ink mb-4">Exchange Process</h2>
+                                        <h2 className="text-xl sm:text-2xl font-bold text-ink mb-4">Exchange Process</h2>
 
                                         <div className="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
                                             {/* Step 1 */}
@@ -123,12 +123,12 @@ export default function ReturnsPolicyPage() {
 
                             {/* Exchange Shipping */}
                             <section>
-                                <div className="flex items-start gap-4">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                                     <div className="mt-1 w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center shrink-0 border border-orange-100">
                                         <Truck className="w-5 h-5 text-orange-500" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-ink mb-4">Exchange Shipping</h2>
+                                        <h2 className="text-xl sm:text-2xl font-bold text-ink mb-4">Exchange Shipping</h2>
                                         <div className="space-y-4">
                                             <div className="bg-white border border-gray-100 p-4 rounded-xl shadow-sm flex items-start gap-3">
                                                 <span className="text-orange-500 shrink-0 mt-0.5">•</span>
@@ -147,12 +147,12 @@ export default function ReturnsPolicyPage() {
 
                             {/* Damaged or Incorrect Product */}
                             <section>
-                                <div className="flex items-start gap-4">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                                     <div className="mt-1 w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100">
                                         <ShieldAlert className="w-5 h-5 text-purple-600" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-ink mb-4">Damaged or Incorrect Product</h2>
+                                        <h2 className="text-xl sm:text-2xl font-bold text-ink mb-4">Damaged or Incorrect Product</h2>
                                         <p className="bg-purple-50/50 p-5 rounded-2xl border border-purple-100 text-ink">
                                             If you receive a damaged or incorrect item, please contact us within <strong className="text-purple-700">24 hours</strong> of delivery with photos of the product and packaging. We will arrange a replacement.
                                         </p>
@@ -164,12 +164,12 @@ export default function ReturnsPolicyPage() {
 
                             {/* Contact Us */}
                             <section>
-                                <div className="flex items-start gap-4">
+                                <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                                     <div className="mt-1 w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0 border border-green-100">
                                         <MessageCircle className="w-5 h-5 text-green-600" />
                                     </div>
                                     <div className="w-full">
-                                        <h2 className="text-2xl font-bold text-ink mb-4">Contact Us</h2>
+                                        <h2 className="text-xl sm:text-2xl font-bold text-ink mb-4">Contact Us</h2>
                                         <p className="mb-4">For exchange requests or support:</p>
 
                                         <div className="flex flex-col sm:flex-row gap-4">

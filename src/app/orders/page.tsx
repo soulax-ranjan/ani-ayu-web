@@ -1,53 +1,173 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { Button } from '@/components/ui/Button'
-import { apiClient } from '@/lib/api'
-import { Loader2, Package, Calendar, ChevronRight, AlertCircle, ShoppingBag, Search, CheckCircle, Truck, Clock } from 'lucide-react'
-import Link from 'next/link'
+import { apiClient, TrackedOrder } from '@/lib/api'
+import { Loader2, Package, Calendar, ChevronRight, AlertCircle, Phone, CheckCircle, Truck, Clock, MapPin, XCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
+// Same rules as the API: 10 digits, optionally prefixed with +91 / 91 / 0
+function normalizePhone(input: string): string | null {
+    let digits = input.replace(/\D/g, '')
+    if (digits.length === 12 && digits.startsWith('91')) digits = digits.slice(2)
+    else if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1)
+    return /^\d{10}$/.test(digits) ? digits : null
+}
+
+const STEPS = [
+    { status: 'pending', label: 'Placed', icon: Clock },
+    { status: 'processing', label: 'Processing', icon: Package },
+    { status: 'shipped', label: 'Shipped', icon: Truck },
+    { status: 'delivered', label: 'Delivered', icon: CheckCircle },
+] as const
+
+const STATUS_BADGE: Record<string, string> = {
+    delivered: 'bg-green-50 text-green-700 border border-green-200',
+    shipped: 'bg-blue-50 text-blue-700 border border-blue-200',
+    cancelled: 'bg-red-50 text-red-700 border border-red-200',
+}
+
+function formatDate(value: string) {
+    return new Date(value).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+function StatusTracker({ status }: { status: TrackedOrder['status'] }) {
+    if (status === 'cancelled') {
+        return (
+            <div className="flex items-center gap-3 bg-red-50 text-red-700 rounded-2xl px-4 py-3 text-sm font-medium">
+                <XCircle size={18} className="shrink-0" /> This order was cancelled.
+            </div>
+        )
+    }
+
+    const current = Math.max(0, STEPS.findIndex(step => step.status === status))
+    return (
+        <ol className="flex items-start">
+            {STEPS.map((step, index) => {
+                const done = index <= current
+                const Icon = step.icon
+                return (
+                    <li key={step.status} className="flex-1 flex flex-col items-center relative">
+                        {index > 0 && (
+                            <span className={`absolute top-4 right-1/2 w-full h-0.5 ${done ? 'bg-primary' : 'bg-gray-200'}`} />
+                        )}
+                        <span className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center ${done ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}>
+                            <Icon size={16} />
+                        </span>
+                        <span className={`mt-2 text-xs font-semibold ${done ? 'text-ink' : 'text-gray-400'}`}>{step.label}</span>
+                    </li>
+                )
+            })}
+        </ol>
+    )
+}
+
+function OrderCard({ order }: { order: TrackedOrder }) {
+    const { delivery } = order
+    const place = [delivery.city, delivery.state?.trim(), delivery.postalCode].filter(Boolean).join(', ')
+
+    return (
+        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-500">
+            {/* Order Header */}
+            <div className="px-6 md:px-8 py-5 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50/30">
+                <div>
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Order</p>
+                    <p className="font-mono text-base font-bold text-primary">{order.orderNumber || '—'}</p>
+                </div>
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide self-start sm:self-auto ${STATUS_BADGE[order.status] || 'bg-primary/5 text-primary border border-primary/20'}`}>
+                    {order.status}
+                </div>
+            </div>
+
+            {/* Progress */}
+            <div className="px-6 md:px-8 py-6 border-b border-gray-50">
+                <StatusTracker status={order.status} />
+            </div>
+
+            {/* Items */}
+            <ul className="px-6 md:px-8 py-4 divide-y divide-gray-50 border-b border-gray-50">
+                {order.items.map((item, index) => (
+                    <li key={index} className="flex items-center gap-4 py-3">
+                        <div className="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden relative shrink-0">
+                            {item.image
+                                ? <Image src={item.image} alt={item.name || 'Product'} fill sizes="64px" className="object-cover" />
+                                : <Package className="w-6 h-6 text-gray-300 absolute inset-0 m-auto" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-ink text-sm truncate">{item.name || 'Product'}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                                {[item.size && `Size ${item.size}`, item.color, `Qty ${item.quantity}`].filter(Boolean).join(' · ')}
+                            </p>
+                        </div>
+                        {item.price != null && (
+                            <p className="text-sm font-bold text-ink shrink-0">₹{Number(item.price * item.quantity).toLocaleString('en-IN')}</p>
+                        )}
+                    </li>
+                ))}
+            </ul>
+
+            {/* Meta */}
+            <div className="px-6 md:px-8 py-5 grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div>
+                    <div className="flex items-center gap-2 text-gray-400 mb-1">
+                        <Calendar size={14} className="text-primary" />
+                        <p className="text-xs font-bold uppercase tracking-wider">Placed on</p>
+                    </div>
+                    <p className="text-ink font-bold text-sm">{order.createdAt ? formatDate(order.createdAt) : '—'}</p>
+                </div>
+                <div>
+                    <div className="flex items-center gap-2 text-gray-400 mb-1">
+                        <MapPin size={14} className="text-primary" />
+                        <p className="text-xs font-bold uppercase tracking-wider">Delivering to</p>
+                    </div>
+                    <p className="text-ink font-bold text-sm">{delivery.name || '—'}</p>
+                    {place && <p className="text-xs text-gray-500">{place}</p>}
+                </div>
+                <div className="sm:text-right">
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Total</p>
+                    <p className="text-xl font-extrabold text-ink">₹{Number(order.totalAmount || 0).toLocaleString('en-IN')}</p>
+                    {!!order.discountAmount && (
+                        <p className="text-xs text-green-600 font-medium">You saved ₹{Number(order.discountAmount).toLocaleString('en-IN')}</p>
+                    )}
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export default function TrackOrderPage() {
-    const [inputOrderId, setInputOrderId] = useState('')
+    const [phoneInput, setPhoneInput] = useState('')
     const [loading, setLoading] = useState(false)
-    const [order, setOrder] = useState<any>(null)
+    const [orders, setOrders] = useState<TrackedOrder[] | null>(null)
     const [error, setError] = useState<string | null>(null)
-    const [searched, setSearched] = useState(false)
 
     const handleTrack = async (e: React.FormEvent) => {
         e.preventDefault()
-        const trimmed = inputOrderId.trim()
-        if (!trimmed) {
-            setError('Please enter your Order ID')
+        const phone = normalizePhone(phoneInput)
+        if (!phone) {
+            setError('Please enter the 10-digit mobile number you used at checkout')
             return
         }
 
         setLoading(true)
         setError(null)
-        setOrder(null)
-        setSearched(false)
+        setOrders(null)
 
         try {
-            const res = await apiClient.trackOrderById(trimmed)
-            const orderData = res.order || res
-            setOrder(orderData)
-            setSearched(true)
+            const res = await apiClient.lookupOrdersByPhone(phone)
+            setOrders(res.orders || [])
         } catch (err: any) {
             console.error(err)
-            setError(err.message || 'No order found with this ID. Please check and try again.')
-            setSearched(true)
+            setError(err.message || 'Something went wrong. Please try again.')
         } finally {
             setLoading(false)
         }
     }
-
-    const { items, address, status, created_at, total_amount, amount, payment_method, payment_status, discount_amount } = order || {}
-    const displayTotal = total_amount || amount || 0
-    const orderIdStr: string = order?.id || order?.order_id || order?.razorpay_order_id || order?._id || ''
 
     return (
         <div className="flex flex-col min-h-screen bg-[#faf9f6]">
@@ -62,7 +182,7 @@ export default function TrackOrderPage() {
                             <Package className="text-primary w-8 h-8 relative z-10 drop-shadow-sm group-hover:scale-110 transition-transform duration-300" />
                         </div>
                         <h1 className="text-4xl md:text-5xl font-extrabold text-ink mb-4 tracking-tight">Track Your Order</h1>
-                        <p className="text-gray-500 text-base max-w-sm mx-auto leading-relaxed">Enter your Order ID below to get real-time updates on your shipment status.</p>
+                        <p className="text-gray-500 text-base max-w-sm mx-auto leading-relaxed">Enter the mobile number you used at checkout to see all your orders and their status.</p>
                     </div>
 
                     {/* Search Form */}
@@ -71,22 +191,25 @@ export default function TrackOrderPage() {
 
                         <form onSubmit={handleTrack} className="space-y-6 relative z-10">
                             <div>
-                                <label className="block text-sm font-bold text-ink mb-3 uppercase tracking-wider">Order Number</label>
+                                <label htmlFor="track-phone" className="block text-sm font-bold text-ink mb-3 uppercase tracking-wider">Mobile Number</label>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                        <Search size={18} className="text-gray-400" />
+                                        <Phone size={18} className="text-gray-400" />
                                     </div>
                                     <input
-                                        type="text"
-                                        value={inputOrderId}
-                                        onChange={(e) => setInputOrderId(e.target.value)}
-                                        className="w-full pl-11 pr-4 py-4 md:py-5 border border-gray-200 rounded-2xl hover:border-gray-300 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-mono text-base bg-gray-50/50 focus:bg-white placeholder:text-gray-400"
-                                        placeholder="e.g. order_..."
-                                        autoComplete="off"
+                                        id="track-phone"
+                                        type="tel"
+                                        inputMode="tel"
+                                        value={phoneInput}
+                                        onChange={(e) => setPhoneInput(e.target.value)}
+                                        className="w-full pl-11 pr-4 py-4 md:py-5 border border-gray-200 rounded-2xl hover:border-gray-300 focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-base tracking-wide bg-gray-50/50 focus:bg-white placeholder:text-gray-400"
+                                        placeholder="e.g. 98765 43210"
+                                        autoComplete="tel"
+                                        maxLength={16}
                                     />
                                 </div>
                                 <p className="text-xs text-gray-500 mt-3 flex gap-1.5 items-start">
-                                    <span className="text-primary">💡</span> Your Order ID was shared in the confirmation email and after checkout.
+                                    <span className="text-primary">💡</span> Use the number from your delivery address.
                                 </p>
                             </div>
 
@@ -110,74 +233,23 @@ export default function TrackOrderPage() {
                         </form>
                     </div>
 
-                    {/* Result */}
-                    {searched && order && (
-                        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-500 hover:shadow-xl transition-shadow group max-w-2xl mx-auto">
-                            {/* Order Header */}
-                            <div className="px-6 md:px-8 py-6 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-50/30">
-                                <div>
-                                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Order Summary</p>
-                                    <p className="font-mono text-xl font-extrabold text-ink bg-primary/10 px-3 py-1 rounded-lg inline-block text-primary">#{orderIdStr.slice(0, 8).toUpperCase()}</p>
-                                </div>
-                                <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide self-start sm:self-auto
-                                    ${order.status === 'delivered' ? 'bg-green-50 text-green-700 border border-green-200' :
-                                        order.status === 'shipped' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
-                                            order.status === 'cancelled' ? 'bg-red-50 text-red-700 border border-red-200' :
-                                                'bg-primary/5 text-primary border border-primary/20'
-                                    }`}>
-                                    {order.status === 'delivered' && <CheckCircle size={16} />}
-                                    {order.status === 'shipped' && <Truck size={16} />}
-                                    {order.status === 'processing' && <Clock size={16} />}
-                                    {order.status === 'pending' && <Clock size={16} />}
-                                    {order.status === 'cancelled' && <AlertCircle size={16} />}
-                                    {order.status || 'Processing'}
-                                </div>
-                            </div>
-
-                            {/* Order Meta */}
-                            <div className="px-6 md:px-8 py-6 grid grid-cols-2 gap-6 border-b border-gray-50">
-                                <div className="flex flex-col gap-1">
-                                    <div className="flex items-center gap-2 text-gray-400 mb-1">
-                                        <Calendar size={16} className="text-primary" />
-                                        <p className="text-xs font-bold uppercase tracking-wider">Date Placed</p>
-                                    </div>
-                                    <p className="text-ink font-bold text-base">
-                                        {order.created_at
-                                            ? new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                                            : '—'}
-                                    </p>
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <div className="flex items-center gap-2 text-gray-400 mb-1">
-                                        <ShoppingBag size={16} className="text-primary" />
-                                        <p className="text-xs font-bold uppercase tracking-wider">Total Items</p>
-                                    </div>
-                                    <p className="text-ink font-bold text-base">{order.items?.length || 0} item{(order.items?.length || 0) !== 1 ? 's' : ''}</p>
-                                </div>
-                            </div>
-
-                            {/* Total + CTA */}
-                            <div className="px-6 md:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-white group-hover:bg-gray-50/50 transition-colors">
-                                <div>
-                                    <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Total Amount</p>
-                                    <p className="text-2xl font-extrabold text-ink">₹{Number(displayTotal).toLocaleString()}</p>
-                                </div>
-                                <Link href={`/orders/${orderIdStr}`} className="w-full sm:w-auto">
-                                    <Button variant="outline" className="w-full sm:w-auto bg-white hover:bg-primary hover:border-primary hover:text-white py-6 px-6 sm:px-8 rounded-2xl flex items-center justify-center gap-2 transition-all font-bold shadow-sm group/btn">
-                                        View Full Details <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
-                                    </Button>
-                                </Link>
-                            </div>
+                    {/* Results */}
+                    {orders && orders.length > 0 && (
+                        <div className="space-y-6 max-w-2xl mx-auto">
+                            <p className="text-sm text-gray-500 font-medium">
+                                {orders.length} order{orders.length !== 1 ? 's' : ''} found
+                            </p>
+                            {orders.map((order, index) => <OrderCard key={`${order.orderNumber}-${index}`} order={order} />)}
                         </div>
                     )}
 
-                    {searched && !order && !error && (
+                    {orders && orders.length === 0 && (
                         <div className="text-center py-16 bg-white rounded-3xl border border-gray-100/50 shadow-sm animate-in fade-in slide-in-from-bottom-4 max-w-2xl mx-auto">
                             <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
                                 <Package className="w-10 h-10 text-gray-300" />
                             </div>
-                            <h3 className="text-xl font-bold text-ink mb-2">No Order Found</h3>
-                            <p className="text-gray-500 max-w-sm mx-auto">We couldn't find an order matching that ID. Please check the spelling and try again.</p>
+                            <h3 className="text-xl font-bold text-ink mb-2">No Orders Found</h3>
+                            <p className="text-gray-500 max-w-sm mx-auto">We couldn&apos;t find any orders for this number. Please check it matches the one on your delivery address.</p>
                         </div>
                     )}
 

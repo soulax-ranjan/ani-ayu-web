@@ -9,6 +9,7 @@ import Testimonials from "@/components/Testimonials"
 import InstagramFeed from "@/components/InstagramFeed"
 import Footer from "@/components/Footer"
 import { apiClient, transformApiProduct } from "@/lib/api"
+import type { Product } from "@/types/product"
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
@@ -24,7 +25,14 @@ export default async function HomePage() {
     }))
   ])
 
-  const products = productsData.products.map(transformApiProduct)
+  // Only send the products the home banner rows actually show (first 4 per section) - keeps the page payload small
+  const perSection = new Map<number, number>()
+  const products = productsData.products.map(transformApiProduct).filter((p) => {
+    if (!p.section) return false
+    const shown = perSection.get(p.section) ?? 0
+    perSection.set(p.section, shown + 1)
+    return shown < 4
+  }).map(toCardProduct)
 
   return (
     <>
@@ -72,4 +80,24 @@ export default async function HomePage() {
       <Footer />
     </>
   )
+}
+
+// Just the fields a ProductCard renders - descriptions, specs, sizes etc. stay out of the page payload
+function toCardProduct(p: Product): Product {
+  return {
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    originalPrice: p.originalPrice,
+    image: p.image,
+    in_stock: p.in_stock,
+    status: p.status,
+    section: p.section,
+    rating: p.rating,
+    category: p.category,
+    description: '',
+    sizes: [],
+    material: '',
+    occasion: '',
+  }
 }

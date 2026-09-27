@@ -84,7 +84,6 @@ export default function Testimonials() {
                 alt={`${testimonials[0].name} with their little one`}
                 fill
                 loading="lazy"
-                quality={90}
                 sizes="(max-width: 768px) 100vw, 512px"
                 className="object-cover object-top"
               />
@@ -101,20 +100,19 @@ export default function Testimonials() {
           </article>
         ) : (
           // Several testimonials - swipeable on mobile, grid on desktop
-          <div className={`flex md:grid ${gridCols} gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-4 px-4 md:mx-0 md:px-0 pb-2 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}>
+          <div className={`flex md:grid ${gridCols} gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-px-4 md:scroll-px-0 -mx-4 px-4 md:mx-0 md:px-0 pb-2 md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}>
             {testimonials.map((t, index) => (
               <article
                 key={`${t.image}-${index}`}
                 className="shrink-0 w-[85%] sm:w-[60%] md:w-auto snap-start flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-stone-200/70 shadow-[0_2px_12px_-4px_rgba(120,90,50,0.12)]"
               >
-                <div className="relative aspect-square bg-gradient-to-b from-[#fdfbf7] to-[#f4ede3]">
+                <div className="relative aspect-[4/3] sm:aspect-square bg-gradient-to-b from-[#fdfbf7] to-[#f4ede3]">
                   <Image
                     src={t.image}
                     alt={`${t.name} with their little one`}
                     fill
                     loading="lazy"
-                    quality={90}
-                    sizes="(max-width: 768px) 85vw, 400px"
+                        sizes="(max-width: 768px) 85vw, 400px"
                     className="object-cover object-top"
                   />
                 </div>
