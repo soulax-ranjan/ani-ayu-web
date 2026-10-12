@@ -2,7 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    minimumCacheTTL: 86400, // cache images for 24h to reduce Supabase round-trips
+    minimumCacheTTL: 2592000, // 30 days - uploaded image URLs are timestamped, so they never change in place
+    formats: ['image/avif', 'image/webp'], // serve AVIF/WebP to supporting browsers
+    deviceSizes: [390, 640, 750, 828, 1080, 1200, 1920], // mobile-first breakpoints
     qualities: [75, 90, 95], // fix Next.js 16 quality warning
     remotePatterns: [
       {
