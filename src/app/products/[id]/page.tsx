@@ -79,7 +79,7 @@ const FALLBACK_SIZE_CHART = [
 ]
 
 const TRUST_POINTS = [
-  { icon: Scissors, title: 'Crafted to order', text: 'Dispatched within 7 business days' },
+  { icon: Scissors, title: 'Crafted to order', text: 'Delivered in 7–9 days' },
   { icon: RefreshCw, title: 'Size exchange', text: 'Wrong fit? We’ll swap the size' },
   { icon: ShieldCheck, title: 'Secure payments', text: 'Safe checkout via Razorpay' },
 ]
@@ -635,7 +635,7 @@ export default function ProductDetailsPage({ params }: Props) {
                   </button>
                 </Accordion>
                 <Accordion title="Shipping & exchanges">
-                  <p>Each piece is crafted to order and dispatched within 7 business days, then delivered in 2–8 business days depending on your city.</p>
+                  <p>Each piece is crafted to order and delivered within 7–9 days of your order, including crafting and shipping.</p>
                   <p className="mt-2">We don’t accept returns, but we’re happy to exchange for a different size.</p>
                   <div className="mt-3 flex gap-4">
                     <Link href="/help/shipping" className="font-medium text-primary hover:underline underline-offset-4">Shipping info</Link>

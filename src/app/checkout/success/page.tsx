@@ -14,6 +14,7 @@ import Footer from '@/components/Footer'
 import { apiClient } from '@/lib/api'
 import { useCartStore } from '@/store/cartStore'
 import { trackEvent } from '@/lib/mixpanel'
+import { trackPurchaseConversion } from '@/lib/gtag'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
@@ -30,13 +31,15 @@ function OrderSuccessContent() {
             apiClient.getOrder(orderId)
                 .then(data => {
                     const orderData = data.order || data
+                    const orderTotal = Number(orderData.total_amount || orderData.totalAmount || orderData.amount || 0)
                     setOrder(orderData)
                     clearCart()
                     trackEvent('Purchase Completed', {
                         order_id: orderId,
-                        total_amount: orderData.total_amount || orderData.totalAmount || orderData.amount || 0,
+                        total_amount: orderTotal,
                         currency: 'INR'
                     })
+                    trackPurchaseConversion({ value: orderTotal, orderId })
                 })
                 .catch(err => console.error(err))
                 .finally(() => setLoading(false))
@@ -58,10 +61,14 @@ function OrderSuccessContent() {
         ? new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
         : new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
+    // Delivery takes 7-9 days from the order date
     const estimatedDelivery = (() => {
-        const d = new Date()
-        d.setDate(d.getDate() + 5)
-        return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long' })
+        const placed = order?.created_at ? new Date(order.created_at) : new Date()
+        const from = new Date(placed); from.setDate(from.getDate() + 7)
+        const to = new Date(placed); to.setDate(to.getDate() + 9)
+        const day = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric' })
+        const dayMonth = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+        return from.getMonth() === to.getMonth() ? `${day(from)}–${dayMonth(to)}` : `${dayMonth(from)} – ${dayMonth(to)}`
     })()
 
     const totalAmount = order?.total_amount || order?.totalAmount || order?.amount || 0
@@ -110,7 +117,7 @@ function OrderSuccessContent() {
                             { icon: CheckCircle, label: 'Order Confirmed', sub: 'Your order has been received', done: true },
                             { icon: Package, label: 'Packing', sub: 'We\'re carefully packing your order', done: false },
                             { icon: Truck, label: 'Shipped', sub: 'Tracking details will be sent to your email', done: false },
-                            { icon: Clock, label: `Delivered by ${estimatedDelivery}`, sub: '3–5 business days', done: false },
+                            { icon: Clock, label: `Estimated delivery: ${estimatedDelivery}`, sub: '7–9 days from your order date', done: false },
                         ].map((step, i) => (
                             <div key={i} className="flex items-start gap-3">
                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${step.done ? 'bg-primary text-white' : 'bg-stone-100 text-stone-400'}`}>

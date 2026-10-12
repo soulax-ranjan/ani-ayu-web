@@ -194,7 +194,7 @@ export default function CartPage() {
                 <ul className="mt-5 space-y-3 border-t border-stone-200/70 pt-5 text-xs text-ink/65">
                   <li className="flex items-start gap-2.5">
                     <Scissors size={16} className="shrink-0 text-primary" strokeWidth={1.75} />
-                    <span>Crafted to order and dispatched within 7 business days. <Link href="/help/shipping" className="text-primary hover:underline">Shipping info</Link></span>
+                    <span>Crafted to order and delivered in 7–9 days. <Link href="/help/shipping" className="text-primary hover:underline">Shipping info</Link></span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <RefreshCw size={16} className="shrink-0 text-primary" strokeWidth={1.75} />

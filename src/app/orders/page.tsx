@@ -26,6 +26,15 @@ const STEPS = [
     { status: 'delivered', label: 'Delivered', icon: CheckCircle },
 ] as const
 
+// 'pending' is the backend's first fulfilment stage (order received), not a payment state
+const STATUS_LABEL: Record<string, string> = {
+    pending: 'Order placed',
+    processing: 'Processing',
+    shipped: 'Shipped',
+    delivered: 'Delivered',
+    cancelled: 'Cancelled',
+}
+
 const STATUS_BADGE: Record<string, string> = {
     delivered: 'bg-green-50 text-green-700 border border-green-200',
     shipped: 'bg-blue-50 text-blue-700 border border-blue-200',
@@ -79,8 +88,15 @@ function OrderCard({ order }: { order: TrackedOrder }) {
                     <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Order</p>
                     <p className="font-mono text-base font-bold text-primary">{order.orderNumber || '—'}</p>
                 </div>
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide self-start sm:self-auto ${STATUS_BADGE[order.status] || 'bg-primary/5 text-primary border border-primary/20'}`}>
-                    {order.status}
+                <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                    {order.paymentStatus?.toLowerCase() === 'paid' && (
+                        <div className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-bold uppercase tracking-wide bg-green-50 text-green-700 border border-green-200">
+                            <CheckCircle size={14} /> Paid
+                        </div>
+                    )}
+                    <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide ${STATUS_BADGE[order.status] || 'bg-primary/5 text-primary border border-primary/20'}`}>
+                        {STATUS_LABEL[order.status] || order.status}
+                    </div>
                 </div>
             </div>
 

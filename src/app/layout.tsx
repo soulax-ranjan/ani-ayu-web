@@ -6,6 +6,7 @@ import { Poppins } from "next/font/google"
 import Script from "next/script"
 import SessionInit from "@/components/SessionInit"
 import AnalyticsInit from "@/components/AnalyticsInit"
+import { GOOGLE_ADS_ID } from "@/lib/gtag"
 
 const poppins = Poppins({ subsets: ["latin", "devanagari"], weight: ["400", "500", "600", "700"], variable: "--font-heading" })
 
@@ -25,6 +26,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SessionInit />
         <AnalyticsInit />
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+        {/* Google tag (gtag.js) - Google Ads */}
+        <Script src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`} strategy="afterInteractive" />
+        <Script id="google-ads-gtag" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');`}
+        </Script>
         <div style={{ width: '100%', maxWidth: '100vw', margin: 0, padding: 0, overflowX: 'hidden' }}>
           {children}
         </div>

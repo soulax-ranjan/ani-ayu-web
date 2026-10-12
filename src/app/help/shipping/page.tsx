@@ -37,7 +37,7 @@ export default function ShippingInfoPage() {
                                         </p>
                                         <div className="bg-primary/5 border border-primary/10 rounded-2xl p-5 mb-4">
                                             <p className="font-bold text-primary">
-                                                Each order requires up to 7 business days for processing and customization before it is shipped.
+                                                Your order is crafted, customized and shipped so that it reaches you within 7–9 days of placing it.
                                             </p>
                                         </div>
                                         <p className="text-sm text-gray-500">
@@ -57,29 +57,16 @@ export default function ShippingInfoPage() {
                                     </div>
                                     <div className="w-full">
                                         <h2 className="text-xl sm:text-2xl font-bold text-ink mb-4">Shipping & Delivery Time</h2>
-                                        <p className="mb-6">Once your order is ready and dispatched, the estimated delivery timeline is:</p>
+                                        <p className="mb-6">From the day you place your order, delivery takes:</p>
 
-                                        <div className="grid grid-cols-3 gap-4 mb-6">
-                                            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-3 sm:p-5 text-center transition-all hover:shadow-md hover:border-gray-200">
-                                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-gray-400 mb-1">Metro Cities</p>
-                                                <p className="font-extrabold text-ink text-lg sm:text-xl">2–4</p>
-                                                <p className="text-xs sm:text-sm text-gray-500 font-medium">business days</p>
-                                            </div>
-                                            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-3 sm:p-5 text-center transition-all hover:shadow-md hover:border-gray-200">
-                                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-gray-400 mb-1">Other Cities</p>
-                                                <p className="font-extrabold text-ink text-lg sm:text-xl">3–6</p>
-                                                <p className="text-xs sm:text-sm text-gray-500 font-medium">business days</p>
-                                            </div>
-                                            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-3 sm:p-5 text-center transition-all hover:shadow-md hover:border-gray-200">
-                                                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-gray-400 mb-1">Remote Areas</p>
-                                                <p className="font-extrabold text-ink text-lg sm:text-xl">5–8</p>
-                                                <p className="text-xs sm:text-sm text-gray-500 font-medium">business days</p>
-                                            </div>
+                                        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 sm:p-6 mb-6 text-center">
+                                            <p className="font-extrabold text-ink text-3xl sm:text-4xl">7–9 days</p>
+                                            <p className="mt-1 text-sm text-gray-500 font-medium">including crafting, customization and shipping</p>
                                         </div>
 
                                         <div className="bg-gray-50 rounded-2xl p-4 border-l-4 border-ink">
                                             <p className="font-bold text-ink">
-                                                Total delivery time may take 7–12 business days including customization and shipping.
+                                                You’ll see the estimated delivery dates for your order on the confirmation page after checkout.
                                             </p>
                                         </div>
                                     </div>

@@ -108,6 +108,9 @@ export default function OrderDetailsPage() {
 
     const statusObj = status?.toLowerCase() || 'pending'
     const statusSteps = ['pending', 'processing', 'shipped', 'delivered']
+    // 'pending' is the backend's first fulfilment stage (order received), not a payment state
+    const stepLabels: Record<string, string> = { pending: 'Order placed', processing: 'Processing', shipped: 'Shipped', delivered: 'Delivered' }
+    const isPaid = String(payment_status || '').toLowerCase() === 'paid'
     let currentStepIndex = statusSteps.indexOf(statusObj)
     if (currentStepIndex < 0) {
         if (statusObj === 'cancelled') currentStepIndex = -1
@@ -132,6 +135,16 @@ export default function OrderDetailsPage() {
                                 <h1 className="text-3xl md:text-4xl font-extrabold text-ink tracking-tight flex items-center gap-3">
                                     Order <span className="text-primary font-mono text-2xl md:text-3xl bg-primary/10 px-3 py-1 rounded-lg">#{orderIdStr.slice(0, 8).toUpperCase()}</span>
                                 </h1>
+                                <div className="mt-3 flex flex-wrap items-center gap-2">
+                                    {isPaid && (
+                                        <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 border border-green-200 px-3 py-1 text-xs font-semibold">
+                                            <CheckCircle size={14} /> Payment received
+                                        </span>
+                                    )}
+                                    <span className="inline-flex items-center rounded-full bg-primary/5 text-primary border border-primary/20 px-3 py-1 text-xs font-semibold">
+                                        {statusObj === 'cancelled' ? 'Cancelled' : stepLabels[statusObj] || statusObj}
+                                    </span>
+                                </div>
                                 <div className="flex items-center gap-4 mt-3 text-gray-500 text-sm font-medium">
                                     <div className="flex items-center gap-1.5"><Calendar size={16} />
                                         {new Date(created_at).toLocaleDateString("en-IN", {
@@ -217,7 +230,7 @@ export default function OrderDetailsPage() {
                                                         </div>
                                                         <div className="text-center">
                                                             <span className={`text-xs sm:text-sm font-bold uppercase tracking-wider block transition-colors ${isCurrent ? 'text-primary' : isCompleted ? 'text-ink' : 'text-gray-400'}`}>
-                                                                {step}
+                                                                {stepLabels[step] || step}
                                                             </span>
                                                         </div>
                                                     </div>
