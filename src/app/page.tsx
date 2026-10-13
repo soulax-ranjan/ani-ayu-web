@@ -55,6 +55,21 @@ export default async function HomePage() {
   const siblingSets: SiblingSet[] = groupByTag('siblingset', 2)
   const festiveCollections: FestiveCollection[] = groupByTag('festive', 1)
 
+  // Banner links: the CTA link set in the admin always wins. Without one, banner N (by its position in the
+  // carousel) opens the shop filtered to products tagged "banner_N", if any exist.
+  // Tag links get the banner's title added so the shop page can show it as the heading.
+  const liveTags = new Set(liveProducts.flatMap((p) => (p.tags || []).map((t) => t.trim().toLowerCase())))
+  const banners = bannersData.banners.map((banner, index) => {
+    const title = banner.title?.trim()
+    const withTitle = (link: string) =>
+      title && link.includes('tag=') && !link.includes('title=') ? `${link}&title=${encodeURIComponent(title)}` : link
+    // Links to our own site (https://aniayu.com/...) become site paths, so they open instantly without a full reload
+    const adminLink = banner.ctaLink?.trim().replace(/^https?:\/\/(www\.)?aniayu\.com(?=\/|$)/i, '') || (banner.ctaLink?.trim() ? '/' : '')
+    if (adminLink) return { ...banner, ctaLink: withTitle(adminLink) }
+    const tag = `banner_${index + 1}`
+    return liveTags.has(tag) ? { ...banner, ctaLink: withTitle(`/products?tag=${tag}`) } : banner
+  })
+
   return (
     <>
       <Suspense fallback={<div className="h-16 md:h-20 bg-cream" />}>
@@ -64,7 +79,7 @@ export default async function HomePage() {
       <main className="flex flex-col">
 
         {/* ── 1. Hero Carousel ── full bleed, no bg */}
-        <HeroCarousel banners={bannersData.banners} />
+        <HeroCarousel banners={banners} />
 
         {/* ── 1b. Festive edit ── deep teal band, from "Festive - …" tags, hidden when none */}
         <FestiveEdit collections={festiveCollections} />

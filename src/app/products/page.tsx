@@ -124,7 +124,8 @@ function ProductsContent() {
 
     // Filter by tag (e.g. /products?tag=Sibling%20Set%20-%20Mint%20Green from a product page)
     if (tagFromUrl) {
-      filtered = filtered.filter(p => p.tags?.includes(tagFromUrl))
+      const wanted = tagFromUrl.trim().toLowerCase()
+      filtered = filtered.filter(p => p.tags?.some(t => t.trim().toLowerCase() === wanted))
     }
 
     // Filter by section (only if section data exists on products)
@@ -192,7 +193,10 @@ function ProductsContent() {
     return [...sizes].sort((a, b) => (parseFloat(a) || 0) - (parseFloat(b) || 0))
   }, [data])
 
-  const pageTitle = tagFromUrl ||
+  // Banner links pass the banner's title; otherwise show a readable version of the tag
+  const titleFromUrl = searchParams?.get('title')?.trim() || ''
+  const tagTitle = tagFromUrl && (titleFromUrl || (/^banner_\d+$/i.test(tagFromUrl) ? 'Featured Collection' : tagFromUrl))
+  const pageTitle = tagTitle ||
     (filters.category.length === 1 ? (filters.category[0] === 'girls' ? 'Girls' : filters.category[0] === 'boys' ? 'Boys' : 'Shop All') : 'Shop All')
 
   const resetFilters = () => {

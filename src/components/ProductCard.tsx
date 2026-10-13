@@ -76,7 +76,7 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
           )}
 
           {/* Discount Badge */}
-          {discountPercent && !isOutOfStock && (
+          {!!discountPercent && discountPercent > 0 && !isOutOfStock && (
             <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10">
               <div className="bg-primary text-white text-[10px] md:text-xs font-bold px-2 md:px-3 py-1 md:py-1.5 rounded-full shadow-lg backdrop-blur-sm flex items-center gap-1">
                 <Sparkles size={12} className="fill-current" />

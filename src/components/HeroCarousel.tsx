@@ -11,6 +11,8 @@ interface HeroBannerProps {
   banners?: Banner[]
 }
 
+const bannerHref = (link?: string | null) => (link && link.trim() !== '' ? link : '/products')
+
 export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) {
   const { data: bannersData, loading, error } = useBanners()
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -100,12 +102,19 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
                 />
               )}
 
+              {/* Whole banner is clickable */}
+              <Link
+                href={bannerHref(banner.ctaLink)}
+                aria-label={banner.title?.trim() || banner.ctaText || 'Explore collection'}
+                className="absolute inset-0"
+              />
+
               {/* Soft warm shade along the bottom, behind the text only - keeps the photo bright */}
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[rgba(45,30,15,0.58)] via-[rgba(45,30,15,0.22)] to-transparent"></div>
 
               {/* Content - centred at the bottom */}
-              <div className="absolute inset-0 flex items-end justify-center">
-                <div className="w-full px-5 md:px-8 pb-9 md:pb-11">
+              <div className="pointer-events-none absolute inset-0 flex items-end justify-center">
+                <div className="w-full px-5 md:px-8 pb-14 md:pb-11">
                   <div className="mx-auto max-w-xl text-center text-white">
                     {banner.title?.trim() && (
                       <h1 className={`text-2xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] [text-shadow:0_2px_16px_rgba(45,30,15,0.45)] ${banner.subtitle?.trim() ? 'mb-1.5 md:mb-2' : 'mb-4 md:mb-5'}`}>
@@ -118,8 +127,8 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
                       </p>
                     )}
                     <Link
-                      href={banner.ctaLink && banner.ctaLink.trim() !== '' ? banner.ctaLink : '/products'}
-                      className="inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-white text-ink font-semibold rounded-full hover:bg-[#e6c88a] transition-colors duration-300 shadow-lg shadow-black/10 text-sm md:text-base"
+                      href={bannerHref(banner.ctaLink)}
+                      className="pointer-events-auto inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-white text-ink font-semibold rounded-full hover:bg-[#e6c88a] transition-colors duration-300 shadow-lg shadow-black/10 text-sm md:text-base"
                     >
                       {banner.ctaText || 'Explore Collection'}
                       <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
@@ -133,7 +142,7 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
 
         {/* Slide indicators - centred under the button */}
         {banners.length > 1 && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-3.5 md:bottom-4 z-20">
+          <div className="pointer-events-none absolute inset-x-0 bottom-6 md:bottom-4 z-20">
             <div className="flex justify-center gap-2">
               {banners.map((_, index) => (
                 <button
