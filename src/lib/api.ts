@@ -119,6 +119,7 @@ export interface Banner {
   subtitle: string
   description: string
   image: string
+  mobileImage?: string | null
   ctaText: string
   ctaLink: string
   backgroundColor: string

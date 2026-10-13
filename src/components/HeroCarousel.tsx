@@ -34,7 +34,7 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
   if (isLoading) {
     return (
       <section className="w-screen !m-0 !border-none !p-0 relative">
-        <div className="relative w-full aspect-[16/9] !m-0 !border-none !p-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/30 animate-pulse">
+        <div className="relative w-full aspect-[2/3] max-h-[82vh] md:aspect-[2/1] md:max-h-none lg:aspect-[5/2] lg:max-h-[860px] !m-0 !border-none !p-0 bg-gradient-to-br from-primary/20 via-accent/10 to-primary/30 animate-pulse">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
           <div className="absolute inset-x-0 bottom-8 text-center">
             <div className="bg-gradient-to-r from-primary to-accent h-12 w-32 rounded-full mx-auto animate-pulse"></div>
@@ -47,7 +47,7 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
   if (errorMessage) {
     return (
       <section className="w-screen !m-0 !border-none !p-0">
-        <div className="relative w-full aspect-[16/9] !m-0 !border-none !p-0 bg-red-100 flex items-center justify-center">
+        <div className="relative w-full aspect-[2/3] max-h-[82vh] md:aspect-[2/1] md:max-h-none lg:aspect-[5/2] lg:max-h-[860px] !m-0 !border-none !p-0 bg-red-100 flex items-center justify-center">
           <div className="text-center">
             <p className="text-red-600 font-semibold">Error loading banners</p>
             <p className="text-sm text-red-500">{errorMessage}</p>
@@ -60,7 +60,7 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
   if (banners.length === 0) {
     return (
       <section className="w-screen !m-0 !border-none !p-0">
-        <div className="relative w-full aspect-[16/9] !m-0 !border-none !p-0 bg-gray-100 flex items-center justify-center">
+        <div className="relative w-full aspect-[2/3] max-h-[82vh] md:aspect-[2/1] md:max-h-none lg:aspect-[5/2] lg:max-h-[860px] !m-0 !border-none !p-0 bg-gray-100 flex items-center justify-center">
           <p className="text-gray-600">No banners available</p>
         </div>
       </section>
@@ -68,8 +68,9 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
   }
 
   return (
-    <section className="w-full relative overflow-hidden bg-gradient-to-br from-primary/5 via-white to-accent/5">
-      <div className="relative w-full h-[500px] md:h-[560px] lg:h-[min(72vh,700px)] overflow-hidden group">
+    <section className="w-full bg-white px-3 py-3 md:px-6 md:py-5 lg:px-8">
+      {/* Inset banner at the upload shapes (2:3 phone, 5:2 desktop) - whole image visible, at most ~560px tall */}
+      <div className="relative w-full max-w-[1400px] mx-auto aspect-[2/3] max-h-[72vh] md:aspect-[2/1] md:max-h-none lg:aspect-[5/2] rounded-2xl md:rounded-3xl overflow-hidden group">
         {/* Carousel Container */}
         <div
           className="flex transition-all duration-700 ease-out w-full h-full"
@@ -77,30 +78,45 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
         >
           {banners.map((banner, index) => (
             <div key={banner.id} className="relative w-full h-full flex-shrink-0">
-              {/* Main Image */}
+              {/* Main Image - mobile image on small screens, web image as the fallback */}
               <Image
                 src={banner.image}
                 alt={banner.title}
                 fill
                 priority={index === 0}
                 fetchPriority={index === 0 ? 'high' : 'auto'}
-                sizes="100vw"
-                className="w-full h-full object-cover object-center"
+                sizes={banner.mobileImage ? "(max-width: 767px) 1px, (max-width: 1400px) 100vw, 1400px" : "(max-width: 767px) 350vw, (max-width: 1400px) 100vw, 1400px"}
+                className={`w-full h-full object-cover object-[center_25%] ${banner.mobileImage ? 'hidden md:block' : ''}`}
               />
+              {banner.mobileImage && (
+                <Image
+                  src={banner.mobileImage}
+                  alt={banner.title}
+                  fill
+                  priority={index === 0}
+                  fetchPriority={index === 0 ? 'high' : 'auto'}
+                  sizes="(max-width: 767px) 100vw, 1px"
+                  className="w-full h-full object-cover object-[center_20%] md:hidden"
+                />
+              )}
 
-              {/* Soft warm shade in the bottom-left corner, behind the text only - keeps the photo bright */}
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_70%_at_0%_100%,rgba(45,30,15,0.5)_0%,rgba(45,30,15,0.18)_45%,transparent_75%)]"></div>
+              {/* Soft warm shade along the bottom, behind the text only - keeps the photo bright */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[rgba(45,30,15,0.58)] via-[rgba(45,30,15,0.22)] to-transparent"></div>
 
-              {/* Content - bottom-left, aligned with the page content */}
-              <div className="absolute inset-0 flex items-end">
-                <div className="w-full max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 pb-12 md:pb-16">
-                  <div className="max-w-[16rem] sm:max-w-xs lg:max-w-sm text-left text-white">
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3 leading-[1.1] [text-shadow:0_2px_16px_rgba(45,30,15,0.45)]">
-                      {banner.title}
-                    </h1>
-                    <p className="text-sm md:text-lg mb-5 md:mb-7 text-white/95 leading-relaxed [text-shadow:0_1px_10px_rgba(45,30,15,0.5)]">
-                      {banner.subtitle}
-                    </p>
+              {/* Content - centred at the bottom */}
+              <div className="absolute inset-0 flex items-end justify-center">
+                <div className="w-full px-5 md:px-8 pb-9 md:pb-11">
+                  <div className="mx-auto max-w-xl text-center text-white">
+                    {banner.title?.trim() && (
+                      <h1 className={`text-2xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] [text-shadow:0_2px_16px_rgba(45,30,15,0.45)] ${banner.subtitle?.trim() ? 'mb-1.5 md:mb-2' : 'mb-4 md:mb-5'}`}>
+                        {banner.title}
+                      </h1>
+                    )}
+                    {banner.subtitle?.trim() && (
+                      <p className="mx-auto max-w-md text-sm md:text-lg mb-4 md:mb-5 text-white/95 leading-relaxed [text-shadow:0_1px_10px_rgba(45,30,15,0.5)]">
+                        {banner.subtitle}
+                      </p>
+                    )}
                     <Link
                       href={banner.ctaLink && banner.ctaLink.trim() !== '' ? banner.ctaLink : '/products'}
                       className="inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-white text-ink font-semibold rounded-full hover:bg-[#e6c88a] transition-colors duration-300 shadow-lg shadow-black/10 text-sm md:text-base"
@@ -115,10 +131,10 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
           ))}
         </div>
 
-        {/* Slide indicators - bottom-right, aligned with the page content */}
+        {/* Slide indicators - centred under the button */}
         {banners.length > 1 && (
-          <div className="pointer-events-none absolute inset-x-0 bottom-5 md:bottom-7 z-20">
-            <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 flex justify-end gap-2">
+          <div className="pointer-events-none absolute inset-x-0 bottom-3.5 md:bottom-4 z-20">
+            <div className="flex justify-center gap-2">
               {banners.map((_, index) => (
                 <button
                   key={index}
