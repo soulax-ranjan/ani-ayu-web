@@ -14,7 +14,7 @@ import Footer from '@/components/Footer'
 import { apiClient } from '@/lib/api'
 import { useCartStore } from '@/store/cartStore'
 import { trackEvent } from '@/lib/mixpanel'
-import { trackPurchaseConversion } from '@/lib/gtag'
+import { trackPurchaseConversion, gaEvent } from '@/lib/gtag'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
@@ -40,6 +40,22 @@ function OrderSuccessContent() {
                         currency: 'INR'
                     })
                     trackPurchaseConversion({ value: orderTotal, orderId })
+                    // GA4: purchase, with the items as the order records them
+                    const orderItems: any[] = orderData.items || orderData.orderItems || orderData.order_items || []
+                    gaEvent('purchase', {
+                        transaction_id: orderId,
+                        value: orderTotal,
+                        items: orderItems.map((item) => {
+                            const product = item.product || item
+                            return {
+                                item_id: String(item.product_id || item.productId || product?.id || item.id || ''),
+                                item_name: product?.name || item.name || item.product_name || 'Product',
+                                price: Number(item.price || item.unit_price || product?.price || 0),
+                                quantity: Number(item.quantity || 1),
+                                ...(item.size ? { item_variant: item.size } : {}),
+                            }
+                        }),
+                    })
                 })
                 .catch(err => console.error(err))
                 .finally(() => setLoading(false))

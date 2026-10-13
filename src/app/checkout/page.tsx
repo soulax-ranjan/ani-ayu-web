@@ -10,6 +10,7 @@ import Footer from '@/components/Footer'
 import { CheckoutStep } from '@/types/checkout'
 import { apiClient } from '@/lib/api'
 import { trackEvent } from '@/lib/mixpanel'
+import { gaEvent, toGaItem } from '@/lib/gtag'
 import { useEffect } from 'react'
 
 // Define window.Razorpay for TS
@@ -50,6 +51,10 @@ export default function CheckoutPage() {
     trackEvent('Checkout Started', {
       cart_total: totals.total,
       item_count: totalItems
+    })
+    gaEvent('begin_checkout', {
+      value: totals.total,
+      items: items.map((item) => toGaItem({ ...item.product, price: item.price }, { size: item.size, quantity: item.quantity })),
     })
   }, [])
 
@@ -137,6 +142,10 @@ export default function CheckoutPage() {
         if (newAddressId) {
           console.log('✅ Address saved with ID:', newAddressId)
           setAddressId(newAddressId)
+          gaEvent('add_shipping_info', {
+            value: totals.total,
+            items: items.map((item) => toGaItem({ ...item.product, price: item.price }, { size: item.size, quantity: item.quantity })),
+          })
           setCurrentStep('payment')
         } else {
           console.error('❌ Missing ID in address response. Full response:', res)

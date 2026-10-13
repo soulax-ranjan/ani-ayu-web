@@ -17,6 +17,7 @@ import { Product as APIProduct } from '@/lib/api'
 import { Product } from '@/types/product'
 import { apiClient } from '@/lib/api'
 import { trackEvent } from '@/lib/mixpanel'
+import { gaEvent, toGaItem } from '@/lib/gtag'
 
 export const runtime = 'edge'
 
@@ -129,6 +130,12 @@ export default function ProductDetailsPage({ params }: Props) {
   const { data: matchingData } = useMatchingProducts(resolvedParams.id)
 
   const { addItem } = useCartStore()
+
+  // GA4: product viewed
+  useEffect(() => {
+    if (!productData) return
+    gaEvent('view_item', { value: Number(productData.price || 0), items: [toGaItem(productData)] })
+  }, [productData])
 
   // Fetch category name
   const [categoryName, setCategoryName] = useState<string>('')
@@ -282,6 +289,7 @@ export default function ProductDetailsPage({ params }: Props) {
         quantity: quantity,
         category: categoryName
       })
+      gaEvent('add_to_cart', { value: product.price * quantity, items: [toGaItem(product, { size: selectedSize, quantity, category: categoryName })] })
       setShowToast(true)
       setTimeout(() => setShowToast(false), 4000)
     }
@@ -303,6 +311,7 @@ export default function ProductDetailsPage({ params }: Props) {
         category: categoryName,
         source: 'Buy Now'
       })
+      gaEvent('add_to_cart', { value: product.price * quantity, items: [toGaItem(product, { size: selectedSize, quantity, category: categoryName })] })
       router.push('/checkout')
     }
   }

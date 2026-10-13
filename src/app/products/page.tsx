@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
 import { useState, useMemo, Suspense, useEffect, useRef } from 'react'
+import { gaEvent, toGaItem } from '@/lib/gtag'
 import { useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { Grid, SlidersHorizontal, X, ChevronDown, Check } from 'lucide-react'
@@ -168,6 +169,17 @@ function ProductsContent() {
 
     return filtered
   }, [allProducts, filters, tagFromUrl])
+
+  // GA4: product list viewed (once per page load, first 20 products shown)
+  const listTracked = useRef(false)
+  useEffect(() => {
+    if (listTracked.current || loading || filteredProducts.length === 0) return
+    listTracked.current = true
+    gaEvent('view_item_list', {
+      item_list_name: filters.category.length === 1 ? filters.category[0] : 'all',
+      items: filteredProducts.slice(0, 20).map((p) => toGaItem(p, { category: p.category })),
+    })
+  }, [loading, filteredProducts, filters.category])
 
   const priceActive = filters.priceRange[0] > 0 || filters.priceRange[1] < PRICE_MAX
   const activeCount = filters.category.length + filters.sizes.length + (priceActive ? 1 : 0)
