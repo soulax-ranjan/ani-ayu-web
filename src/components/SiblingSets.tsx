@@ -21,7 +21,7 @@ export default function SiblingSets({ sets }: { sets: SiblingSet[] }) {
   if (sets.length === 0) return null
 
   return (
-    <section className="w-full py-12 md:py-16">
+    <section id="sibling-sets" className="w-full py-12 md:py-16 scroll-mt-24">
       <div className="mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8">
         <div className="mb-8 md:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-3">
           <div>

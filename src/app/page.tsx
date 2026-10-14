@@ -5,6 +5,7 @@ import BestDesigns from "@/components/BestDesigns"
 import BannerProductSections from "@/components/BannerProductSections"
 import SiblingSets, { type SiblingSet } from "@/components/SiblingSets"
 import FestiveEdit, { type FestiveCollection } from "@/components/FestiveEdit"
+import QuickLinks, { type QuickLink } from "@/components/QuickLinks"
 import FounderStory from "@/components/FounderStory"
 import InstagramGallery from "@/components/InstagramGallery"
 import Testimonials from "@/components/Testimonials"
@@ -55,6 +56,34 @@ export default async function HomePage() {
   const siblingSets: SiblingSet[] = groupByTag('siblingset', 2)
   const festiveCollections: FestiveCollection[] = groupByTag('festive', 1)
 
+  // "Shop by collection" tiles under the banner, each with a real product photo (no photo used twice)
+  const GIRLS_CATEGORY_ID = '22222222-2222-2222-2222-222222222222'
+  const usedImages = new Set<string>()
+  const takeImage = (candidates: { image_url?: string | null; image?: string | null }[]) => {
+    for (const c of candidates) {
+      const img = c.image_url || c.image
+      if (img && !usedImages.has(img)) { usedImages.add(img); return img }
+    }
+    return null
+  }
+  const featuredFirst = [...liveProducts].sort((a, b) => Number(!!b.featured) - Number(!!a.featured))
+  const girls = featuredFirst.filter((p) => p.category_id === GIRLS_CATEGORY_ID)
+  const boys = featuredFirst.filter((p) => p.category_id && p.category_id !== GIRLS_CATEGORY_ID)
+  const tile = (label: string, caption: string, href: string, images: (string | null)[], highlight = false): QuickLink | null => {
+    const valid = images.filter((i): i is string => !!i)
+    return valid.length ? { label, caption, href, images: valid, highlight } : null
+  }
+  const quickLinks = [
+    ...festiveCollections.map((c) => {
+      const name = c.tag.replace(/^festive\s*[-–:]?\s*/i, '').trim() || 'Festive'
+      return tile(`The ${name} Edit`, `Our festive picks for ${name}`, `/products?tag=${encodeURIComponent(c.tag)}&title=${encodeURIComponent(`The ${name} Edit`)}`, [takeImage(c.products)], true)
+    }),
+    tile('Girls', 'Lehengas & co-ords', '/products?category=girls', [takeImage(girls)]),
+    tile('Boys', 'Kurtas & jackets', '/products?category=boys', [takeImage(boys)]),
+    siblingSets.length > 0 ? tile('Sibling Sets', 'Twinning outfits', '#sibling-sets', siblingSets[0].products.slice(0, 2).map((p) => takeImage([p]))) : null,
+    tile('Shop All', 'Full collection', '/products', [takeImage(featuredFirst)]),
+  ].filter((l): l is QuickLink => !!l)
+
   // Banner links: the CTA link set in the admin always wins. Without one, banner N (by its position in the
   // carousel) opens the shop filtered to products tagged "banner_N", if any exist.
   // Tag links get the banner's title added so the shop page can show it as the heading.
@@ -80,6 +109,7 @@ export default async function HomePage() {
 
         {/* ── 1. Hero Carousel ── full bleed, no bg */}
         <HeroCarousel banners={banners} />
+        <QuickLinks links={quickLinks} />
 
         {/* ── 1b. Festive edit ── deep teal band, from "Festive - …" tags, hidden when none */}
         <FestiveEdit collections={festiveCollections} />

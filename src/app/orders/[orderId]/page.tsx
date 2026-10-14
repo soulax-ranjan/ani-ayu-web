@@ -288,13 +288,13 @@ export default function OrderDetailsPage() {
                                                     </div>
 
                                                     <div className="mt-auto flex items-center justify-between sm:justify-start gap-4">
-                                                        <p className="text-gray-500 text-sm">₹{price.toLocaleString()} each</p>
-                                                        <p className="font-extrabold text-ink text-lg sm:hidden">₹{itemTotal.toLocaleString()}</p>
+                                                        <p className="text-gray-500 text-sm">₹{price.toLocaleString('en-IN')} each</p>
+                                                        <p className="font-extrabold text-ink text-lg sm:hidden">₹{itemTotal.toLocaleString('en-IN')}</p>
                                                     </div>
                                                 </div>
                                                 <div className="hidden sm:flex flex-col items-end justify-center pl-4 border-l border-gray-100">
                                                     <p className="text-sm text-gray-400 font-medium mb-1">Total</p>
-                                                    <p className="font-extrabold text-ink text-xl">₹{itemTotal.toLocaleString()}</p>
+                                                    <p className="font-extrabold text-ink text-xl">₹{itemTotal.toLocaleString('en-IN')}</p>
                                                 </div>
                                             </div>
                                         )
@@ -314,12 +314,12 @@ export default function OrderDetailsPage() {
                                 <div className="space-y-4 text-sm font-medium">
                                     <div className="flex justify-between text-gray-500">
                                         <span>Subtotal</span>
-                                        <span className="text-ink">₹{(displayTotal + displayDiscount).toLocaleString()}</span>
+                                        <span className="text-ink">₹{(displayTotal + displayDiscount).toLocaleString('en-IN')}</span>
                                     </div>
                                     {displayDiscount > 0 && (
                                         <div className="flex justify-between text-green-600">
                                             <span>Discount</span>
-                                            <span>-₹{displayDiscount.toLocaleString()}</span>
+                                            <span>-₹{displayDiscount.toLocaleString('en-IN')}</span>
                                         </div>
                                     )}
                                     <div className="flex justify-between text-gray-500">
@@ -329,7 +329,7 @@ export default function OrderDetailsPage() {
                                     <div className="pt-4 border-t border-dashed border-gray-200">
                                         <div className="flex justify-between items-center">
                                             <span className="text-base text-gray-800 font-bold">Total Amount</span>
-                                            <span className="text-2xl font-extrabold text-ink">₹{displayTotal.toLocaleString()}</span>
+                                            <span className="text-2xl font-extrabold text-ink">₹{displayTotal.toLocaleString('en-IN')}</span>
                                         </div>
                                     </div>
                                 </div>

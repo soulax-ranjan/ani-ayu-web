@@ -176,7 +176,7 @@ function OrderSuccessContent() {
                                             <p className="text-xs text-gray-400">Size: {size} · Qty: {qty}</p>
                                         </div>
                                         <span className="text-sm font-semibold text-primary flex-shrink-0">
-                                            ₹{(price * qty).toLocaleString()}
+                                            ₹{(price * qty).toLocaleString('en-IN')}
                                         </span>
                                     </div>
                                 )
@@ -187,7 +187,7 @@ function OrderSuccessContent() {
                         <div className="border-t border-stone-100 mt-4 pt-4 flex justify-between items-center">
                             <span className="text-sm text-gray-500">Order Total</span>
                             <span className="text-lg font-bold text-primary" style={{ fontFamily: 'var(--font-heading)' }}>
-                                ₹{Number(totalAmount).toLocaleString()}
+                                ₹{Number(totalAmount).toLocaleString('en-IN')}
                             </span>
                         </div>
                     </div>

@@ -102,12 +102,12 @@ export default function ProductCard({ product, className = '' }: ProductCardProp
               <span className={`font-heading text-lg md:text-2xl font-bold tabular-nums ${
                 isOutOfStock ? 'text-gray-400' : 'text-primary'
               }`}>
-                ₹{product.price.toLocaleString()}
+                ₹{product.price.toLocaleString('en-IN')}
               </span>
             </div>
             {product.originalPrice && product.originalPrice > product.price && (
               <span className="font-heading text-xs text-[#a8a29e] line-through font-medium tabular-nums">
-                ₹{product.originalPrice.toLocaleString()}
+                ₹{product.originalPrice.toLocaleString('en-IN')}
               </span>
             )}
           </div>

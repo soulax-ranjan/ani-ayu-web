@@ -117,21 +117,23 @@ export default function HeroBanner({ banners: serverBanners }: HeroBannerProps) 
                 <div className="w-full px-5 md:px-8 pb-14 md:pb-11">
                   <div className="mx-auto max-w-xl text-center text-white">
                     {banner.title?.trim() && (
-                      <h1 className={`text-2xl md:text-4xl lg:text-[2.75rem] font-bold leading-[1.1] [text-shadow:0_2px_16px_rgba(45,30,15,0.45)] ${banner.subtitle?.trim() ? 'mb-1.5 md:mb-2' : 'mb-4 md:mb-5'}`}>
+                      <h1 className={`font-[family-name:var(--font-display)] font-medium text-[1.65rem] md:text-[2.35rem] lg:text-[2.6rem] leading-[1.12] tracking-[-0.01em] [text-shadow:0_1px_12px_rgba(45,30,15,0.35)] ${banner.subtitle?.trim() ? 'mb-2 md:mb-2.5' : 'mb-4 md:mb-5'}`}>
                         {banner.title}
                       </h1>
                     )}
                     {banner.subtitle?.trim() && (
-                      <p className="mx-auto max-w-md text-sm md:text-lg mb-4 md:mb-5 text-white/95 leading-relaxed [text-shadow:0_1px_10px_rgba(45,30,15,0.5)]">
+                      <p className="mx-auto max-w-md text-[11px] md:text-xs font-semibold uppercase tracking-[0.28em] mb-4 md:mb-5 text-white/90 [text-shadow:0_1px_8px_rgba(45,30,15,0.5)]">
                         {banner.subtitle}
                       </p>
                     )}
                     <Link
                       href={bannerHref(banner.ctaLink)}
-                      className="pointer-events-auto inline-flex items-center justify-center px-6 md:px-8 py-2.5 md:py-3.5 bg-white text-ink font-semibold rounded-full hover:bg-[#e6c88a] transition-colors duration-300 shadow-lg shadow-black/10 text-sm md:text-base"
+                      className="group/cta pointer-events-auto inline-flex items-center gap-3 rounded-full bg-[#fffaf2]/95 backdrop-blur-sm pl-5 md:pl-6 pr-1.5 py-1.5 ring-1 ring-white/80 shadow-[0_10px_28px_-10px_rgba(45,30,15,0.55)] text-ink text-sm md:text-[15px] font-semibold tracking-[0.02em] transition-all duration-200 hover:bg-white hover:shadow-[0_14px_32px_-10px_rgba(45,30,15,0.6)] active:scale-95"
                     >
                       {banner.ctaText || 'Explore Collection'}
-                      <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+                      <span className="grid place-items-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-[#c2621d] text-white shadow-sm transition-transform duration-300 group-hover/cta:translate-x-0.5" aria-hidden>
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
                     </Link>
                   </div>
                 </div>

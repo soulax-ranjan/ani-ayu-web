@@ -1,7 +1,7 @@
 
 import type { Metadata } from "next"
 import "./globals.css"
-import { quicksand, pacifico } from "@/styles/fonts"
+import { quicksand, pacifico, playfair } from "@/styles/fonts"
 import { Poppins } from "next/font/google"
 import Script from "next/script"
 import SessionInit from "@/components/SessionInit"
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${quicksand.variable} ${pacifico.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${quicksand.variable} ${pacifico.variable} ${playfair.variable}`}>
       <body className="min-h-screen font-[var(--font-quicksand)] text-ink antialiased">
         <SessionInit />
         <AnalyticsInit />

@@ -1,4 +1,5 @@
-import { Sparkles } from "lucide-react"
+import Link from "next/link"
+import { Sparkles, ArrowRight } from "lucide-react"
 import ProductCard from "@/components/ProductCard"
 import type { Product } from "@/types/product"
 
@@ -46,6 +47,8 @@ export default function FestiveEdit({ collections }: { collections: FestiveColle
     <>
       {collections.map((collection) => {
         const occasion = occasionName(collection.tag)
+        const editTitle = `The ${occasion || "Festive"} Edit`
+        const editHref = `/products?tag=${encodeURIComponent(collection.tag)}&title=${encodeURIComponent(editTitle)}`
         // Up to 3 pieces: intro beside the products. 4-5: intro on top, one row. 6+: intro on top, swipeable row.
         const count = collection.products.length
         const wide = count > 3
@@ -70,8 +73,8 @@ export default function FestiveEdit({ collections }: { collections: FestiveColle
             ))}
 
             <div className={`relative mx-auto max-w-[1200px] px-4 md:px-6 lg:px-8 py-12 md:py-16 grid gap-6 md:gap-8 ${wide ? "" : "lg:grid-cols-4 items-center"}`}>
-              {/* Intro */}
-              <div className={wide ? "lg:flex lg:items-end lg:justify-between lg:gap-10" : "lg:pr-4"}>
+              {/* Intro - the whole block opens the full collection */}
+              <Link href={editHref} className={`group/intro block ${wide ? "lg:flex lg:items-end lg:justify-between lg:gap-10" : "lg:pr-4"}`}>
                 <div>
                 <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-[#b7791f]">
                   <Sparkles size={14} /> Festive edit
@@ -84,9 +87,11 @@ export default function FestiveEdit({ collections }: { collections: FestiveColle
                   <p className="mt-4 text-ink/65 leading-relaxed">
                     Our picks for {occasion || "festive"} celebrations, chosen to make your little ones shine.
                   </p>
-                  <div className={`mt-5 h-px w-16 bg-[#d9a441] ${wide ? "lg:ml-auto" : ""}`} />
+                  <span className={`mt-4 inline-flex items-center gap-2 rounded-full bg-[#c2621d] text-white px-5 py-2.5 text-sm font-semibold shadow-md shadow-[#c2621d]/20 transition-all group-hover/intro:bg-[#a9531a] active:scale-95 ${wide ? "lg:ml-auto" : ""}`}>
+                    Shop the edit <ArrowRight size={16} className="transition-transform group-hover/intro:translate-x-0.5" />
+                  </span>
                 </div>
-              </div>
+              </Link>
 
               {/* Products - swipeable on phones, grid from lg */}
               <div

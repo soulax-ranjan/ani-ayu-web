@@ -115,11 +115,11 @@ export default function BestDesigns({ bestSellers: serverBestSellers }: BestDesi
                         className="text-lg tabular-nums"
                         style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: '#3a7d6e' }}
                       >
-                        ₹{d.price.toLocaleString()}
+                        ₹{d.price.toLocaleString('en-IN')}
                       </span>
                       {discount > 0 && (
                         <span className="text-[12px] text-[#a8a29e] line-through tabular-nums" style={{ fontFamily: 'var(--font-heading)' }}>
-                          ₹{d.originalPrice.toLocaleString()}
+                          ₹{d.originalPrice.toLocaleString('en-IN')}
                         </span>
                       )}
                     </div>
